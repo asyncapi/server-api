@@ -1,0 +1,88 @@
+openapi: 3.1.0
+info:
+  version: 0.1.0
+  title: AsyncAPI Server API
+  description: Server API providing official AsyncAPI tools
+  contact:
+    name: AsyncAPI Initiative
+    email: info@asyncapi.io
+    url: https://asyncapi.com/
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: http://api.asyncapi.io # we should change it
+
+paths:
+  /generate:
+    summary: Group of paths that supports the AsyncAPI Generator - https://www.asyncapi.com/tools/generator.
+    post:
+      summary: Generate the given AsyncAPI template.
+      operationId: generateTemplate
+      tags:
+        - generator
+      externalDocs:
+        name: Website for the AsyncAPI Generator
+        url: https://www.asyncapi.com/tools/generator
+      requestBody:
+        description: Template details to be generated.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Template'
+      responses:
+        '200':
+          description: Template succesfully generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '422': # I'm not sure if this is the right code if someone gives the wrong body shape (e.g. not allowed `template` field or invalid asyncapi).
+          description: Failed to generate the given template due to invalid parameters or invalid AsyncAPI document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Template:
+      type: object
+      required:
+        - template
+      properties:
+        template:
+          type: string
+          description: Template name to be generated.
+          enum:
+            - 'html'
+            - 'markdown'
+        parameters:
+          type: object
+          description: Template parameters to be generated.
+          minProperties: 1
+          additionalProperties: true
+    Error:
+      type: object
+      required:
+        - code
+        - message
+        - errors
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        errors:
+          type: array
+
+
