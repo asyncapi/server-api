@@ -12,7 +12,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
-  - url: http://api.asyncapi.io # we should change it
+  - url: http://api.asyncapi.io
 
 paths:
   /generate:
@@ -39,7 +39,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Template'
-        '422': # I'm not sure if this is the right code if someone gives the wrong body shape (e.g. not allowed `template` field or invalid asyncapi).
+        '422':
           description: Failed to generate the given template due to invalid parameters or invalid AsyncAPI document.
           content:
             application/json:
