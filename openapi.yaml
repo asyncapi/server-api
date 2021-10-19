@@ -12,10 +12,10 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
-  - url: https://api.asyncapi.io
+  - url: https://api.asyncapi.io/v1
 
 paths:
-  /v1/generate/template:
+  /generate/template:
     post:
       summary: Generate the given AsyncAPI template.
       operationId: generateTemplate
