@@ -54,11 +54,17 @@ paths:
 
 components:
   schemas:
+    AsyncAPIDocument:
+      description: AsyncAPI document in JSON or YAML
+      type: string
+      minLength: 1
     Template:
       type: object
       required:
         - template
       properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
         template:
           type: string
           description: Template name to be generated.
