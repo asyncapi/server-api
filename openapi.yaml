@@ -12,16 +12,16 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
-  - url: http://api.asyncapi.io
+  - url: https://api.asyncapi.io
 
 paths:
-  /generate:
-    summary: Group of paths that supports the AsyncAPI Generator - https://www.asyncapi.com/tools/generator.
+  /v1/generate/template:
     post:
       summary: Generate the given AsyncAPI template.
       operationId: generateTemplate
       tags:
         - generator
+        - template
       externalDocs:
         name: Website for the AsyncAPI Generator
         url: https://www.asyncapi.com/tools/generator
@@ -39,8 +39,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Template'
+        '400':
+          description: Failed to generate the given template due to invalid AsyncAPI document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '422':
-          description: Failed to generate the given template due to invalid parameters or invalid AsyncAPI document.
+          description: Failed to generate the given template due to invalid parameters.
           content:
             application/json:
               schema:
@@ -56,11 +62,16 @@ components:
   schemas:
     AsyncAPIDocument:
       description: AsyncAPI document in JSON or YAML
-      type: string
+      type: # can be sent as normal JSON or stringified JSON/YAML
+        - string 
+        - object
       minLength: 1
+      minProperties: 1
+      additionalProperties: true
     Template:
       type: object
       required:
+        - asyncapi
         - template
       properties:
         asyncapi:
@@ -73,7 +84,7 @@ components:
             - 'markdown'
         parameters:
           type: object
-          description: Template parameters to be generated.
+          description: Template parameters to be generated. This field is optional but may be required for some templates.
           minProperties: 1
           additionalProperties: true
     Error:
@@ -81,7 +92,6 @@ components:
       required:
         - code
         - message
-        - errors
       properties:
         code:
           type: integer
