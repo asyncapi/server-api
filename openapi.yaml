@@ -13,7 +13,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
-  - url: https://api.asyncapi.io/v1
+  - url: https://api.asyncapi.com/v1
 
 paths:
   /generator:
@@ -102,7 +102,7 @@ components:
             it SHOULD provide human-readable documentation for the problem type
             (e.g., using HTML).
           default: 'about:blank'
-          example: 'https://api.asyncapi.io/problem/invalid-template-parameters'
+          example: 'https://api.asyncapi.com/problem/invalid-template-parameters'
         title:
           type: string
           description: |
