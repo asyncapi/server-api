@@ -19,7 +19,7 @@ paths:
   /generator:
     post:
       summary: Generate the given AsyncAPI template.
-      operationId: generateTemplate
+      operationId: generator
       tags:
         - generator
         - template
@@ -63,12 +63,11 @@ components:
   schemas:
     AsyncAPIDocument:
       description: AsyncAPI document in JSON or YAML
-      type: # can be sent as normal JSON or stringified JSON/YAML
-        - string 
-        - object
-      minLength: 1
-      minProperties: 1
-      additionalProperties: true
+      oneOf:
+        - type: string # can be in YAML format
+        - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.0.0.json
+        - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.1.0.json
+        - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.2.0.json
     Template:
       type: object
       required:
