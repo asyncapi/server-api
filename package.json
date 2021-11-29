@@ -1,0 +1,56 @@
+{
+  "name": "@asyncapi/server-api",
+  "version": "0.1.0",
+  "description": "Server API providing official AsyncAPI tools",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/asyncapi/server-api",
+  "bugs": {
+    "url": "https://github.com/asyncapi/server-api/issues"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/asyncapi/server-api.git"
+  },
+  "keywords": [
+    "server",
+    "api",
+    "asyncapi",
+    "generator",
+    "tooling"
+  ],
+  "author": {
+    "name": "The AsyncAPI maintainers"
+  },
+  "scripts": {
+    "test": "echo 'Nothing To Test'",
+    "lint": "echo 'Not Implemented Yet'",
+    "generate:assets": "npm run generate:readme:toc",
+    "generate:readme:toc": "markdown-toc -i README.md"
+  },
+  "dependencies": {
+    "@asyncapi/generator": "^1.8.14",
+    "@asyncapi/html-template": "^0.23.10",
+    "@asyncapi/markdown-template": "^0.15.0",
+    "@asyncapi/parser": "^1.10.0",
+    "archiver": "^5.3.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/archiver": "^5.1.1",
+    "@types/body-parser": "^1.19.1",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.10.3",
+    "@types/uuid": "^8.3.1",
+    "markdown-toc": "^1.2.0",
+    "nodemon": "^2.0.13",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
+  }
+}
