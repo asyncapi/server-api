@@ -2,4 +2,5 @@ node_modules
 .vscode
 coverage
 lib
+examples
 *.DS_Store
