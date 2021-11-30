@@ -34,6 +34,7 @@
     "generate:readme:toc": "markdown-toc -i README.md"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.3",
     "@asyncapi/avro-schema-parser": "^1.0.0",
     "@asyncapi/generator": "^1.8.25",
     "@asyncapi/html-template": "^0.24.0",

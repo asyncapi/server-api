@@ -11,4 +11,5 @@ export interface Problem {
   status?: number;
   detail?: string;
   instance?: string;
+  [key: string]: any;
 }

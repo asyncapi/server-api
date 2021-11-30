@@ -3,6 +3,7 @@ import { Router } from 'express';
 
 import { GeneratorController } from '../controllers/generator.controller';
 import { Routes } from '../interfaces';
+import { generatorTemplateParametersValidationMiddleware } from "../middlewares/generator-template-parameters-validation.middleware";
 
 export class GeneratorRoute implements Routes {
   public path = '/generator';
@@ -14,6 +15,6 @@ export class GeneratorRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}`, this.generatorController.generate.bind(this.generatorController));
+    this.router.post(`${this.path}`, generatorTemplateParametersValidationMiddleware, this.generatorController.generate.bind(this.generatorController));
   }
 }

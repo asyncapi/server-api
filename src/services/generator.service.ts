@@ -30,12 +30,12 @@ export class GeneratorService {
       await new Promise<void>((resolve) => {
         zip.on('end', resolve);
         zip.finalize();
-      });  
+      });
     }
     catch (err: unknown) {
       throw new ProblemException({
         type: 'internal-server-error',
-        title: 'Something went wrong',
+        title: 'Internal server error',
         status: 500,
         detail: (err as Error).message,
       });

@@ -7,17 +7,42 @@ import { parse } from '../utils/parser';
 export async function documentValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
     const { asyncapi } = req.body;
+    if (asyncapi === undefined) {
+      next();
+    }
+
     const parsedDocument = await parse(asyncapi);
     req.parsedDocument = parsedDocument;
     next();
-  } catch (err: unknown) {
+  } catch (err: any) {
+    let error = err;
     if (err instanceof ParserError) {
       const typeName = (err as any).type.replace('https://github.com/asyncapi/parser-js/', '');
-      (err as any).type = ProblemException.createType(typeName);
-      (err as any).status = retrieveStatusCode(typeName);
-      // add validationErrors and refs fields to the output
+      error = new ProblemException({
+        type: ProblemException.createType(typeName),
+        title: (err as any).title,
+        status: retrieveStatusCode(typeName),
+      });
+
+      if ((err as any).detail) {
+        error.detail = (err as any).detail;
+      }
+      if ((err as any).validationErrors) {
+        error.validationErrors = (err as any).validationErrors;
+      }
+      if ((err as any).parsedJSON) {
+        error.parsedJSON = (err as any).parsedJSON;
+      }
+      if ((err as any).location) {
+        error.location = (err as any).location;
+      }
+      if ((err as any).refs) {
+        error.refs = (err as any).refs;
+      }
+      console.log(err)
     }
-    next(err);
+
+    next(error);
   }
 };
 
