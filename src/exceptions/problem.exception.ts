@@ -27,11 +27,15 @@ export class ProblemException extends Error implements Problem {
     }
   }
 
-  static toJSON(problem: ProblemException): Problem {
+  static toJSON(problem: ProblemException, includeStack: boolean = false): Problem {
     const { name, message, stack, ...rest } = problem;
-    return {
+    const json = {
       ...rest,
     }
+    if (includeStack) {
+      json.lol = stack;
+    }
+    return json;
   }
 
   static createType(type: string): string {

@@ -16,7 +16,7 @@ export async function requestBodyValidationMiddleware(req: Request, _: Response,
     if (validate === undefined) {
       return next();
     }
-    
+
     const valid = validate(req.body);
     const errors = validate.errors && [...validate.errors];
 
@@ -64,6 +64,7 @@ async function getValidator(req: Request) {
   }
   const schema = requestBody.content['application/json'].schema;
 
+  // asyncapi is validated in another middleware
   if (schema.properties && schema.properties.asyncapi) {
     schema.properties.asyncapi = {};
   }

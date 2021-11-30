@@ -12,9 +12,9 @@ import { problemMiddleware } from './middlewares/problem.middleware'
 import { logger } from './utils/logger';
 
 export class App {
-  public app: express.Application;
-  public port: string | number;
-  public env: string;
+  private app: express.Application;
+  private port: string | number;
+  private env: string;
 
   constructor(routes: Routes[]) {
     this.app = express();
