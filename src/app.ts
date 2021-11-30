@@ -1,10 +1,13 @@
 import bodyParser from 'body-parser';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import config from 'config';
 import cors from 'cors';
 import express from 'express';
 
 import { Routes } from "./interfaces";
 import { problemMiddleware } from './middlewares/problem.middleware'
+import { documentValidationMiddleware } from './middlewares/document-validation.middleware';
 import { logger } from './utils/logger';
 
 export class App {
@@ -18,8 +21,11 @@ export class App {
     this.env = process.env.NODE_ENV || 'development';
 
     this.initializeMiddlewares();
+    // initialize validation middlewares
+    this.initializeValidation();
+    // initialize all routes
     this.initializeRoutes(routes);
-    // initialize error handling at last
+    // initialize error handlings
     this.initializeErrorHandling();
   }
 
@@ -38,9 +44,15 @@ export class App {
 
   private initializeMiddlewares() {
     this.app.use(cors({ origin: config.get('cors.origin'), credentials: config.get('cors.credentials') }));
+    this.app.use(compression());
     this.app.use(bodyParser.text({ type: 'text/plain', limit: '5mb' }));
     this.app.use(bodyParser.urlencoded({ extended: true }));
-    this.app.use(express.json());
+    this.app.use(bodyParser.json({ limit: '5mb' }));
+    this.app.use(cookieParser());
+  }
+
+  private initializeValidation() {
+    this.app.use(documentValidationMiddleware);
   }
 
   private initializeRoutes(routes: Routes[]) {

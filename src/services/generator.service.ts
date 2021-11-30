@@ -1,32 +1,29 @@
 import archiver, { Archiver } from 'archiver';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import AsyncAPIGenerator from '@asyncapi/generator';
 
-import { retrieveLangauge } from "../utils/retrieveLanguage";
+import { prepareParserConfig } from "../utils/parser";
+import { retrieveLangauge } from "../utils/retrieve-language";
 import { createTempDirectory, removeTempDirectory } from "../utils/temp-dir";
+import { ProblemException } from '../exceptions/problem.exception';
 
 export class GeneratorService {
-  public async generateTemplate(body: any, res: Response) {
-    res.type("application/zip");
-    res.attachment("asyncapi.zip");
-
+  public async generateTemplate(req: Request, res: Response) {
     const zip = archiver('zip', { zlib: { level: 9 } });
     zip.pipe(res);
 
     let tmpDir: string;
     try {
       tmpDir = createTempDirectory();
-
-      const { template, parameters } = body;
-      const asyncapi = this.ensureDocument(body.asyncapi);
+      const { asyncapi, template, parameters } = req.body;
 
       const generator = new AsyncAPIGenerator(template, tmpDir, {
         forceWrite: true,
         templateParams: parameters,
       });
 
-      await generator.generateFromString(asyncapi);
+      await generator.generate(req.parsedDocument, prepareParserConfig(req));
       zip.directory(tmpDir, 'template');
       this.appendAsyncAPIDocument(zip, asyncapi);
 
@@ -35,12 +32,12 @@ export class GeneratorService {
         zip.finalize();
       });  
     }
-    catch (err) {
-      console.log(err)
-      return res.status(422).send({
-        code: 'incorrect-format',
-        message: err.message,
-        // errors: Array.isArray(err) ? err : null
+    catch (err: unknown) {
+      throw new ProblemException({
+        type: 'internal-server-error',
+        title: 'Something went wrong',
+        status: 500,
+        detail: (err as Error).message,
       });
     }
     finally {
@@ -49,6 +46,7 @@ export class GeneratorService {
   }
 
   private appendAsyncAPIDocument(archive: Archiver, asyncapi: string) {
+    asyncapi = JSON.stringify(asyncapi);
     const language = retrieveLangauge(asyncapi);
     if (language === 'yaml') {
       archive.append(asyncapi, { name: 'asyncapi.yml' });
@@ -56,9 +54,5 @@ export class GeneratorService {
     else {
       archive.append(asyncapi, { name: 'asyncapi.json' });
     }
-  }
-
-  private ensureDocument(asyncapi: object | string): string {
-    return JSON.stringify(asyncapi);
   }
 }

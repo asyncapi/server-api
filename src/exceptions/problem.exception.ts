@@ -1,6 +1,8 @@
 import { Problem } from "../interfaces";
 
 export class ProblemException extends Error implements Problem {
+  static URL_PREFIX = 'https://api.asyncapi.com/problem/';
+
   public type?: string;
   public title?: string;
   public status?: number;
@@ -24,6 +26,6 @@ export class ProblemException extends Error implements Problem {
   }
 
   static createType(type: string): string {
-    return `https://api.asyncapi.com/problem/${type}`;
+    return type.startsWith(this.URL_PREFIX) ? type : `${this.URL_PREFIX}${type}`;
   }
 }

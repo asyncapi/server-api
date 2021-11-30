@@ -6,8 +6,12 @@ export class GeneratorController {
   private generatorService = new GeneratorService();
 
   public async generate(req: Request, res: Response, next: NextFunction) {
+    res.type("application/zip");
+    res.attachment("asyncapi.zip");
+
     try {
-      await this.generatorService.generateTemplate(req.body, res);
+      await this.generatorService.generateTemplate(req, res);
+      res.status(200);
     } catch (error) {
       next(error);
     }
