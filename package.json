@@ -25,7 +25,10 @@
     "name": "The AsyncAPI maintainers"
   },
   "scripts": {
-    "test": "echo 'Nothing To Test'",
+    "start": "npm run build && cross-env NODE_ENV=production node dist/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon",
+    "build": "tsc",
+    "test": "jest --forceExit --detectOpenHandles",
     "lint": "echo 'Not Implemented Yet'",
     "generate:assets": "npm run generate:readme:toc",
     "generate:readme:toc": "markdown-toc -i README.md"
@@ -37,19 +40,25 @@
     "@asyncapi/parser": "^1.13.0",
     "archiver": "^5.3.0",
     "body-parser": "^1.19.0",
+    "config": "^3.3.6",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@types/archiver": "^5.1.1",
     "@types/body-parser": "^1.19.1",
+    "@types/config": "0.0.40",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/node": "^16.10.3",
     "@types/uuid": "^8.3.1",
+    "cross-env": "^7.0.3",
+    "jest": "^27.4.1",
     "markdown-toc": "^1.2.0",
     "nodemon": "^2.0.13",
+    "ts-jest": "^27.0.7",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.3"
   }
