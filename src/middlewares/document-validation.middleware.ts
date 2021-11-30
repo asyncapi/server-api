@@ -2,16 +2,16 @@ import { ParserError } from '@asyncapi/parser';
 import { Request, Response, NextFunction } from 'express';
 import { ProblemException } from '../exceptions/problem.exception';
 
-import { parse } from '../utils/parser';
+import { parse, prepareParserConfig } from '../utils/parser';
 
 export async function documentValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
     const { asyncapi } = req.body;
     if (asyncapi === undefined) {
-      next();
+      return next();
     }
 
-    const parsedDocument = await parse(asyncapi);
+    const parsedDocument = await parse(asyncapi, prepareParserConfig(req));
     req.parsedDocument = parsedDocument;
     next();
   } catch (err: any) {
