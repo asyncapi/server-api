@@ -80,8 +80,8 @@ components:
           type: string
           description: Template name to be generated.
           enum:
-            - 'html'
-            - 'markdown'
+            - '@asyncapi/html-template'
+            - '@asyncapi/markdown-template'
         parameters:
           type: object
           description: |

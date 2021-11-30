@@ -7,7 +7,7 @@ import express from 'express';
 
 import { Routes } from "./interfaces";
 import { documentValidationMiddleware } from './middlewares/document-validation.middleware';
-// import { requestBodyValidationMiddleware } from './middlewares/request-body-validation.middleware';
+import { requestBodyValidationMiddleware } from './middlewares/request-body-validation.middleware';
 import { problemMiddleware } from './middlewares/problem.middleware'
 import { logger } from './utils/logger';
 
@@ -54,7 +54,7 @@ export class App {
 
   private initializeValidation() {
     this.app.use(documentValidationMiddleware);
-    // this.app.use(requestBodyValidationMiddleware);
+    this.app.use(requestBodyValidationMiddleware);
   }
 
   private initializeRoutes(routes: Routes[]) {

@@ -2,6 +2,7 @@
 import fs from 'fs';
 // @ts-ignore
 import path from 'path';
+
 import Ajv from 'ajv';
 import { Request, Response, NextFunction } from 'express';
 
@@ -16,6 +17,10 @@ export async function generatorTemplateParametersValidationMiddleware(req: Reque
         title: 'Unsupported Generator Template',
         status: 422,
       });
+    }
+
+    if (typeof parameters !== 'object') {
+      return next();
     }
 
     const validate = getValidator(template);
