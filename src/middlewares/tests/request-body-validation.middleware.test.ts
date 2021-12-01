@@ -61,7 +61,7 @@ describe('requestBodyValidationMiddleware', () => {
           template: 'custom template'
         })
         .expect(422, {
-          type: 'https://api.asyncapi.com/problem/invalid-request-body',
+          type: ProblemException.createType('invalid-request-body'),
           title: 'Invalid Request Body',
           status: 422,
           validationErrors: [
