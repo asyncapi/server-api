@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-export interface Routes {
+export interface Controller {
   path?: string;
-  router: Router;
+  boot(): Router;
 }
 
 export interface Problem {

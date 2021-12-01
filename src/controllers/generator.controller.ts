@@ -1,8 +1,13 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 
+import { Controller } from '../interfaces';
+
+import { generatorTemplateParametersValidationMiddleware } from "../middlewares/generator-template-parameters-validation.middleware";
 import { GeneratorService } from '../services/generator.service';
 
-export class GeneratorController {
+export class GeneratorController implements Controller {
+  public path = '/generator';
+
   private generatorService = new GeneratorService();
 
   public async generate(req: Request, res: Response, next: NextFunction) {
@@ -16,4 +21,16 @@ export class GeneratorController {
       next(error);
     }
   };
+
+  public boot(): Router {
+    const router = Router();
+    
+    router.post(
+      `${this.path}`, 
+      generatorTemplateParametersValidationMiddleware, 
+      this.generate.bind(this)
+    );
+
+    return router;
+  }
 }

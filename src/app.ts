@@ -5,7 +5,7 @@ import config from 'config';
 import cors from 'cors';
 import express from 'express';
 
-import { Routes } from "./interfaces";
+import { Controller } from "./interfaces";
 import { documentValidationMiddleware } from './middlewares/document-validation.middleware';
 import { requestBodyValidationMiddleware } from './middlewares/request-body-validation.middleware';
 import { problemMiddleware } from './middlewares/problem.middleware'
@@ -16,7 +16,7 @@ export class App {
   private port: string | number;
   private env: string;
 
-  constructor(routes: Routes[]) {
+  constructor(controller: Controller[]) {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV || 'development';
@@ -24,8 +24,8 @@ export class App {
     this.initializeMiddlewares();
     // initialize validation middlewares
     this.initializeValidation();
-    // initialize all routes
-    this.initializeRoutes(routes);
+    // initialize all controllers
+    this.initializeControllers(controller);
     // initialize error handlings
     this.initializeErrorHandling();
   }
@@ -57,9 +57,9 @@ export class App {
     this.app.use(requestBodyValidationMiddleware);
   }
 
-  private initializeRoutes(routes: Routes[]) {
-    routes.forEach(route => {
-      this.app.use('/', route.router);
+  private initializeControllers(controller: Controller[]) {
+    controller.forEach(controller => {
+      this.app.use('/', controller.boot());
     });
   }
 

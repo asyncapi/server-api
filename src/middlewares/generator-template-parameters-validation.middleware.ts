@@ -13,7 +13,7 @@ export async function generatorTemplateParametersValidationMiddleware(req: Reque
     const { template, parameters } = req.body;
     if (assertTemplate(template) === false) {
       throw new ProblemException({
-        type: ProblemException.createType('unsupported-template'),
+        type: 'unsupported-template',
         title: 'Unsupported Generator Template',
         status: 422,
       });
@@ -29,7 +29,7 @@ export async function generatorTemplateParametersValidationMiddleware(req: Reque
 
     if (valid === false) {
       throw new ProblemException({
-        type: ProblemException.createType('invalid-template-parameters'),
+        type: 'invalid-template-parameters',
         title: 'Invalid Generator Template parameters',
         status: 422,
         validationErrors: errors as any,

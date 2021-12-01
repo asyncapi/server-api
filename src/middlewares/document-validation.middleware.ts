@@ -19,7 +19,7 @@ export async function documentValidationMiddleware(req: Request, _: Response, ne
     if (err instanceof ParserError) {
       const typeName = (err as any).type.replace('https://github.com/asyncapi/parser-js/', '');
       error = new ProblemException({
-        type: ProblemException.createType(typeName),
+        type: typeName,
         title: (err as any).title,
         status: retrieveStatusCode(typeName),
       });
@@ -39,7 +39,6 @@ export async function documentValidationMiddleware(req: Request, _: Response, ne
       if ((err as any).refs) {
         error.refs = (err as any).refs;
       }
-      console.log(err)
     }
 
     next(error);

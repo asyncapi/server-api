@@ -22,7 +22,7 @@ export async function requestBodyValidationMiddleware(req: Request, _: Response,
 
     if (valid === false) {
       throw new ProblemException({
-        type: ProblemException.createType('invalid-request-body'),
+        type: 'invalid-request-body',
         title: 'Invalid Request Body',
         status: 422,
         validationErrors: errors as any,
@@ -54,11 +54,15 @@ async function getValidator(req: Request) {
   const appOpenAPI = await getAppOpenAPI();
   const paths = appOpenAPI.paths;
 
-  const path = paths[reqPath][method.toLowerCase()];
+  const path = paths[reqPath];
   if (!path) {
     return undefined;
   }
-  const requestBody = path.requestBody;
+  const pathMethod = path[method.toLowerCase()];
+  if (!pathMethod) {
+    return undefined;
+  }
+  const requestBody = pathMethod.requestBody;
   if (!requestBody) {
     return undefined;
   }
