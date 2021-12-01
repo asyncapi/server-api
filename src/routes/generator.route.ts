@@ -15,6 +15,10 @@ export class GeneratorRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}`, generatorTemplateParametersValidationMiddleware, this.generatorController.generate.bind(this.generatorController));
+    this.router.post(
+      `${this.path}`, 
+      generatorTemplateParametersValidationMiddleware, 
+      this.generatorController.generate.bind(this.generatorController)
+    );
   }
 }

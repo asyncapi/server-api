@@ -6,9 +6,9 @@ export interface Routes {
 }
 
 export interface Problem {
-  type?: string;
-  title?: string;
-  status?: number;
+  type: string;
+  title: string;
+  status: number;
   detail?: string;
   instance?: string;
   [key: string]: any;

@@ -131,4 +131,5 @@ components:
       required:
         - type
         - title
+        - status
       additionalProperties: true

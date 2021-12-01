@@ -10,9 +10,6 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
-// Define log format
-const logFormat = winston.format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`);
-
 /*
  * Log Level
  * error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
@@ -22,7 +19,8 @@ const logger = winston.createLogger({
     winston.format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    logFormat,
+    // Define log format
+    winston.format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`),
   ),
 });
 

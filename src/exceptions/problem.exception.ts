@@ -10,16 +10,17 @@ const SKIPPED_FIELDS = [
 export class ProblemException extends Error implements Problem {
   static URL_PREFIX = 'https://api.asyncapi.com/problem/';
 
-  public type?: string;
-  public title?: string;
-  public status?: number;
+  public type: string;
+  public title: string;
+  public status: number;
   public detail?: string;
   public instance?: string;
   [key: string]: any;
 
   constructor(problem: Problem) {
     super(problem.detail || problem.title);
-    this.type = problem.type ?? ProblemException.createType(problem.type);
+    this.name = 'ProblemException';
+    this.type = problem.type && ProblemException.createType(problem.type);
 
     for (let field in problem) {
       if (SKIPPED_FIELDS.includes(field)) continue;
@@ -33,7 +34,7 @@ export class ProblemException extends Error implements Problem {
       ...rest,
     }
     if (includeStack) {
-      json.lol = stack;
+      json.stack = stack;
     }
     return json;
   }

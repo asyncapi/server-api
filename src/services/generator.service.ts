@@ -28,6 +28,7 @@ export class GeneratorService {
       this.appendAsyncAPIDocument(zip, asyncapi);
 
       await new Promise<void>((resolve) => {
+        // wait for closing stream
         zip.on('end', resolve);
         zip.finalize();
       });
