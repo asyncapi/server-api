@@ -3,4 +3,5 @@ node_modules
 coverage
 lib
 examples
+logs
 *.DS_Store
