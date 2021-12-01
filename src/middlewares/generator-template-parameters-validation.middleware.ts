@@ -93,6 +93,7 @@ function serializeTemplateParameters(templateName: string): object {
     type: 'object',
     properties: parameters,
     required,
+    // don't allow non supported properties
     additionalProperties: false,
   }
 }
