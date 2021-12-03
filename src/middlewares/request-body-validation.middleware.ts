@@ -1,15 +1,12 @@
-// @ts-ignore
-import fs from "fs";
-// @ts-ignore
-import path from "path";
-
 import Ajv from 'ajv';
-import YAML from 'js-yaml';
-import $RefParser from '@apidevtools/json-schema-ref-parser';
 
 import { Request, Response, NextFunction } from 'express';
-import { ProblemException } from '../exceptions/problem.exception';;
+import { ProblemException } from '../exceptions/problem.exception';
+import { getAppOpenAPI } from '../utils/app-openapi';
 
+/**
+ * Validate for the given request the request's body based on path definition from the OpenAPI Document.
+ */
 export async function requestBodyValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
     const validate = await getValidator(req);
@@ -42,6 +39,9 @@ const ajv = new Ajv({
   logger: false,
 });
 
+/**
+ * Retrieve proper AJV's validator function, create or reuse it.
+ */
 async function getValidator(req: Request) {
   const { path: reqPath, method } = req;
   const schemaName = `${reqPath}->${method}`;
@@ -68,26 +68,12 @@ async function getValidator(req: Request) {
   }
   const schema = requestBody.content['application/json'].schema;
 
-  // asyncapi is validated in another middleware
+  // asyncapi is validated in another middleware so make so annotate it as `any` type
   if (schema.properties && schema.properties.asyncapi) {
-    schema.properties.asyncapi = {};
+    schema.properties.asyncapi = true;
   }
   schema['$schema'] = 'http://json-schema.org/draft-07/schema#';
 
   ajv.addSchema(schema, schemaName);
   return ajv.getSchema(schemaName);
-}
-
-let parsedOpenAPI = undefined;
-async function getAppOpenAPI(): Promise<any> {
-  if (parsedOpenAPI) {
-    return parsedOpenAPI;
-  }
-  
-  let openaAPI = fs.readFileSync(path.join(__dirname, '../../openapi.yaml'), 'utf-8');
-  parsedOpenAPI = YAML.load(openaAPI)
-  const refParser = new $RefParser;
-  await refParser.dereference(parsedOpenAPI);
-
-  return parsedOpenAPI;
 }

@@ -4,6 +4,9 @@ import { ProblemException } from '../exceptions/problem.exception';
 
 import { parse, prepareParserConfig } from '../utils/parser';
 
+/**
+ * Validate sent AsyncAPI document.
+ */
 export async function documentValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
     const { asyncapi } = req.body;
@@ -16,28 +19,28 @@ export async function documentValidationMiddleware(req: Request, _: Response, ne
     next();
   } catch (err: any) {
     let error = err;
-    if (err instanceof ParserError) {
-      const typeName = (err as any).type.replace('https://github.com/asyncapi/parser-js/', '');
+    if (error instanceof ParserError) {
+      const typeName = err.type.replace('https://github.com/asyncapi/parser-js/', '');
       error = new ProblemException({
         type: typeName,
-        title: (err as any).title,
+        title: err.title,
         status: retrieveStatusCode(typeName),
       });
 
-      if ((err as any).detail) {
-        error.detail = (err as any).detail;
+      if (err.detail) {
+        error.detail = err.detail;
       }
-      if ((err as any).validationErrors) {
-        error.validationErrors = (err as any).validationErrors;
+      if (err.validationErrors) {
+        error.validationErrors = err.validationErrors;
       }
-      if ((err as any).parsedJSON) {
-        error.parsedJSON = (err as any).parsedJSON;
+      if (err.parsedJSON) {
+        error.parsedJSON = err.parsedJSON;
       }
-      if ((err as any).location) {
-        error.location = (err as any).location;
+      if (err.location) {
+        error.location = err.location;
       }
-      if ((err as any).refs) {
-        error.refs = (err as any).refs;
+      if (err.refs) {
+        error.refs = err.refs;
       }
     }
 
@@ -54,6 +57,9 @@ const TYPES_400 = [
   'impossible-to-convert-to-json',
 ];
 
+/**
+ * Some error types have to be treated as 400 HTTP Status Code, another as 422.
+ */
 function retrieveStatusCode(type: string): number {
   if (TYPES_400.includes(type)) {
     return 400;

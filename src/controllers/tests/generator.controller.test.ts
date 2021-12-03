@@ -29,7 +29,26 @@ describe('GeneratorController', () => {
         .expect(200);
     });
 
-    it('should throw error when sended template parameters are invalid', async () => {
+    it('should pass when sent template parameters are empty', async () => {
+      const app = new App([new GeneratorController()]);
+
+      return await request(app.getServer())
+        .post('/generator')
+        .send({
+          asyncapi: {
+            "asyncapi": "2.2.0",
+            "info": {
+              "title": "Test Service",
+              "version": "1.0.0",
+            },
+            "channels": {},
+          },
+          template: '@asyncapi/html-template',
+        })
+        .expect(200);
+    });
+
+    it('should throw error when sent template parameters are invalid', async () => {
       const app = new App([new GeneratorController()]);
 
       return await request(app.getServer())

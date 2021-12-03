@@ -3,6 +3,9 @@ import { NextFunction, Request, Response } from 'express';
 import { ProblemException } from '../exceptions/problem.exception';
 import { logger } from '../utils/logger';
 
+/**
+ * Catch problem exception, log it and serialize error to human readable form.
+ */
 export function problemMiddleware(error: ProblemException, req: Request, res: Response, next: NextFunction) {
   try {
     const status = error.status = error.status || 500;

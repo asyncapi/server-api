@@ -8,23 +8,15 @@ import { Request, Response, NextFunction } from 'express';
 
 import { ProblemException } from '../exceptions/problem.exception';
 
+/**
+ * Validate for the given template the template's parameters.
+ */
 export async function generatorTemplateParametersValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
     const { template, parameters } = req.body;
-    if (assertTemplate(template) === false) {
-      throw new ProblemException({
-        type: 'unsupported-template',
-        title: 'Unsupported Generator Template',
-        status: 422,
-      });
-    }
-
-    if (typeof parameters !== 'object') {
-      return next();
-    }
 
     const validate = getValidator(template);
-    const valid = validate(parameters);
+    const valid = validate(parameters || {});
     const errors = validate.errors && [...validate.errors];
 
     if (valid === false) {
@@ -42,15 +34,6 @@ export async function generatorTemplateParametersValidationMiddleware(req: Reque
   }
 };
 
-const SUPPORTED_TEMPLATES = [
-  '@asyncapi/html-template',
-  '@asyncapi/markdown-template',
-];
-
-function assertTemplate(templateName: string): boolean {
-  return SUPPORTED_TEMPLATES.includes(templateName);
-}
-
 const ajv = new Ajv({
   inlineRefs: true,
   allErrors: true,
@@ -58,6 +41,9 @@ const ajv = new Ajv({
   logger: false,
 });
 
+/**
+ * Retrieve proper AJV's validator function, create or reuse it.
+ */
 function getValidator(templateName: string) {
   let validate = ajv.getSchema(templateName);
   if (!validate) {
@@ -67,6 +53,9 @@ function getValidator(templateName: string) {
   return validate;
 }
 
+/**
+ * Serialize template parameters. Read all parameters from template's package.json and serialize to proper JSON Schema.
+ */
 function serializeTemplateParameters(templateName: string): object {
   const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, `../../node_modules/${templateName}/package.json`), 'utf-8'));
   if (!packageJSON) {
@@ -78,9 +67,10 @@ function serializeTemplateParameters(templateName: string): object {
     return;
   }
 
-  const parameters = generator.parameters as object;
+  const parameters = generator.parameters || {};
   const required: string[] = [];
   for (let parameter in parameters) {
+    // at the moment all parameter have to be passed to the Generator instance as string
     parameters[parameter].type = 'string';
     if (parameters[parameter].required) {
       required.push(parameter);
