@@ -21,7 +21,7 @@ module.exports = {
   // Module file extensions for importing
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 
-  testTimeout: 10000,
+  testTimeout: 20000,
   
   setupFiles: ["./tests/jest.setup.ts"],
   globals: {

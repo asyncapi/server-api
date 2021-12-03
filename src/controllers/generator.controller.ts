@@ -9,7 +9,7 @@ import { GeneratorService } from '../services/generator.service';
 import { prepareParserConfig } from '../utils/parser';
 
 /**
- * Controller which implements the Generator functionality
+ * Controller which exposes the Generator functionality
  */
 export class GeneratorController implements Controller {
   public path = '/generator';
@@ -18,7 +18,7 @@ export class GeneratorController implements Controller {
   private generatorService = new GeneratorService();
 
   private async generate(req: Request, res: Response) {
-    const zip = this.archiverService.create(res);
+    const zip = this.archiverService.createZip(res);
     this.archiverService.appendHeaders(res);
 
     let tmpDir: string;

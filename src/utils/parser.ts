@@ -12,7 +12,15 @@ registerSchemaParser(openapiSchemaParser);
 registerSchemaParser(ramlDtParser);
 registerSchemaParser(avroSchemaParser);
 
-function prepareParserConfig(req: Request) {
+function prepareParserConfig(req?: Request) {
+  if (!req) {
+    return {
+      resolve: {
+        file: false,
+      },
+    }
+  }
+
   return {
     resolve: {
       file: false,

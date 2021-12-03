@@ -5,7 +5,7 @@ import { retrieveLangauge } from "../utils/retrieve-language";
 import { createTempDirectory, removeTempDirectory } from "../utils/temp-dir";
 
 export class ArchiverService {
-  public create(res?: Response) {
+  public createZip(res?: Response) {
     const zip = archiver('zip', { zlib: { level: 9 } });
     res && zip.pipe(res);
     return zip;
