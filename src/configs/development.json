@@ -1,6 +1,5 @@
 {
   "env": "development",
-  "secretKey": "secretKey",
   "log": {
       "format": "dev",
       "dir": "../logs"

@@ -1,11 +1,8 @@
 import { registerSchemaParser, parse } from '@asyncapi/parser';
 import { Request } from 'express';
 
-// @ts-ignore
 import ramlDtParser from '@asyncapi/raml-dt-schema-parser';
-// @ts-ignore
 import openapiSchemaParser from '@asyncapi/openapi-schema-parser';
-// @ts-ignore
 import avroSchemaParser from '@asyncapi/avro-schema-parser';
 
 registerSchemaParser(openapiSchemaParser);

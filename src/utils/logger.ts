@@ -3,9 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
 
-// logs dir
 const logDir: string = path.join(__dirname, config.get('log.dir'));
-
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }

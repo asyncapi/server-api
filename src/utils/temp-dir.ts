@@ -1,14 +1,11 @@
 import os from "os";
-// @ts-ignore
 import fs from "fs";
-// @ts-ignore
 import path from "path";
 import { v4 as uuidv4 } from 'uuid';
 
 import { logger } from './logger';
 
 export function createTempDirectory() {
-  // @ts-ignore
   return fs.mkdtempSync(path.join(os.tmpdir(), uuidv4()));
 }
 

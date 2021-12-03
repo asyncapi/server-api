@@ -1,6 +1,4 @@
-// @ts-ignore
 import fs from "fs";
-// @ts-ignore
 import path from "path";
 
 import YAML from 'js-yaml';

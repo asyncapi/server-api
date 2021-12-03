@@ -4,6 +4,9 @@ import { Response } from 'express';
 import { retrieveLangauge } from "../utils/retrieve-language";
 import { createTempDirectory, removeTempDirectory } from "../utils/temp-dir";
 
+/**
+ * Service providing `archiver` functionality with needed helpers.
+ */
 export class ArchiverService {
   public createZip(res?: Response) {
     const zip = archiver('zip', { zlib: { level: 9 } });

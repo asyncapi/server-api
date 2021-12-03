@@ -1,6 +1,4 @@
-// @ts-ignore
 import fs from 'fs';
-// @ts-ignore
 import path from 'path';
 
 import Ajv from 'ajv';
@@ -54,7 +52,7 @@ function getValidator(templateName: string) {
 }
 
 /**
- * Serialize template parameters. Read all parameters from template's package.json and serialize to proper JSON Schema.
+ * Serialize template parameters. Read all parameters from template's package.json and create a proper JSON Schema for validating parameters.
  */
 function serializeTemplateParameters(templateName: string): object {
   const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, `../../node_modules/${templateName}/package.json`), 'utf-8'));
@@ -70,7 +68,7 @@ function serializeTemplateParameters(templateName: string): object {
   const parameters = generator.parameters || {};
   const required: string[] = [];
   for (let parameter in parameters) {
-    // at the moment all parameter have to be passed to the Generator instance as string
+    // at the moment all parameters have to be passed to the Generator instance as string
     parameters[parameter].type = 'string';
     if (parameters[parameter].required) {
       required.push(parameter);

@@ -3,6 +3,9 @@ import { AsyncAPIDocument } from '@asyncapi/parser';
 
 import { prepareParserConfig } from "../utils/parser";
 
+/**
+ * Service providing `@asyncapi/generator` functionality.
+ */
 export class GeneratorService {
   public async generate(
     asyncapi: AsyncAPIDocument | string,
