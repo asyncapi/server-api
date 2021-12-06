@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@asyncapi/generator": "^1.8.14",
-    "@asyncapi/html-template": "^0.23.10",
+    "@asyncapi/html-template": "^0.23.15",
     "@asyncapi/markdown-template": "^0.19.8",
     "@asyncapi/parser": "^1.13.0",
     "archiver": "^5.3.0",
