@@ -6,12 +6,12 @@ import { ProblemException } from '../../exceptions/problem.exception';
 import { GeneratorController } from "../generator.controller";
 
 describe('GeneratorController', () => {
-  describe('[POST] /generator', () => {
+  describe('[POST] /generate', () => {
     it('should generate template ', async () => {
       const app = new App([new GeneratorController()]);
 
       return await request(app.getServer())
-        .post('/generator')
+        .post('/generate')
         .send({
           asyncapi: {
             "asyncapi": "2.2.0",
@@ -33,7 +33,7 @@ describe('GeneratorController', () => {
       const app = new App([new GeneratorController()]);
 
       return await request(app.getServer())
-        .post('/generator')
+        .post('/generate')
         .send({
           asyncapi: {
             "asyncapi": "2.2.0",
@@ -52,7 +52,7 @@ describe('GeneratorController', () => {
       const app = new App([new GeneratorController()]);
 
       return await request(app.getServer())
-        .post('/generator')
+        .post('/generate')
         .send({
           asyncapi: {
             "asyncapi": "2.2.0",

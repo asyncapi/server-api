@@ -12,7 +12,7 @@ import { prepareParserConfig } from '../utils/parser';
  * Controller which exposes the Generator functionality
  */
 export class GeneratorController implements Controller {
-  public path = '/generator';
+  public path = '/generate';
 
   private archiverService = new ArchiverService();
   private generatorService = new GeneratorService();

@@ -16,11 +16,12 @@ servers:
   - url: https://api.asyncapi.com/v1
 
 paths:
-  /generator:
+  /generate:
     post:
       summary: Generate the given AsyncAPI template.
-      operationId: generator
+      operationId: generate
       tags:
+        - generate
         - generator
         - template
       externalDocs:

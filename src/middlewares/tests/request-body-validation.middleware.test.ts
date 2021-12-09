@@ -6,12 +6,12 @@ import { ProblemException } from '../../exceptions/problem.exception';
 import { createTestController } from '../../../tests/test.controller';
 
 // requestBodyValidationMiddleware is added to every route
-// test /generator route to check validation of custom requestBody
+// test /generate route to check validation of custom requestBody
 describe('requestBodyValidationMiddleware', () => {
-  describe('[POST] /generator', () => {
+  describe('[POST] /generate', () => {
     it('should pass when request body is valid', async () => {
       const TestController = createTestController({
-        path: '/generator',
+        path: '/generate',
         method: 'post',
         callback: (_, res) => {
           res.status(200).send({ success: true });
@@ -20,7 +20,7 @@ describe('requestBodyValidationMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/generator')
+        .post('/generate')
         .send({
           asyncapi: {
             "asyncapi": "2.2.0",
@@ -48,7 +48,7 @@ describe('requestBodyValidationMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/generator')
+        .post('/generate')
         .send({
           asyncapi: {
             "asyncapi": "2.2.0",
