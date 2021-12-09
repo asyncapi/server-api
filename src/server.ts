@@ -2,9 +2,9 @@
 process.env['NODE_CONFIG_DIR'] = __dirname + '/configs';
 
 import { App } from './app';
-import { GeneratorController } from './controllers/generator.controller';
+import { GenerateController } from './controllers/generate.controller';
 
 const app = new App([
-  new GeneratorController()
+  new GenerateController()
 ]);
 app.listen();

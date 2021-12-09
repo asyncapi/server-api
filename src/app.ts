@@ -1,14 +1,14 @@
 import bodyParser from 'body-parser';
 import compression from 'compression';
-import cookieParser from 'cookie-parser';
 import config from 'config';
 import cors from 'cors';
 import express from 'express';
 
 import { Controller } from "./interfaces";
-import { documentValidationMiddleware } from './middlewares/document-validation.middleware';
+
 import { requestBodyValidationMiddleware } from './middlewares/request-body-validation.middleware';
 import { problemMiddleware } from './middlewares/problem.middleware'
+
 import { logger } from './utils/logger';
 
 export class App {
@@ -44,16 +44,16 @@ export class App {
   }
 
   private initializeMiddlewares() {
+    const requestBodyLimit = config.get<string>('request.body.limit');
+
     this.app.use(cors({ origin: config.get('cors.origin'), credentials: config.get('cors.credentials') }));
     this.app.use(compression());
-    this.app.use(bodyParser.text({ type: ["text/*"], limit: '5mb' }));
-    this.app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
-    this.app.use(bodyParser.json({ type: ["json", "*/json", "+json"], limit: '5mb' }));
-    this.app.use(cookieParser());
+    this.app.use(bodyParser.text({ type: ["text/*"], limit: requestBodyLimit }));
+    this.app.use(bodyParser.urlencoded({ extended: true, limit: requestBodyLimit }));
+    this.app.use(bodyParser.json({ type: ["json", "*/json", "+json"], limit: requestBodyLimit }));
   }
 
   private initializeValidation() {
-    this.app.use(documentValidationMiddleware);
     this.app.use(requestBodyValidationMiddleware);
   }
 

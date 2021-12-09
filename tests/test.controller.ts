@@ -6,10 +6,13 @@ interface Path {
   path: string,
   method: 'all' | 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head',
   callback: (req: Request, res: Response, next: NextFunction) => any;
+  middlewares?: Array<(req: Request, res: Response, next: NextFunction) => any>;
 }
 
 export function createTestController(paths: Path | Path[]) {
   return class implements Controller {
+    public basepath = '/';
+
     public boot(): Router {
       const router = Router();
 
@@ -17,6 +20,7 @@ export function createTestController(paths: Path | Path[]) {
       p.forEach(path => {
         router[path.method](
           path.path, 
+          ...(path.middlewares || []),
           path.callback,
         );
       })

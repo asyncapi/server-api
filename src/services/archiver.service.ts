@@ -5,12 +5,19 @@ import { retrieveLangauge } from "../utils/retrieve-language";
 import { createTempDirectory, removeTempDirectory } from "../utils/temp-dir";
 
 /**
- * Service providing `archiver` functionality with needed helpers.
+ * Service wrapping the `archiver` module:
+    - easier zip creation
+    - adding proper `Content-Type` header
+    - easier adding an AsyncAPI document to the archive
+    - easier stream finalization
  */
 export class ArchiverService {
   public createZip(res?: Response) {
     const zip = archiver('zip', { zlib: { level: 9 } });
-    res && zip.pipe(res);
+    if (res) {
+      zip.pipe(res);
+      res.attachment("asyncapi.zip");
+    }
     return zip;
   }
 
@@ -43,10 +50,5 @@ export class ArchiverService {
 
   public removeTempDirectory(tmpDir: string) {
     return removeTempDirectory(tmpDir);
-  }
-
-  public appendHeaders(res: Response) {
-    res.type("application/zip");
-    res.attachment("asyncapi.zip");
   }
 }

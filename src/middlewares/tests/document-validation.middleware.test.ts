@@ -2,6 +2,7 @@ import request from 'supertest';
 
 import { App } from '../../app';
 import { ProblemException } from '../../exceptions/problem.exception';
+import { documentValidationMiddleware } from '../document-validation.middleware';
 
 import { createTestController } from '../../../tests/test.controller';
 
@@ -15,6 +16,7 @@ describe('documentValidationMiddleware', () => {
         callback: (_, res) => {
           res.status(200).send({ success: true });
         },
+        middlewares: [documentValidationMiddleware],
       })
       const app = new App([new TestController()]);
 
@@ -33,6 +35,7 @@ describe('documentValidationMiddleware', () => {
         callback: (_, res) => {
           res.status(200).send({ success: true });
         },
+        middlewares: [documentValidationMiddleware],
       })
       const app = new App([new TestController()]);
 
@@ -89,6 +92,7 @@ describe('documentValidationMiddleware', () => {
         callback: (_, res) => {
           res.status(200).send({ success: true });
         },
+        middlewares: [documentValidationMiddleware],
       })
       const app = new App([new TestController()]);
 

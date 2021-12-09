@@ -7,6 +7,10 @@ import { logger } from '../utils/logger';
  * Catch problem exception, log it and serialize error to human readable form.
  */
 export function problemMiddleware(error: ProblemException, req: Request, res: Response, next: NextFunction) {
+  if (res.headersSent) {
+    return next(error);
+  }
+
   try {
     const status = error.status = error.status || 500;
     error.title = error.title || 'Internal server error';

@@ -54,7 +54,6 @@ const TYPES_400 = [
   'invalid-document-type',
   'invalid-json',
   'invalid-yaml',  
-  'impossible-to-convert-to-json',
 ];
 
 /**

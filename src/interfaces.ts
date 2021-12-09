@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 export interface Controller {
-  path?: string;
+  basepath: string;
   boot(): Router;
 }
 

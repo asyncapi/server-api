@@ -3,12 +3,12 @@ import request from 'supertest';
 import { App } from '../../app';
 import { ProblemException } from '../../exceptions/problem.exception';
 
-import { GeneratorController } from "../generator.controller";
+import { GenerateController } from "../generate.controller";
 
 describe('GeneratorController', () => {
   describe('[POST] /generate', () => {
     it('should generate template ', async () => {
-      const app = new App([new GeneratorController()]);
+      const app = new App([new GenerateController()]);
 
       return await request(app.getServer())
         .post('/generate')
@@ -30,7 +30,7 @@ describe('GeneratorController', () => {
     });
 
     it('should pass when sent template parameters are empty', async () => {
-      const app = new App([new GeneratorController()]);
+      const app = new App([new GenerateController()]);
 
       return await request(app.getServer())
         .post('/generate')
@@ -49,7 +49,7 @@ describe('GeneratorController', () => {
     });
 
     it('should throw error when sent template parameters are invalid', async () => {
-      const app = new App([new GeneratorController()]);
+      const app = new App([new GenerateController()]);
 
       return await request(app.getServer())
         .post('/generate')
