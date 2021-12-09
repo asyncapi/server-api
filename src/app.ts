@@ -21,12 +21,13 @@ export class App {
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV || 'development';
 
+    // initialize core middlewares
     this.initializeMiddlewares();
     // initialize validation middlewares
     this.initializeValidation();
     // initialize all controllers
     this.initializeControllers(controller);
-    // initialize error handlings
+    // initialize error handling
     this.initializeErrorHandling();
   }
 
