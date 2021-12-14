@@ -1,0 +1,149 @@
+import fs from 'fs';
+import path from 'path';
+import { NextFunction, Request, Response, Router } from 'express';
+import Ajv from 'ajv';
+
+import { Controller } from '../interfaces';
+
+import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
+
+import { ArchiverService } from '../services/archiver.service';
+import { GeneratorService } from '../services/generator.service';
+
+import { ProblemException } from '../exceptions/problem.exception';
+import { prepareParserConfig } from '../utils/parser';
+
+/**
+ * Controller which exposes the Generator functionality
+ */
+export class GenerateController implements Controller {
+  public basepath = '/generate';
+
+  private archiverService = new ArchiverService();
+  private generatorService = new GeneratorService();
+  private ajv: Ajv;
+
+  private async generate(req: Request, res: Response, next: NextFunction) {
+    try {
+      this.validateTemplateParameters(req);
+    } catch(err) {
+      return next(err);
+    }
+    
+    const zip = this.archiverService.createZip(res);
+
+    let tmpDir: string;
+    try {
+      tmpDir = this.archiverService.createTempDirectory();
+      const { asyncapi, template, parameters } = req.body;
+
+      await this.generatorService.generate(
+        req.parsedDocument,
+        template,
+        parameters,
+        tmpDir,
+        prepareParserConfig(req),
+      );
+
+      this.archiverService.appendDirectory(zip, tmpDir, 'template');
+      this.archiverService.appendAsyncAPIDocument(zip, asyncapi);
+
+      res.status(200);
+      return await this.archiverService.finalize(zip);
+    }
+    catch (err: unknown) {
+      return next(new ProblemException({
+        type: 'internal-server-error',
+        title: 'Internal server error',
+        status: 500,
+        detail: (err as Error).message,
+      }));
+    }
+    finally {
+      this.archiverService.removeTempDirectory(tmpDir);
+    }
+  }
+
+  private validateTemplateParameters(req: Request) {
+    const { template, parameters } = req.body;
+
+    const validate = this.getAjvValidator(template);
+    const valid = validate(parameters || {});
+    const errors = validate.errors && [...validate.errors];
+
+    if (valid === false) {
+      throw new ProblemException({
+        type: 'invalid-template-parameters',
+        title: 'Invalid Generator Template parameters',
+        status: 422,
+        validationErrors: errors as any,
+      });
+    }
+  }
+
+  /**
+   * Retrieve proper AJV's validator function, create or reuse it.
+   */
+  public getAjvValidator(templateName: string) {
+    let validate = this.ajv.getSchema(templateName);
+    if (!validate) {
+      this.ajv.addSchema(this.serializeTemplateParameters(templateName), templateName);
+      validate = this.ajv.getSchema(templateName);
+    }
+    return validate;
+  }
+
+  /**
+   * Serialize template parameters. Read all parameters from template's package.json and create a proper JSON Schema for validating parameters.
+   */
+  public serializeTemplateParameters(templateName: string): object {
+    const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, `../../node_modules/${templateName}/package.json`), 'utf-8'));
+    if (!packageJSON) {
+      return;
+    }
+
+    const generator = packageJSON.generator;
+    if (!generator || !generator.parameters) {
+      return;
+    }
+
+    const parameters = generator.parameters || {};
+    const required: string[] = [];
+    for (let parameter in parameters) {
+      // at the moment all parameters have to be passed to the Generator instance as string
+      parameters[parameter].type = 'string';
+      if (parameters[parameter].required) {
+        required.push(parameter);
+      }
+      delete parameters[parameter].required;
+    }
+
+    return {
+      '$schema': 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: parameters,
+      required,
+      // don't allow non supported properties
+      additionalProperties: false,
+    }
+  }
+
+
+  public boot(): Router {
+    this.ajv = new Ajv({
+      inlineRefs: true,
+      allErrors: true,
+      schemaId: 'id',
+      logger: false,
+    });
+    const router = Router();
+    
+    router.post(
+      `${this.basepath}`, 
+      documentValidationMiddleware,
+      this.generate.bind(this)
+    );
+
+    return router;
+  }
+}

@@ -16,11 +16,12 @@ servers:
   - url: https://api.asyncapi.com/v1
 
 paths:
-  /generator:
+  /generate:
     post:
       summary: Generate the given AsyncAPI template.
-      operationId: generator
+      operationId: generate
       tags:
+        - generate
         - generator
         - template
       externalDocs:
@@ -80,15 +81,14 @@ components:
           type: string
           description: Template name to be generated.
           enum:
-            - 'html'
-            - 'markdown'
+            - '@asyncapi/html-template'
+            - '@asyncapi/markdown-template'
         parameters:
           type: object
           description: |
             Template parameters to be generated. Each template has different parameters that you should check in the documentation, 
             which is usually located in the template's repository.
             This field is optional but may be required for some templates.
-          minProperties: 1
           additionalProperties: true
     Problem:
       type: object
@@ -128,4 +128,8 @@ components:
           description: |
             An absolute URI that identifies the specific occurrence of the problem.
             It may or may not yield further information if dereferenced.
+      required:
+        - type
+        - title
+        - status
       additionalProperties: true
