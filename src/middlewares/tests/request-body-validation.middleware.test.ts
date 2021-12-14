@@ -16,19 +16,19 @@ describe('requestBodyValidationMiddleware', () => {
         callback: (_, res) => {
           res.status(200).send({ success: true });
         },
-      })
+      });
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
         .post('/generate')
         .send({
           asyncapi: {
-            "asyncapi": "2.2.0",
-            "info": {
-              "title": "Test Service",
-              "version": "1.0.0",
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
             },
-            "channels": {},
+            channels: {},
           },
           template: '@asyncapi/html-template'
         })
@@ -44,19 +44,19 @@ describe('requestBodyValidationMiddleware', () => {
         callback: (_, res) => {
           res.status(200).send({ success: true });
         },
-      })
+      });
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
         .post('/generate')
         .send({
           asyncapi: {
-            "asyncapi": "2.2.0",
-            "info": {
-              "title": "Test Service",
-              "version": "1.0.0",
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
             },
-            "channels": {},
+            channels: {},
           },
           template: 'custom template'
         })
@@ -70,7 +70,7 @@ describe('requestBodyValidationMiddleware', () => {
               schemaPath: '#/properties/template/enum',
               keyword: 'enum',
               params: {
-                allowedValues: [ '@asyncapi/html-template', '@asyncapi/markdown-template' ]
+                allowedValues: ['@asyncapi/html-template', '@asyncapi/markdown-template']
               },
               message: 'must be equal to one of the allowed values'
             }

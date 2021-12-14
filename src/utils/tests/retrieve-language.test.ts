@@ -1,4 +1,4 @@
-import { retrieveLangauge } from "../retrieve-language";
+import { retrieveLangauge } from '../retrieve-language';
 
 describe('retrieveLangauge()', () => {
   test('should check that content is yaml', () => {

@@ -22,4 +22,4 @@ export function problemMiddleware(error: ProblemException, req: Request, res: Re
   } catch (err: unknown) {
     next(err);
   }
-};
+}

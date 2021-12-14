@@ -1,4 +1,4 @@
-import { ProblemException } from "../problem.exception";
+import { ProblemException } from '../problem.exception';
 
 describe('ProblemException', () => {
   describe('constructor', () => {
@@ -10,7 +10,7 @@ describe('ProblemException', () => {
           status: 422,
           customField: 'customValue',
         });
-      } catch(e: unknown) {
+      } catch (e: unknown) {
         const err = e as ProblemException;
         expect(err.name).toEqual('ProblemException');
         expect(err.message).toEqual('Some problem');
@@ -39,7 +39,7 @@ describe('ProblemException', () => {
           status: 422,
           customField: 'customValue',
         });
-      } catch(e) {
+      } catch (e) {
         expect(ProblemException.toJSON(e as ProblemException)).toEqual({
           type: ProblemException.createType('some-type'),
           title: 'Some problem',
@@ -57,7 +57,7 @@ describe('ProblemException', () => {
           status: 422,
           customField: 'customValue',
         });
-      } catch(e) {
+      } catch (e) {
         expect(ProblemException.toJSON(e as ProblemException, true)).toEqual({
           type: ProblemException.createType('some-type'),
           title: 'Some problem',

@@ -3,7 +3,7 @@ import request from 'supertest';
 import { App } from '../../app';
 import { ProblemException } from '../../exceptions/problem.exception';
 
-import { GenerateController } from "../generate.controller";
+import { GenerateController } from '../generate.controller';
 
 describe('GeneratorController', () => {
   describe('[POST] /generate', () => {
@@ -14,12 +14,12 @@ describe('GeneratorController', () => {
         .post('/generate')
         .send({
           asyncapi: {
-            "asyncapi": "2.2.0",
-            "info": {
-              "title": "Test Service",
-              "version": "1.0.0",
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
             },
-            "channels": {},
+            channels: {},
           },
           template: '@asyncapi/html-template',
           parameters: {
@@ -36,12 +36,12 @@ describe('GeneratorController', () => {
         .post('/generate')
         .send({
           asyncapi: {
-            "asyncapi": "2.2.0",
-            "info": {
-              "title": "Test Service",
-              "version": "1.0.0",
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
             },
-            "channels": {},
+            channels: {},
           },
           template: '@asyncapi/html-template',
         })
@@ -55,12 +55,12 @@ describe('GeneratorController', () => {
         .post('/generate')
         .send({
           asyncapi: {
-            "asyncapi": "2.2.0",
-            "info": {
-              "title": "Test Service",
-              "version": "1.0.0",
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
             },
-            "channels": {},
+            channels: {},
           },
           template: '@asyncapi/html-template',
           parameters: {
