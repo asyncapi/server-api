@@ -25,8 +25,8 @@ export class GenerateController implements Controller {
 
   private async generate(req: Request, res: Response, next: NextFunction) {
     try {
-      this.validateTemplateParameters(req);
-    } catch(err) {
+      await this.validateTemplateParameters(req);
+    } catch (err) {
       return next(err);
     }
     
@@ -50,24 +50,22 @@ export class GenerateController implements Controller {
 
       res.status(200);
       return await this.archiverService.finalize(zip);
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
       return next(new ProblemException({
         type: 'internal-server-error',
         title: 'Internal server error',
         status: 500,
         detail: (err as Error).message,
       }));
-    }
-    finally {
+    } finally {
       this.archiverService.removeTempDirectory(tmpDir);
     }
   }
 
-  private validateTemplateParameters(req: Request) {
+  private async validateTemplateParameters(req: Request) {
     const { template, parameters } = req.body;
 
-    const validate = this.getAjvValidator(template);
+    const validate = await this.getAjvValidator(template);
     const valid = validate(parameters || {});
     const errors = validate.errors && [...validate.errors];
 
@@ -84,10 +82,10 @@ export class GenerateController implements Controller {
   /**
    * Retrieve proper AJV's validator function, create or reuse it.
    */
-  public getAjvValidator(templateName: string) {
+  public async getAjvValidator(templateName: string) {
     let validate = this.ajv.getSchema(templateName);
     if (!validate) {
-      this.ajv.addSchema(this.serializeTemplateParameters(templateName), templateName);
+      this.ajv.addSchema(await this.serializeTemplateParameters(templateName), templateName);
       validate = this.ajv.getSchema(templateName);
     }
     return validate;
@@ -96,8 +94,10 @@ export class GenerateController implements Controller {
   /**
    * Serialize template parameters. Read all parameters from template's package.json and create a proper JSON Schema for validating parameters.
    */
-  public serializeTemplateParameters(templateName: string): object {
-    const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, `../../node_modules/${templateName}/package.json`), 'utf-8'));
+  public async serializeTemplateParameters(templateName: string): Promise<object> {
+    const pathToPackageJSON = path.join(__dirname, `../../node_modules/${templateName}/package.json`);
+    const packageJSONContent = await fs.promises.readFile(pathToPackageJSON, 'utf-8');
+    const packageJSON = JSON.parse(packageJSONContent);
     if (!packageJSON) {
       return;
     }
@@ -109,25 +109,24 @@ export class GenerateController implements Controller {
 
     const parameters = generator.parameters || {};
     const required: string[] = [];
-    for (let parameter in parameters) {
+    for (const parameter in parameters) {
       // at the moment all parameters have to be passed to the Generator instance as string
-      parameters[parameter].type = 'string';
-      if (parameters[parameter].required) {
+      parameters[String(parameter)].type = 'string';
+      if (parameters[String(parameter)].required) {
         required.push(parameter);
       }
-      delete parameters[parameter].required;
+      delete parameters[String(parameter)].required;
     }
 
     return {
-      '$schema': 'http://json-schema.org/draft-07/schema#',
+      $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
       properties: parameters,
       required,
       // don't allow non supported properties
       additionalProperties: false,
-    }
+    };
   }
-
 
   public boot(): Router {
     this.ajv = new Ajv({

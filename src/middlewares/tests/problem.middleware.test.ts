@@ -19,7 +19,7 @@ describe('problemMiddleware', () => {
             status: 422,
           });
         },
-      })
+      });
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
@@ -39,7 +39,7 @@ describe('problemMiddleware', () => {
         callback: (_, res) => {
           res.status(200).send({ success: true });
         },
-      })
+      });
       const app = new App([new TestController()]);
 
       return await request(app.getServer())

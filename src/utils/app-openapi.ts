@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 import YAML from 'js-yaml';
 import $RefParser from '@apidevtools/json-schema-ref-parser';
@@ -14,8 +14,8 @@ export async function getAppOpenAPI(): Promise<any> {
     return parsedOpenAPI;
   }
   
-  let openaAPI = fs.readFileSync(path.join(__dirname, '../../openapi.yaml'), 'utf-8');
-  parsedOpenAPI = YAML.load(openaAPI)
+  const openaAPI = fs.readFileSync(path.join(__dirname, '../../openapi.yaml'), 'utf-8');
+  parsedOpenAPI = YAML.load(openaAPI);
   const refParser = new $RefParser;
   await refParser.dereference(parsedOpenAPI);
 

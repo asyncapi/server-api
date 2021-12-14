@@ -1,8 +1,8 @@
 import archiver, { Archiver } from 'archiver';
 import { Response } from 'express';
 
-import { retrieveLangauge } from "../utils/retrieve-language";
-import { createTempDirectory, removeTempDirectory } from "../utils/temp-dir";
+import { retrieveLangauge } from '../utils/retrieve-language';
+import { createTempDirectory, removeTempDirectory } from '../utils/temp-dir';
 
 /**
  * Service wrapping the `archiver` module:
@@ -16,7 +16,7 @@ export class ArchiverService {
     const zip = archiver('zip', { zlib: { level: 9 } });
     if (res) {
       zip.pipe(res);
-      res.attachment("asyncapi.zip");
+      res.attachment('asyncapi.zip');
     }
     return zip;
   }
@@ -25,13 +25,12 @@ export class ArchiverService {
     archive.directory(from, to);
   }
 
-  public appendAsyncAPIDocument(archive: Archiver, asyncapi: string, fileName: string = 'asyncapi') {
+  public appendAsyncAPIDocument(archive: Archiver, asyncapi: string, fileName = 'asyncapi') {
     asyncapi = JSON.stringify(asyncapi);
     const language = retrieveLangauge(asyncapi);
     if (language === 'yaml') {
       archive.append(asyncapi, { name: `${fileName}.yml` });
-    }
-    else {
+    } else {
       archive.append(asyncapi, { name: `${fileName}.json`});
     }
   }

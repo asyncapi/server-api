@@ -4,10 +4,10 @@ import config from 'config';
 import cors from 'cors';
 import express from 'express';
 
-import { Controller } from "./interfaces";
+import { Controller } from './interfaces';
 
 import { requestBodyValidationMiddleware } from './middlewares/request-body-validation.middleware';
-import { problemMiddleware } from './middlewares/problem.middleware'
+import { problemMiddleware } from './middlewares/problem.middleware';
 
 import { logger } from './utils/logger';
 
@@ -33,10 +33,10 @@ export class App {
 
   public listen() {
     this.app.listen(this.port, () => {
-      logger.info(`=================================`);
+      logger.info('=================================');
       logger.info(`= ENV: ${this.env}`);
       logger.info(`= 🚀 AsyncAPI Server API listening on the port ${this.port}`);
-      logger.info(`=================================`);
+      logger.info('=================================');
     });
   }
 
@@ -49,9 +49,9 @@ export class App {
 
     this.app.use(cors({ origin: config.get('cors.origin'), credentials: config.get('cors.credentials') }));
     this.app.use(compression());
-    this.app.use(bodyParser.text({ type: ["text/*"], limit: requestBodyLimit }));
+    this.app.use(bodyParser.text({ type: ['text/*'], limit: requestBodyLimit }));
     this.app.use(bodyParser.urlencoded({ extended: true, limit: requestBodyLimit }));
-    this.app.use(bodyParser.json({ type: ["json", "*/json", "+json"], limit: requestBodyLimit }));
+    this.app.use(bodyParser.json({ type: ['json', '*/json', '+json'], limit: requestBodyLimit }));
   }
 
   private initializeValidation() {

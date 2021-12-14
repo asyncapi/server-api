@@ -1,4 +1,4 @@
-import { getAppOpenAPI } from "../app-openapi";
+import { getAppOpenAPI } from '../app-openapi';
 
 describe('getAppOpenAPI()', () => {
   test('should return OpenAPI document as JSON', async () => {

@@ -17,7 +17,7 @@ describe('documentValidationMiddleware', () => {
           res.status(200).send({ success: true });
         },
         middlewares: [documentValidationMiddleware],
-      })
+      });
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
@@ -36,42 +36,42 @@ describe('documentValidationMiddleware', () => {
           res.status(200).send({ success: true });
         },
         middlewares: [documentValidationMiddleware],
-      })
+      });
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
         .post('/test')
         .send({
           asyncapi: {
-            "asyncapi": "2.2.0",
-            "info": {
-              "title": "Account Service",
-              "version": "1.0.0",
-              "description": "This service is in charge of processing user signups"
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Account Service',
+              version: '1.0.0',
+              description: 'This service is in charge of processing user signups'
             },
-            "channels": {
-              "user/signedup": {
-                "subscribe": {
-                  "message": {
-                    "$ref": "#/components/messages/UserSignedUp"
+            channels: {
+              'user/signedup': {
+                subscribe: {
+                  message: {
+                    $ref: '#/components/messages/UserSignedUp'
                   }
                 }
               }
             },
-            "components": {
-              "messages": {
-                "UserSignedUp": {
-                  "payload": {
-                    "type": "object",
-                    "properties": {
-                      "displayName": {
-                        "type": "string",
-                        "description": "Name of the user"
+            components: {
+              messages: {
+                UserSignedUp: {
+                  payload: {
+                    type: 'object',
+                    properties: {
+                      displayName: {
+                        type: 'string',
+                        description: 'Name of the user'
                       },
-                      "email": {
-                        "type": "string",
-                        "format": "email",
-                        "description": "Email of the user"
+                      email: {
+                        type: 'string',
+                        format: 'email',
+                        description: 'Email of the user'
                       }
                     }
                   }
@@ -93,7 +93,7 @@ describe('documentValidationMiddleware', () => {
           res.status(200).send({ success: true });
         },
         middlewares: [documentValidationMiddleware],
-      })
+      });
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
@@ -101,9 +101,9 @@ describe('documentValidationMiddleware', () => {
         .send({
           // without title, version and channels
           asyncapi: {
-            "asyncapi": "2.2.0",
-            "info": {
-              "description": "This service is in charge of processing user signups"
+            asyncapi: '2.2.0',
+            info: {
+              description: 'This service is in charge of processing user signups'
             }
           }
         })
@@ -113,15 +113,15 @@ describe('documentValidationMiddleware', () => {
           status: 422,
           validationErrors: [
             {
-              title: "/info should have required property 'title'",
+              title: '/info should have required property \'title\'',
               location: { jsonPointer: '/info' }
             },
             {
-              title: "/info should have required property 'version'",
+              title: '/info should have required property \'version\'',
               location: { jsonPointer: '/info' }
             },
             {
-              title: "/ should have required property 'channels'",
+              title: '/ should have required property \'channels\'',
               location: { jsonPointer: '/' }
             }
           ],

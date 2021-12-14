@@ -23,7 +23,7 @@ export function createTestController(paths: Path | Path[]) {
           ...(path.middlewares || []),
           path.callback,
         );
-      })
+      });
   
       return router;
     }

@@ -1,5 +1,5 @@
-import fs from "fs";
-import { createTempDirectory, removeTempDirectory } from "../temp-dir";
+import fs from 'fs';
+import { createTempDirectory, removeTempDirectory } from '../temp-dir';
 
 describe('createTempDirectory() & removeTempDirectory()', () => {
   test('should create and then remove temp folder', () => {

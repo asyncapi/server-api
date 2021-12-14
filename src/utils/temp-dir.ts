@@ -1,6 +1,6 @@
-import os from "os";
-import fs from "fs";
-import path from "path";
+import os from 'os';
+import fs from 'fs';
+import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 import { logger } from './logger';
@@ -12,8 +12,7 @@ export function createTempDirectory() {
 export function removeTempDirectory(tmpDir: string) {
   try {
     tmpDir && fs.existsSync(tmpDir) && fs.rmSync(tmpDir, { recursive: true });
-  }
-  catch (e) {
+  } catch (e) {
     logger.error(`An error has occurred while removing the temp folder at ${tmpDir}. Please remove it manually. Error: ${e}`);
   }
 }

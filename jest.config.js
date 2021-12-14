@@ -23,7 +23,7 @@ module.exports = {
 
   testTimeout: 20000,
   
-  setupFiles: ["./tests/jest.setup.ts"],
+  setupFiles: ['./tests/jest.setup.ts'],
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.json',

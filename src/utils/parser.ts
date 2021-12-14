@@ -15,7 +15,7 @@ function prepareParserConfig(req?: Request) {
       resolve: {
         file: false,
       },
-    }
+    };
   }
 
   return {

@@ -1,4 +1,4 @@
-import { Problem } from "../interfaces";
+import { Problem } from '../interfaces';
 
 const SKIPPED_FIELDS = [
   'name',
@@ -15,24 +15,25 @@ export class ProblemException extends Error implements Problem {
   public status: number;
   public detail?: string;
   public instance?: string;
-  [key: string]: any;
+  [key: string]: any; // eslint-disable-line no-undef
 
   constructor(problem: Problem) {
     super(problem.detail || problem.title);
     this.name = 'ProblemException';
     this.type = problem.type && ProblemException.createType(problem.type);
 
-    for (let field in problem) {
+    for (const field in problem) {
       if (SKIPPED_FIELDS.includes(field)) continue;
-      (this as any)[field] = problem[field];
+      (this as any)[String(field)] = problem[String(field)];
     }
   }
 
-  static toJSON(problem: ProblemException, includeStack: boolean = false): Problem {
-    const { name, message, stack, ...rest } = problem;
+  static toJSON(problem: ProblemException, includeStack = false): Problem {
+    // disable eslint is easier that changing it to more complex logic, we need to "skip" name and message fields
+    const { name, message, stack, ...rest } = problem; // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
     const json = {
       ...rest,
-    }
+    };
     if (includeStack) {
       json.stack = stack;
     }
