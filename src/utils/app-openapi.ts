@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 
 import YAML from 'js-yaml';
@@ -14,7 +14,7 @@ export async function getAppOpenAPI(): Promise<any> {
     return parsedOpenAPI;
   }
   
-  const openaAPI = fs.readFileSync(path.join(__dirname, '../../openapi.yaml'), 'utf-8');
+  const openaAPI = await fs.readFile(path.join(__dirname, '../../openapi.yaml'), 'utf-8');
   parsedOpenAPI = YAML.load(openaAPI);
   const refParser = new $RefParser;
   await refParser.dereference(parsedOpenAPI);

@@ -34,7 +34,7 @@ export class GenerateController implements Controller {
 
     let tmpDir: string;
     try {
-      tmpDir = this.archiverService.createTempDirectory();
+      tmpDir = await this.archiverService.createTempDirectory();
       const { asyncapi, template, parameters } = req.body;
 
       await this.generatorService.generate(

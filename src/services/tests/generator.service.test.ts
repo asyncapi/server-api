@@ -23,7 +23,7 @@ describe('GeneratorService', () => {
         version: '2.1.37',
       };
   
-      const tmpDir = createTempDirectory();
+      const tmpDir = await createTempDirectory();
       try {
         await generatorService.generate(
           JSON.stringify(asyncapi),
@@ -36,7 +36,7 @@ describe('GeneratorService', () => {
         expect(fs.existsSync(path.join(tmpDir, 'template'))).toEqual(true);
         expect(fs.existsSync(path.join(tmpDir, 'template/index.html'))).toEqual(true);
       } catch (e: any) {
-        removeTempDirectory(tmpDir);
+        await removeTempDirectory(tmpDir);
       }
     });
   });
