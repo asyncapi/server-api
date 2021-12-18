@@ -29,7 +29,7 @@ export class GenerateController implements Controller {
     } catch (err) {
       return next(err);
     }
-    
+
     const zip = this.archiverService.createZip(res);
 
     let tmpDir: string;
@@ -136,9 +136,9 @@ export class GenerateController implements Controller {
       logger: false,
     });
     const router = Router();
-    
+
     router.post(
-      `${this.basepath}`, 
+      `${this.basepath}`,
       documentValidationMiddleware,
       this.generate.bind(this)
     );

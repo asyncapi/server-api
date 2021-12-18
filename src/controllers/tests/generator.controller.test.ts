@@ -76,7 +76,7 @@ describe('GeneratorController', () => {
               instancePath: '',
               schemaPath: '#/additionalProperties',
               keyword: 'additionalProperties',
-              params: { 
+              params: {
                 additionalProperty: 'customParameter'
               },
               message: 'must NOT have additional properties'
