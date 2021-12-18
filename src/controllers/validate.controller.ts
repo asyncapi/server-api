@@ -17,7 +17,13 @@ export class ValidateController implements Controller {
 
   private async validate(req: Request, res: Response, next: NextFunction) {
     try {
-      const { asyncapi } = req.body;
+      const contentType = req.headers['content-type'];
+
+      if (!contentType || (contentType.indexOf('application/json') !== 0 && contentType.indexOf('application/x-yaml') !== 0)) {
+        return res.sendStatus(400).end();
+      }
+
+      const asyncapi = contentType.indexOf('application/json') !== 0 ? req.body : req.body.asyncapi;
 
       if (asyncapi === null) {
         return next(new ProblemException({
@@ -25,6 +31,13 @@ export class ValidateController implements Controller {
           title: 'Bad Request',
           status: 400,
           detail: 'The "asyncapi" field in the request payload is required.',
+        }));
+      } else if (typeof asyncapi !== 'string' && typeof asyncapi !== 'object') {
+        return next(new ProblemException({
+          type: 'invalid-request-body',
+          title: 'Bad Request',
+          status: 400,
+          detail: 'The "asyncapi" field must be a string or object.',
         }));
       }
 

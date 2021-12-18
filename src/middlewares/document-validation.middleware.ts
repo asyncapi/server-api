@@ -15,7 +15,7 @@ export async function documentValidationMiddleware(req: Request, _: Response, ne
       return next();
     }
 
-    const parsedDocument = await parserService.parse(JSON.stringify(asyncapi), prepareParserConfig(req));
+    const parsedDocument = await parserService.parse(asyncapi, prepareParserConfig(req));
 
     req.parsedDocument = parsedDocument;
     next();

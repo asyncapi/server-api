@@ -55,6 +55,12 @@ async function getValidator(req: Request) {
  */
 export async function requestBodyValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
+    // Only validate the body payload if it's in JSON
+    const contentType = req.headers['content-type'];
+    if (contentType && contentType.indexOf('application/json') !== 0) {
+      return next();
+    }
+
     const validate = await getValidator(req);
     if (validate === undefined) {
       return next();
