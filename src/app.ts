@@ -49,7 +49,7 @@ export class App {
 
     this.app.use(cors({ origin: config.get('cors.origin'), credentials: config.get('cors.credentials') }));
     this.app.use(compression());
-    this.app.use(bodyParser.text({ type: ['text/*'], limit: requestBodyLimit }));
+    this.app.use(bodyParser.text({ type: ['text/*', 'application/x-yaml'], limit: requestBodyLimit }));
     this.app.use(bodyParser.urlencoded({ extended: true, limit: requestBodyLimit }));
     this.app.use(bodyParser.json({ type: ['json', '*/json', '+json'], limit: requestBodyLimit }));
   }
