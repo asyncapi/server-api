@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ParserService } from '../services/parser.service';
 
-import { prepareParserConfig, handleParserError } from '../utils/parser';
+import { prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
 
 const parserService = new ParserService();
 
@@ -25,7 +25,6 @@ export async function documentValidationMiddleware(req: Request, _: Response, ne
     req.parsedDocument = parsedDocument;
     next();
   } catch (err: any) {
-    const error = handleParserError(err);
-    next(error);
+    next(tryConvertToProblemException(err));
   }
 }

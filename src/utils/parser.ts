@@ -73,7 +73,7 @@ function mergeParserError(error: ProblemException, parserError: any): ProblemExc
   return error;
 }
 
-function handleParserError(err: any) {
+function tryConvertToProblemException(err: any) {
   let error = err;
   if (error instanceof ParserError) {
     const typeName = err.type.replace('https://github.com/asyncapi/parser-js/', '');
@@ -88,4 +88,4 @@ function handleParserError(err: any) {
   return error;
 }
 
-export { prepareParserConfig, parse, mergeParserError, retrieveStatusCode, handleParserError };
+export { prepareParserConfig, parse, mergeParserError, retrieveStatusCode, tryConvertToProblemException };

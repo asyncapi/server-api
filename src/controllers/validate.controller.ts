@@ -5,7 +5,7 @@ import { Controller } from '../interfaces';
 import { ParserService } from '../services/parser.service';
 
 import { ProblemException } from '../exceptions/problem.exception';
-import { prepareParserConfig, handleParserError } from '../utils/parser';
+import { prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
 
 const BAD_REQUEST = 'Bad Request';
 
@@ -52,8 +52,7 @@ export class ValidateController implements Controller {
 
       res.status(200).end();
     } catch (err: unknown) {
-      const error = handleParserError(err);
-      return next(error);
+      return next(tryConvertToProblemException(err));
     }
   }
 
