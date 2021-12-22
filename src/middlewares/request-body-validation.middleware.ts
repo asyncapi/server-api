@@ -38,7 +38,10 @@ async function getValidator(req: Request) {
   if (!requestBody) {
     return undefined;
   }
-  const schema = requestBody.content['application/json'].schema;
+
+  const contentType = req.headers['content-type'];
+  // eslint-disable-next-line security/detect-object-injection
+  const schema = requestBody.content[contentType].schema;
 
   // asyncapi is validated in another middleware so make so annotate it as `any` type
   if (schema.properties && schema.properties.asyncapi) {
@@ -55,9 +58,8 @@ async function getValidator(req: Request) {
  */
 export async function requestBodyValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
-    // Only validate the body payload if it's in JSON
-    const contentType = req.headers['content-type'];
-    if (contentType && contentType.indexOf('application/json') !== 0) {
+    // Don't validate the body payload if it's the /validate path, because it'll be validated in the controller
+    if (req.path === '/validate') {
       return next();
     }
 

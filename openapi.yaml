@@ -66,14 +66,16 @@ paths:
       operationId: validate
       tags:
         - validate
-        - template
       requestBody:
         description: Validate the given AsyncAPI document with the AsyncAPI parser.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Template'
+              $ref: '#/components/schemas/AsyncAPIDocument'
+          application/x-yaml:
+            schema:
+              $ref: '#/components/schemas/AsyncAPIDocument'
       responses:
         '200':
           description: The given template is valid.

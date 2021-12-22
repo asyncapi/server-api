@@ -19,19 +19,8 @@ export class ValidateController implements Controller {
 
   private async validate(req: Request, res: Response, next: NextFunction) {
     try {
-      const contentType = req.headers['content-type'];
-
-      if (!contentType || (contentType.indexOf('application/json') !== 0 && contentType.indexOf('application/x-yaml') !== 0)) {
-        return next(new ProblemException({
-          type: 'invalid-document-type',
-          title: BAD_REQUEST,
-          status: 400,
-          detail: 'The supported content types are: application/json, application/x-yaml',
-        }));
-      }
-
-      const asyncapi = contentType.indexOf('application/json') >= 0 ? req.body.asyncapi : req.body;
-      if (asyncapi === null) {
+      const asyncapi = req.body;
+      if (!asyncapi) {
         return next(new ProblemException({
           type: 'null-or-falsey-document',
           title: BAD_REQUEST,

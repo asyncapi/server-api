@@ -16,7 +16,7 @@ export async function documentValidationMiddleware(req: Request, _: Response, ne
     }
 
     const asyncapi = contentType.indexOf('application/json') >= 0 ? req.body.asyncapi : req.body;
-    if (asyncapi === undefined) {
+    if (!asyncapi) {
       return next();
     }
 
