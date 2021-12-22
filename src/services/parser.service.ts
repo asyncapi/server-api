@@ -9,6 +9,6 @@ export class ParserService {
       return null;
     }
 
-    return await parse(asyncapi, options);
+    return parse(asyncapi, options);
   }
 }

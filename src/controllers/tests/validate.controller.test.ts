@@ -81,7 +81,7 @@ describe('ValidateController', () => {
     it('should validate AsyncAPI document in JSON', async () => {
       const app = new App([new ValidateController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/validate')
         .send(validJSONAsyncAPI)
         .expect(200);
@@ -90,7 +90,7 @@ describe('ValidateController', () => {
     it('should validate AsyncAPI document in YAML', async () => {
       const app = new App([new ValidateController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/validate')
         .set('Content-Type', 'application/x-yaml')
         .send(validYAMLAsyncAPI)
@@ -100,7 +100,7 @@ describe('ValidateController', () => {
     it('should throw error when sent an empty document', async () => {
       const app = new App([new ValidateController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/validate')
         .send({})
         .expect(422, {
@@ -114,7 +114,7 @@ describe('ValidateController', () => {
     it('should throw error when sent an invalid AsyncAPI document', async () => {
       const app = new App([new ValidateController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/validate')
         .send(invalidJSONAsyncAPI)
         .expect(422, {
