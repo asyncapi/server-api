@@ -30,6 +30,7 @@
     "dev": "cross-env NODE_ENV=development nodemon",
     "build:dev": "tsc",
     "build:prod": "tsc",
+    "docker:build": "docker build -t asyncapi/server-api:latest .",
     "test": "cross-env NODE_ENV=test jest",
     "lint": "eslint --max-warnings 0 --config .eslintrc .",
     "lint:fix": "eslint --max-warnings 0 --config .eslintrc . --fix",
