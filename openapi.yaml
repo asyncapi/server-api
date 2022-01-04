@@ -74,7 +74,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ValidateDocument'
       responses:
-        '200':
+        '204':
           description: The given template is valid.
         '400':
           description: The given template is not valid due to invalid AsyncAPI document.
