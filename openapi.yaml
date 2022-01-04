@@ -36,7 +36,7 @@ paths:
               $ref: '#/components/schemas/Template'
       responses:
         '200':
-          description: Template succesfully generated.
+          description: Template successfully generated.
           content:
             application/json:
               schema:
@@ -72,17 +72,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AsyncAPIDocument'
-          application/x-yaml:
-            schema:
-              $ref: '#/components/schemas/AsyncAPIDocument'
+              $ref: '#/components/schemas/ValidateDocument'
       responses:
         '200':
           description: The given template is valid.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Template'
         '400':
           description: The given template is not valid due to invalid AsyncAPI document.
           content:
@@ -131,6 +124,13 @@ components:
             which is usually located in the template's repository.
             This field is optional but may be required for some templates.
           additionalProperties: true
+    ValidateDocument:
+      type: object
+      required:
+        - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
     Problem:
       type: object
       properties:

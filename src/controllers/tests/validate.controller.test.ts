@@ -83,8 +83,10 @@ describe('ValidateController', () => {
 
       return request(app.getServer())
         .post('/validate')
-        .send(validJSONAsyncAPI)
-        .expect(200);
+        .send({
+          asyncapi: validJSONAsyncAPI
+        })
+        .expect(204);
     });
 
     it('should validate AsyncAPI document in YAML', async () => {
@@ -92,9 +94,10 @@ describe('ValidateController', () => {
 
       return request(app.getServer())
         .post('/validate')
-        .set('Content-Type', 'application/x-yaml')
-        .send(validYAMLAsyncAPI)
-        .expect(200);
+        .send({
+          asyncapi: validYAMLAsyncAPI
+        })
+        .expect(204);
     });
 
     it('should throw error when sent an empty document', async () => {
@@ -104,10 +107,20 @@ describe('ValidateController', () => {
         .post('/validate')
         .send({})
         .expect(422, {
-          type: ProblemException.createType('missing-asyncapi-field'),
-          title: 'The `asyncapi` field is missing.',
+          type: ProblemException.createType('invalid-request-body'),
+          title: 'Invalid Request Body',
           status: 422,
-          parsedJSON: {}
+          validationErrors: [
+            {
+              instancePath: '',
+              schemaPath: '#/required',
+              keyword: 'required',
+              params: {
+                missingProperty: 'asyncapi'
+              },
+              message: 'must have required property \'asyncapi\''
+            }
+          ]
         });
     });
 
@@ -116,7 +129,9 @@ describe('ValidateController', () => {
 
       return request(app.getServer())
         .post('/validate')
-        .send(invalidJSONAsyncAPI)
+        .send({
+          asyncapi: invalidJSONAsyncAPI
+        })
         .expect(422, {
           type: ProblemException.createType('validation-errors'),
           title: 'There were errors validating the AsyncAPI document.',

@@ -19,7 +19,7 @@ export class ValidateController implements Controller {
 
   private async validate(req: Request, res: Response, next: NextFunction) {
     try {
-      const asyncapi = req.body;
+      const asyncapi = req.body?.asyncapi;
       if (!asyncapi) {
         return next(new ProblemException({
           type: 'null-or-falsey-document',
@@ -39,7 +39,7 @@ export class ValidateController implements Controller {
       const options = prepareParserConfig(req);
       await this.parserService.parse(asyncapi, options);
 
-      res.status(200).end();
+      res.status(204).end();
     } catch (err: unknown) {
       return next(tryConvertToProblemException(err));
     }
