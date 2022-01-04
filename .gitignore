@@ -2,6 +2,8 @@ node_modules
 .vscode
 coverage
 lib
+dist
 examples
 logs
+server-production.js
 *.DS_Store
