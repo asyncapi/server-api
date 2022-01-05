@@ -15,7 +15,7 @@ Helm chart that installs the AsyncAPI Server API - https://github.com/asyncapi/s
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `asyncapi/server-api"` |  |
+| image.repository | string | `"asyncapi/server-api"` |  |
 | image.tag | string | `"latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | nameOverride | string | `""` |  |
