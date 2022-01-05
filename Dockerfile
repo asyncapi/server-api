@@ -23,10 +23,10 @@ COPY --from=build /app/dist ./dist
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package* ./
+# install only production dependencies (defined in "dependencies")
+RUN npm ci --only=production 
 # copy OpenaAPI document
 COPY openapi.yaml ./
-# install only production dependencies (defined in "dependencies")
-RUN npm ci --only=production
 
-EXPOSE 5000
+EXPOSE 80
 CMD ["npm", "run", "start:prod"]

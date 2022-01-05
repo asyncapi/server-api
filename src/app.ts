@@ -18,7 +18,7 @@ export class App {
 
   constructor(controller: Controller[]) {
     this.app = express();
-    this.port = process.env.PORT || 5000;
+    this.port = process.env.PORT || 80;
     this.env = process.env.NODE_ENV || 'development';
 
     // initialize core middlewares
