@@ -5,5 +5,4 @@ lib
 dist
 examples
 logs
-server-production.js
 *.DS_Store

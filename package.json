@@ -25,7 +25,7 @@
     "name": "The AsyncAPI maintainers"
   },
   "scripts": {
-    "start:dev": "npm run build:dev && cross-env NODE_ENV=production node dist/server.js",
+    "start:dev": "npm run build:dev && cross-env NODE_ENV=development node dist/server.js",
     "start:prod": "NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build:dev": "tsc",
