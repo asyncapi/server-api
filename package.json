@@ -36,7 +36,7 @@
     "generate:assets": "npm run generate:readme:toc",
     "generate:readme:toc": "markdown-toc -i README.md",
     "generate:docker": "docker build --tag asyncapi/server-api .",
-    "release": "semantic-release"
+    "release": "npm run generate:docker && semantic-release"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
