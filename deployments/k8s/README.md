@@ -22,8 +22,8 @@ Helm chart that installs the AsyncAPI Server API - https://github.com/asyncapi/s
 | nodeSelector | object | `{}` |  |
 | podAnnotations | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
-| ports | object | `{"http":5000}` | Server API opened ports. |
-| ports.http | int | `5000` | Port where the Server API will be available. |
+| ports | object | `{"http":80}` | Server API opened ports. |
+| ports.http | int | `80` | Port where the Server API will be available. |
 | replicaCount | int | `2` |  |
 | resources | object | `{}` |  |
 | securityContext | object | `{}` |  |

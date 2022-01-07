@@ -14,7 +14,7 @@ replicaCount: 2
 # Server API opened ports.
 ports:
   # Port where the Server API will be available.
-  http: 5000
+  http: 80
 
 # Env vars. Needed for configuring the app.
 env: {}
