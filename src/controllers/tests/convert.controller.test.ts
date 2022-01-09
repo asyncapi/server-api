@@ -46,10 +46,10 @@ channels:
 
 describe('ConvertController', () => {
   describe('[POST] /convert', () => {
-    it('should throw error with invalid version', async () => {
+    it('should throw error with invalid version', () => {
       const app = new App([new ConvertController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/convert')
         .send({
           asyncapi: {
@@ -70,10 +70,10 @@ describe('ConvertController', () => {
         });
     });
 
-    it('should pass when converting to latest version', async () => {
+    it('should pass when converting to latest version', () => {
       const app = new App([new ConvertController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/convert')
         .send({
           asyncapi: validAsyncAPI2_0_0,
