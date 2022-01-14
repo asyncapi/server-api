@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "asyncapi-server-api.fullname" . }}
+  namespace: {{ .Release.Namespace }}  
   labels:
     {{- include "asyncapi-server-api.labels" . | nindent 4 }}
 spec:

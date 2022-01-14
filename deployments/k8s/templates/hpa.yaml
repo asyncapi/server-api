@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "asyncapi-server-api.fullname" . }}
+  namespace: {{ .Release.Namespace }}  
   labels:
     {{- include "asyncapi-server-api.labels" . | nindent 4 }}
 spec:
