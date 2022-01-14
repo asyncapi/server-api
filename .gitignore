@@ -2,6 +2,7 @@ node_modules
 .vscode
 coverage
 lib
+dist
 examples
 logs
 *.DS_Store
