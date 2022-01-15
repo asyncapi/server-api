@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { ParserService } from '../services/parser.service';
 
-import { prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
-
-const parserService = new ParserService();
+import { parse, prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
 
 /**
  * Validate sent AsyncAPI document.
@@ -15,7 +12,7 @@ export async function documentValidationMiddleware(req: Request, _: Response, ne
       return next();
     }
 
-    const parsedDocument = await parserService.parse(asyncapi, prepareParserConfig(req));
+    const parsedDocument = await parse(asyncapi, prepareParserConfig(req));
 
     req.parsedDocument = parsedDocument;
     next();
