@@ -10,7 +10,7 @@ describe('GeneratorController', () => {
     it('should generate template ', async () => {
       const app = new App([new GenerateController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/generate')
         .send({
           asyncapi: {
@@ -32,7 +32,7 @@ describe('GeneratorController', () => {
     it('should pass when sent template parameters are empty', async () => {
       const app = new App([new GenerateController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/generate')
         .send({
           asyncapi: {
@@ -51,7 +51,7 @@ describe('GeneratorController', () => {
     it('should throw error when sent template parameters are invalid', async () => {
       const app = new App([new GenerateController()]);
 
-      return await request(app.getServer())
+      return request(app.getServer())
         .post('/generate')
         .send({
           asyncapi: {
