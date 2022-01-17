@@ -13,10 +13,8 @@ FROM base AS build
 WORKDIR /app
 COPY . .
 
-# delete package-lock.json - more info https://github.com/asyncapi/.github/issues/123
-# delete that line and install by `npm ci` when mentioned issue will be resolved
-RUN rm -rf package-lock.json
 # install dependencies
+# switch to the `npm ci` when https://github.com/asyncapi/.github/issues/123 issue will be resolved
 RUN npm install
 
 # build to a production Javascript
