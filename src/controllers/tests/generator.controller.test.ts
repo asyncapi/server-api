@@ -11,7 +11,7 @@ describe('GeneratorController', () => {
       const app = new App([new GenerateController()]);
 
       return await request(app.getServer())
-        .post('/generate')
+        .post('/v1/generate')
         .send({
           asyncapi: {
             asyncapi: '2.2.0',
@@ -33,7 +33,7 @@ describe('GeneratorController', () => {
       const app = new App([new GenerateController()]);
 
       return await request(app.getServer())
-        .post('/generate')
+        .post('/v1/generate')
         .send({
           asyncapi: {
             asyncapi: '2.2.0',
@@ -52,7 +52,7 @@ describe('GeneratorController', () => {
       const app = new App([new GenerateController()]);
 
       return await request(app.getServer())
-        .post('/generate')
+        .post('/v1/generate')
         .send({
           asyncapi: {
             asyncapi: '2.2.0',
