@@ -29,7 +29,6 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY --from=build /app/package* ./
-# COPY package* ./
 # install only production dependencies (defined in "dependencies")
 RUN npm ci --only=production 
 # copy OpenaAPI document
