@@ -12,8 +12,11 @@ FROM base AS build
 
 WORKDIR /app
 COPY . .
+
 # install dependencies
-RUN npm ci
+# remove package-lock.json with lockVersion: 1 due to problem described in the https://github.com/asyncapi/.github/issues/123
+# remove first run and switch to the `npm ci` when mentioned issue will be resolved
+RUN rm package-lock.json; npm install
 
 # build to a production Javascript
 RUN npm run build:prod
@@ -24,8 +27,7 @@ FROM base AS release
 WORKDIR /app
 COPY --from=build /app/dist ./dist
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package* ./
+COPY --from=build /app/package* ./
 # install only production dependencies (defined in "dependencies")
 RUN npm ci --only=production 
 # copy OpenaAPI document
