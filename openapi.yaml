@@ -38,7 +38,7 @@ paths:
         '200':
           description: Template successfully generated.
           content:
-            application/octet-stream:
+            application/zip:
               schema:
                 type: string
                 format: binary
