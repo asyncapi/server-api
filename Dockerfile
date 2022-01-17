@@ -14,8 +14,9 @@ WORKDIR /app
 COPY . .
 
 # install dependencies
-# switch to the `npm ci` when https://github.com/asyncapi/.github/issues/123 issue will be resolved
-RUN npm install
+# remove package-lock.json with lockVersion: 1 due to problem described in the https://github.com/asyncapi/.github/issues/123
+# remove first run and switch to the `npm ci` when mentioned issue will be resolved
+RUN rm package-lock.json; npm install
 
 # build to a production Javascript
 RUN npm run build:prod
