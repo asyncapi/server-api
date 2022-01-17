@@ -21,7 +21,7 @@ describe('documentValidationMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/test')
+        .post('/v1/test')
         .send({})
         .expect(200, {
           success: true,
@@ -40,7 +40,7 @@ describe('documentValidationMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/test')
+        .post('/v1/test')
         .send({
           asyncapi: {
             asyncapi: '2.2.0',
@@ -97,7 +97,7 @@ describe('documentValidationMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/test')
+        .post('/v1/test')
         .send({
           // without title, version and channels
           asyncapi: {
