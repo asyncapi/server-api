@@ -82,7 +82,7 @@ describe('ValidateController', () => {
       const app = new App([new ValidateController()]);
 
       return request(app.getServer())
-        .post('/validate')
+        .post('/v1/validate')
         .send({
           asyncapi: validJSONAsyncAPI
         })
@@ -93,7 +93,7 @@ describe('ValidateController', () => {
       const app = new App([new ValidateController()]);
 
       return request(app.getServer())
-        .post('/validate')
+        .post('/v1/validate')
         .send({
           asyncapi: validYAMLAsyncAPI
         })
@@ -128,7 +128,7 @@ describe('ValidateController', () => {
       const app = new App([new ValidateController()]);
 
       return request(app.getServer())
-        .post('/validate')
+        .post('/v1/validate')
         .send({
           asyncapi: invalidJSONAsyncAPI
         })
