@@ -36,7 +36,7 @@ paths:
               $ref: '#/components/schemas/Template'
       responses:
         '200':
-          description: Template succesfully generated.
+          description: Template successfully generated.
           content:
             application/json:
               schema:
@@ -60,6 +60,40 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+  /validate:
+    post:
+      summary: Validate the given AsyncAPI document.
+      operationId: validate
+      tags:
+        - validate
+      requestBody:
+        description: Validate the given AsyncAPI document with the AsyncAPI parser.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateDocument'
+      responses:
+        '204':
+          description: The given AsyncAPI document is valid.
+        '400':
+          description: The given AsyncAPI document is not valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: The given AsyncAPI document is not valid due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
 components:
   schemas:
     AsyncAPIDocument:
@@ -90,6 +124,13 @@ components:
             which is usually located in the template's repository.
             This field is optional but may be required for some templates.
           additionalProperties: true
+    ValidateDocument:
+      type: object
+      required:
+        - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
     Problem:
       type: object
       properties:

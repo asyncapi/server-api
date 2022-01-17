@@ -38,6 +38,7 @@ async function getValidator(req: Request) {
   if (!requestBody) {
     return undefined;
   }
+
   const schema = requestBody.content['application/json'].schema;
 
   // asyncapi is validated in another middleware so make so annotate it as `any` type

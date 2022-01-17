@@ -19,12 +19,12 @@ export function createTestController(paths: Path | Path[]) {
       const p = Array.isArray(paths) ? paths : [paths];
       p.forEach(path => {
         router[path.method](
-          path.path, 
+          path.path,
           ...(path.middlewares || []),
           path.callback,
         );
       });
-  
+
       return router;
     }
   };

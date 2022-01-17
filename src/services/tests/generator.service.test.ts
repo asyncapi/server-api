@@ -22,7 +22,7 @@ describe('GeneratorService', () => {
       const parameters = {
         version: '2.1.37',
       };
-  
+
       const tmpDir = await createTempDirectory();
       try {
         await generatorService.generate(
@@ -32,7 +32,7 @@ describe('GeneratorService', () => {
           tmpDir,
           prepareParserConfig(),
         );
-    
+
         expect(fs.existsSync(path.join(tmpDir, 'template'))).toEqual(true);
         expect(fs.existsSync(path.join(tmpDir, 'template/index.html'))).toEqual(true);
       } catch (e: any) {
