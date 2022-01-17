@@ -60,7 +60,8 @@ export class App {
 
   private initializeControllers(controller: Controller[]) {
     controller.forEach(controller => {
-      this.app.use('/', controller.boot());
+      // in the `openapi.yaml` we have prefix `v1` for all paths
+      this.app.use('/v1/', controller.boot());
     });
   }
 
