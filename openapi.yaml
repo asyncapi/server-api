@@ -116,8 +116,17 @@ components:
           type: string
           description: Template name to be generated.
           enum:
+            - '@asyncapi/dotnet-nats-template'
+            - '@asyncapi/go-watermill-template'
             - '@asyncapi/html-template'
+            - '@asyncapi/java-spring-cloud-stream-template'
+            - '@asyncapi/java-spring-template'
+            - '@asyncapi/java-template'
             - '@asyncapi/markdown-template'
+            - '@asyncapi/nodejs-template'
+            - '@asyncapi/nodejs-ws-template'
+            - '@asyncapi/python-paho-template'
+            - '@asyncapi/ts-nats-template'
         parameters:
           type: object
           description: |

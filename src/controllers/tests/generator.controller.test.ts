@@ -84,5 +84,47 @@ describe('GeneratorController', () => {
           ]
         });
     });
+
+    it('should throw error when required parameter is not sent', async () => {
+      const app = new App([new GenerateController()]);
+
+      return request(app.getServer())
+        .post('/v1/generate')
+        .send({
+          asyncapi: {
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
+            },
+            channels: {},
+          },
+          template: '@asyncapi/nodejs-template',
+          parameters: {
+            invalidServer: 'invalidServer',
+          }
+        })
+        .expect(422, {
+          type: ProblemException.createType('invalid-template-parameters'),
+          title: 'Invalid Generator Template parameters',
+          status: 422,
+          validationErrors: [
+            {
+              instancePath: '',
+              schemaPath: '#/required',
+              keyword: 'required',
+              params: { missingProperty: 'server' },
+              message: "must have required property 'server'"
+            },
+            {
+              instancePath: '',
+              schemaPath: '#/additionalProperties',
+              keyword: 'additionalProperties',
+              params: { additionalProperty: 'invalidServer' },
+              message: 'must NOT have additional properties'
+            }
+          ]
+        });
+    });
   });
 });
