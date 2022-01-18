@@ -38,9 +38,10 @@ paths:
         '200':
           description: Template successfully generated.
           content:
-            application/json:
+            application/zip:
               schema:
-                $ref: '#/components/schemas/Template'
+                type: string
+                format: binary
         '400':
           description: Failed to generate the given template due to invalid AsyncAPI document.
           content:

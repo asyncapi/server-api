@@ -15,7 +15,9 @@ const ajv = new Ajv({
  * Retrieve proper AJV's validator function, create or reuse it.
  */
 async function getValidator(req: Request) {
-  const { path: reqPath, method } = req;
+  const method = req.method;
+  let reqPath = req.path;
+  reqPath = reqPath.startsWith('/v1') ? reqPath.replace('/v1', '') : reqPath;
   const schemaName = `${reqPath}->${method}`;
 
   const validate = ajv.getSchema(schemaName);

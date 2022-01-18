@@ -20,7 +20,7 @@ describe('requestBodyValidationMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/generate')
+        .post('/v1/generate')
         .send({
           asyncapi: {
             asyncapi: '2.2.0',
@@ -39,7 +39,7 @@ describe('requestBodyValidationMiddleware', () => {
 
     it('should throw error when request body is invalid', async () => {
       const TestController = createTestController({
-        path: '/test',
+        path: '/generate',
         method: 'post',
         callback: (_, res) => {
           res.status(200).send({ success: true });
@@ -48,7 +48,7 @@ describe('requestBodyValidationMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/generate')
+        .post('/v1/generate')
         .send({
           asyncapi: {
             asyncapi: '2.2.0',

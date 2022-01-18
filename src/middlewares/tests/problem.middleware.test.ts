@@ -23,7 +23,7 @@ describe('problemMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/test')
+        .post('/v1/test')
         .send({})
         .expect(422, {
           type: ProblemException.createType('custom-problem'),
@@ -43,7 +43,7 @@ describe('problemMiddleware', () => {
       const app = new App([new TestController()]);
 
       return await request(app.getServer())
-        .post('/test')
+        .post('/v1/test')
         .send({})
         .expect(200, {
           success: true,
