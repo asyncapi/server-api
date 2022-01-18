@@ -114,7 +114,7 @@ describe('GeneratorController', () => {
               schemaPath: '#/required',
               keyword: 'required',
               params: { missingProperty: 'server' },
-              message: "must have required property 'server'"
+              message: 'must have required property \'server\''
             },
             {
               instancePath: '',

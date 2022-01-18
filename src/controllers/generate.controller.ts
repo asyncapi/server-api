@@ -45,7 +45,7 @@ export class GenerateController implements Controller {
           tmpDir,
           prepareParserConfig(req),
         );
-      } catch(genErr: unknown) {
+      } catch (genErr: unknown) {
         return next(new ProblemException({
           type: 'internal-generator-error',
           title: 'Internal Generator error',
