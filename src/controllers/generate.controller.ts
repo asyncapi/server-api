@@ -39,7 +39,7 @@ export class GenerateController implements Controller {
 
       try {
         await this.generatorService.generate(
-          req.parsedDocument,
+          asyncapi,
           template,
           parameters,
           tmpDir,
