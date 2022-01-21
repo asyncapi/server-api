@@ -5,12 +5,13 @@
 image:
   repository: asyncapi/server-api
   pullPolicy: Always
-  tag: "latest"
+  tag: latest
 
 imagePullSecrets: []
 
 replicaCount: 2
 
+host: api.asyncapi.com
 # Server API opened ports.
 ports:
   # Port where the Server API will be available.
@@ -63,3 +64,8 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+ingress:
+  enabled: false
+  issuerName: ""
+  secretName: ""
