@@ -95,6 +95,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+
+  /convert:
+    post:
+      summary: Convert the given AsyncAPI document to the specified version.
+      operationId: convert
+      tags:
+        - convert
+      requestBody:
+        description: Parameters to convert the spec.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertRequest'
+      responses:
+        '200':
+          description: AsyncAPI document successfully converted.
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/ConvertResponse'
+        '400':
+          description: Failed to convert due to invalid AsyncAPI document.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Failed to convert the given document due to invalid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
 components:
   schemas:
     AsyncAPIDocument:
@@ -138,6 +178,39 @@ components:
       type: object
       required:
         - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
+    ConvertRequest:
+      type: object
+      required:
+        - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
+        version:
+          $ref: '#/components/schemas/SpecVersions'
+        language:
+          type: string
+          description: Language to be converted to.
+          enum:
+            - 'yaml'
+            - 'json'
+    SpecVersions:
+      type: string
+      description: Valid spec versions for the AsyncAPI document.
+      enum:
+        - '1.0.0'
+        - '1.1.0'
+        - '1.2.0'
+        - '2.0.0-rc1'
+        - '2.0.0-rc2'
+        - '2.0.0'
+        - '2.1.0'
+        - '2.2.0'
+        - 'latest'
+    ConvertResponse:
+      type: object
       properties:
         asyncapi:
           $ref: '#/components/schemas/AsyncAPIDocument'
