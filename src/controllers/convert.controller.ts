@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import YAML from 'js-yaml';
 
-import { ALL_SPECS, Controller, ConvertRequestDto } from '../interfaces';
+import { Controller, ConvertRequestDto } from '../interfaces';
 
 import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
 
