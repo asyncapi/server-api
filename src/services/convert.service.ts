@@ -2,8 +2,7 @@ import { convert } from '@asyncapi/converter';
 import { AsyncAPIDocument } from '@asyncapi/parser';
 import specs from '@asyncapi/specs';
 
-import * as JSYAML from 'js-yaml';
-import YAML from 'yaml';
+import YAML from 'js-yaml';
 
 import { logger } from '../utils/logger';
 
@@ -24,16 +23,7 @@ export class ConvertService {
     version: string = this.getLastVersion(),
   ): Promise<string> {
     try {
-      let asyncapiSpec: string;
-      if (typeof spec === 'object') { // TODO: can we check if it's an instance of AsyncAPIDocument?
-        // Convert JSON object to YAML
-        const doc = new YAML.Document();
-        doc.contents = spec;
-        asyncapiSpec = doc.toString();
-      } else {
-        asyncapiSpec = spec;
-      }
-
+      const asyncapiSpec = typeof spec === 'object' ? JSON.stringify(spec) : spec;
       const convertedSpec = convert(asyncapiSpec, version);
 
       return language === 'json'
@@ -50,7 +40,7 @@ export class ConvertService {
   private convertToJSON(spec: string) {
     try {
       // JSON or YAML String -> JS object
-      const jsonContent = JSYAML.load(spec);
+      const jsonContent = YAML.load(spec);
       // JS Object -> pretty JSON string
       return JSON.stringify(jsonContent, null, 2);
     } catch (err) {
