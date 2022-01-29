@@ -2,6 +2,7 @@ import request from 'supertest';
 
 import { App } from '../../app';
 import { ProblemException } from '../../exceptions/problem.exception';
+import { ALL_SPECS } from '../../interfaces';
 
 import { ConvertController } from '../convert.controller';
 
@@ -50,7 +51,7 @@ describe('ConvertController', () => {
       const app = new App([new ConvertController()]);
 
       return request(app.getServer())
-        .post('/convert')
+        .post('/v1/convert')
         .send({
           asyncapi: {
             asyncapi: '2.2.0',
@@ -62,11 +63,21 @@ describe('ConvertController', () => {
           },
           version: '1'
         })
-        .expect(400, {
-          type: ProblemException.createType('invalid-json'),
-          title: 'Bad Request',
-          status: 400,
-          detail: 'Invalid version parameter'
+        .expect(422, {
+          type: ProblemException.createType('invalid-request-body'),
+          title: 'Invalid Request Body',
+          status: 422,
+          validationErrors: [
+            {
+              instancePath: '/version',
+              schemaPath: '#/properties/version/enum',
+              keyword: 'enum',
+              params: {
+                allowedValues: ALL_SPECS
+              },
+              message: 'must be equal to one of the allowed values'
+            }
+          ]
         });
     });
 
@@ -74,7 +85,7 @@ describe('ConvertController', () => {
       const app = new App([new ConvertController()]);
 
       return request(app.getServer())
-        .post('/convert')
+        .post('/v1/convert')
         .send({
           asyncapi: validAsyncAPI2_0_0,
           version: '2.2.0'

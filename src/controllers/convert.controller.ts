@@ -21,15 +21,6 @@ export class ConvertController implements Controller {
   private async convert(req: Request, res: Response, next: NextFunction) {
     try {
       const { version, language, asyncapi } = req.body as ConvertRequestDto;
-      // Validate input
-      if (!ALL_SPECS.includes(version)) {
-        return next(new ProblemException({
-          type: 'invalid-json',
-          title: 'Bad Request',
-          status: 400,
-          detail: 'Invalid version parameter'
-        }));
-      }
 
       await parse(asyncapi, prepareParserConfig(req));
       const convertedSpec = await this.convertService.convertSpec(
