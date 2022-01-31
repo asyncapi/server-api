@@ -1,8 +1,8 @@
 import { convert } from '@asyncapi/converter';
 import { AsyncAPIDocument } from '@asyncapi/parser';
-import specs from '@asyncapi/specs';
 
 import YAML from 'js-yaml';
+import { LAST_SPEC_VERSION } from '../interfaces';
 
 import { logger } from '../utils/logger';
 
@@ -20,7 +20,7 @@ export class ConvertService {
   public async convertSpec(
     spec: AsyncAPIDocument | string,
     language = '',
-    version: string = this.getLastVersion(),
+    version: string = LAST_SPEC_VERSION,
   ): Promise<string> {
     try {
       const asyncapiSpec = typeof spec === 'object' ? JSON.stringify(spec) : spec;
@@ -34,8 +34,6 @@ export class ConvertService {
       throw err;
     }
   }
-
-  private getLastVersion = () => Object.keys(specs).pop();
 
   private convertToJSON(spec: string) {
     try {
