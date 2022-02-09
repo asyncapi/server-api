@@ -49,7 +49,7 @@ export class GenerateController implements Controller {
         return next(new ProblemException({
           type: 'internal-generator-error',
           title: 'Internal Generator error',
-          status: 422,
+          status: 500,
           detail: (genErr as Error).message,
         }));
       }
