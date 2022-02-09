@@ -37,13 +37,22 @@ export class GenerateController implements Controller {
       tmpDir = await this.archiverService.createTempDirectory();
       const { asyncapi, template, parameters } = req.body;
 
-      await this.generatorService.generate(
-        req.parsedDocument,
-        template,
-        parameters,
-        tmpDir,
-        prepareParserConfig(req),
-      );
+      try {
+        await this.generatorService.generate(
+          asyncapi,
+          template,
+          parameters,
+          tmpDir,
+          prepareParserConfig(req),
+        );
+      } catch (genErr: unknown) {
+        return next(new ProblemException({
+          type: 'internal-generator-error',
+          title: 'Internal Generator error',
+          status: 500,
+          detail: (genErr as Error).message,
+        }));
+      }
 
       this.archiverService.appendDirectory(zip, tmpDir, 'template');
       this.archiverService.appendAsyncAPIDocument(zip, asyncapi);

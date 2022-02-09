@@ -4,6 +4,7 @@ import { App } from '../../app';
 import { ProblemException } from '../../exceptions/problem.exception';
 
 import { createTestController } from '../../../tests/test.controller';
+import { getAppOpenAPI } from '../../utils/app-openapi';
 
 // requestBodyValidationMiddleware is added to every route
 // test /generate route to check validation of custom requestBody
@@ -46,6 +47,9 @@ describe('requestBodyValidationMiddleware', () => {
         },
       });
       const app = new App([new TestController()]);
+      
+      const openApi = await getAppOpenAPI();
+      const availableTemplates = openApi.components.schemas.Template.properties.template.enum;
 
       return await request(app.getServer())
         .post('/v1/generate')
@@ -70,7 +74,7 @@ describe('requestBodyValidationMiddleware', () => {
               schemaPath: '#/properties/template/enum',
               keyword: 'enum',
               params: {
-                allowedValues: ['@asyncapi/html-template', '@asyncapi/markdown-template']
+                allowedValues: availableTemplates,
               },
               message: 'must be equal to one of the allowed values'
             }

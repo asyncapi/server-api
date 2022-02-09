@@ -22,8 +22,10 @@ export class GeneratorService {
 
     if (typeof asyncapi === 'string') {
       await generator.generateFromString(asyncapi, parserOptions);
-    } else {
-      await generator.generate(asyncapi, parserOptions);
+    } else if (asyncapi instanceof AsyncAPIDocument) {
+      await generator.generate(asyncapi);
+    } else { // object case
+      await generator.generateFromString(JSON.stringify(asyncapi), parserOptions);
     }
   }
 }
