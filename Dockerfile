@@ -1,10 +1,8 @@
 # ---- Base Alpine with installed Node ----
-FROM alpine:3.14.3 AS base
+FROM node:14-alpine3.14 AS base
 
 # install node
 RUN apk add --update \
-  nodejs=14.18.1-r0 \
-  npm=7.17.0-r0 \
   nghttp2
 
 # ---- Install dependencies ----
