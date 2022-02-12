@@ -57,6 +57,10 @@ export class ConvertController implements Controller {
         asyncapi: convertedSpecObject
       });
     } catch (err: unknown) {
+      if (err instanceof ProblemException) {
+        return next(err);
+      }
+
       return next(new ProblemException({
         type: 'internal-server-error',
         title: 'Internal server error',

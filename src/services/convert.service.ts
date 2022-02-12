@@ -2,9 +2,8 @@ import { convert } from '@asyncapi/converter';
 import { AsyncAPIDocument } from '@asyncapi/parser';
 
 import YAML from 'js-yaml';
+import { ProblemException } from '../exceptions/problem.exception';
 import { LAST_SPEC_VERSION } from '../interfaces';
-
-import { logger } from '../utils/logger';
 
 /**
  * Service providing `@asyncapi/converter` functionality.
@@ -30,8 +29,16 @@ export class ConvertService {
         ? this.convertToJSON(convertedSpec)
         : convertedSpec;
     } catch (err) {
-      logger.error('[ConvertService] An error has occurred while converting spec to version: {0}. Error: {1}', version, err);
-      throw err;
+      if (err instanceof ProblemException) {
+        throw err;
+      }
+
+      throw new ProblemException({
+        type: '/problems/converter',
+        title: 'Could not convert document',
+        status: 422,
+        detail: (err as Error).message
+      });
     }
   }
 
@@ -42,8 +49,12 @@ export class ConvertService {
       // JS Object -> pretty JSON string
       return JSON.stringify(jsonContent, null, 2);
     } catch (err) {
-      logger.error('[ConvertService.convertToJSON] Error: {0}', err);
-      throw err;
+      throw new ProblemException({
+        type: '/problems/converter-json',
+        title: 'Could not convert document',
+        status: 422,
+        detail: (err as Error).message
+      });
     }
   }
 }
