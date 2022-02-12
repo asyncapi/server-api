@@ -15,10 +15,10 @@ export interface Problem {
   [key: string]: any;
 }
 
-export const ALL_SPECS = Object.keys(specs);
+export const ALL_SPECS = [...Object.keys(specs), 'latest'];
 export const LAST_SPEC_VERSION = ALL_SPECS[ALL_SPECS.length - 1];
 
-export type SpecsEnum = keyof typeof specs | 'latest';
+export type SpecsEnum = keyof typeof specs;
 
 export type ConvertRequestDto = {
   /**
