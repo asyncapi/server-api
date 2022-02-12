@@ -1,4 +1,3 @@
-import { AsyncAPIDocument } from '@asyncapi/parser';
 import specs from '@asyncapi/specs';
 import { Router } from 'express';
 export interface Controller {
@@ -19,16 +18,3 @@ export const ALL_SPECS = [...Object.keys(specs), 'latest'];
 export const LAST_SPEC_VERSION = ALL_SPECS[ALL_SPECS.length - 1];
 
 export type SpecsEnum = keyof typeof specs;
-
-export type ConvertRequestDto = {
-  /**
-   * Spec version to upgrade to.
-   * Default is 'latest'.
-   */
-  version?: SpecsEnum;
-  /**
-   * Language to convert the file to.
-   */
-  language?: string,
-  asyncapi: AsyncAPIDocument
-}

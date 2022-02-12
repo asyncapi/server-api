@@ -195,6 +195,7 @@ components:
           description: Language to be converted to.
           enum:
             - 'yaml'
+            - 'yml'
             - 'json'
     SpecVersions:
       type: string

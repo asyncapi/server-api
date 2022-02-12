@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import YAML from 'js-yaml';
 
-import { Controller, ConvertRequestDto } from '../interfaces';
+import { AsyncAPIDocument } from '@asyncapi/parser';
+
+import { Controller, SpecsEnum } from '../interfaces';
 
 import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
 
@@ -9,6 +11,19 @@ import { ConvertService } from '../services/convert.service';
 
 import { ProblemException } from '../exceptions/problem.exception';
 import { parse, prepareParserConfig } from '../utils/parser';
+
+type ConvertRequestDto = {
+  /**
+   * Spec version to upgrade to.
+   * Default is 'latest'.
+   */
+  version?: SpecsEnum;
+  /**
+   * Language to convert the file to.
+   */
+  language?: string,
+  asyncapi: AsyncAPIDocument
+}
 
 /**
  * Controller which exposes the Convert functionality
