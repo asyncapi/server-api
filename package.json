@@ -41,7 +41,7 @@
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@asyncapi/avro-schema-parser": "^1.0.1",
-    "@asyncapi/dotnet-nats-template": "^0.4.3",
+    "@asyncapi/dotnet-nats-template": "^0.4.4",
     "@asyncapi/generator": "^1.9.0",
     "@asyncapi/go-watermill-template": "^0.1.37",
     "@asyncapi/html-template": "^0.24.8",
