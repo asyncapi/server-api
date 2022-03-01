@@ -3,6 +3,7 @@ import compression from 'compression';
 import config from 'config';
 import cors from 'cors';
 import express from 'express';
+import helmet from 'helmet';
 
 import { Controller } from './interfaces';
 
@@ -52,6 +53,7 @@ export class App {
     this.app.use(bodyParser.text({ type: ['text/*'], limit: requestBodyLimit }));
     this.app.use(bodyParser.urlencoded({ extended: true, limit: requestBodyLimit }));
     this.app.use(bodyParser.json({ type: ['json', '*/json', '+json'], limit: requestBodyLimit }));
+    this.app.use(helmet());
   }
 
   private initializeValidation() {
