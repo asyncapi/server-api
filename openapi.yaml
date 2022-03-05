@@ -182,7 +182,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
-
+  /diff:
+    post:
+      summary: Compare the given AsyncAPI documents.
+      operationId: diff
+      tags:
+        - diff
+      requestBody:
+        description: Compare the given AsyncAPI documents.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiffDocument'
+      responses:
+        '200':
+          description: The given AsyncAPI documents are equal.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiffResult'
+        '400':
+          description: The given AsyncAPI documents are not equal.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: The given AsyncAPI documents are not equal due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
 components:
   schemas:
     AsyncAPIDocument:
