@@ -117,8 +117,7 @@ paths:
           content:
             application/zip:
               schema:
-                type: string
-                format: binary
+                $ref: "#/components/schemas/Bundle"
         "400":
           description: The given AsyncAPI document is not valid.
           content:
@@ -126,7 +125,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "422":
-          description: The given AsyncAPI document is not valid due to invalid parameters in the request.
+          description: The given AsyncAPI document is not valid due to invalid file path.
           content:
             application/json:
               schema:
@@ -275,6 +274,28 @@ components:
       properties:
         converted:
           $ref: '#/components/schemas/AsyncAPIDocument'
+
+    BundleDocument:
+      type: object
+      required:
+        - asyncapis 
+      properties:
+        asyncapis:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AsyncAPIDocument"
+        base:
+          $ref: "#/components/schemas/AsyncAPIDocument"
+      x-server-api:
+        skipFieldsInValidation: [asyncapis, base]
+    Bundle:
+      type: object
+      required:
+        - bundled 
+      properties:
+        bundled:
+          $ref: "#/components/schemas/AsyncAPIDocument"
 
     Problem:
       type: object

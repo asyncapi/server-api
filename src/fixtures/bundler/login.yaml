@@ -1,0 +1,17 @@
+# @format
+
+asyncapi: "2.2.0"
+info:
+  title: Account Service
+  version: 1.0.0
+  description: This service is in charge of processing user signup
+
+channels:
+  user/loggenin:
+    subscribe:
+      message:
+        payload:
+          type: object
+          properties:
+            displayName:
+              type: string
