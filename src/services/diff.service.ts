@@ -1,6 +1,10 @@
-// @ts-ignore
-import AsyncAPIGenerator from '@asyncapi/generator';
-import { AsyncAPIDocument } from '@asyncapi/parser';
+import { diff } from '@asyncapi/diff';
 
-import { prepareParserConfig } from '../utils/parser';
+export class DiffService{
+    public async diff(asyncapi: any, other: any){
+        const output = await diff(asyncapi, other);
+        return output;
+    }
+}
+
 
