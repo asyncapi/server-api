@@ -2,12 +2,13 @@ import Ajv from 'ajv';
 import { NextFunction, Request, Response, Router } from 'express';
 import { ProblemException } from '../exceptions/problem.exception';
 import { Controller } from '../interfaces';
+import { BundlerService } from '../services/bundler.service';
 import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
 
 export class BundlerController implements Controller {
   public basepath = '/bundle';
   private ajv:Ajv;
-  bundlerService: any;
+  bundlerService: BundlerService;
   private async bundle(req:Request, res:Response, next:NextFunction) {
     try {
       await this.validateFilesParameter(req.body.files);
