@@ -197,19 +197,19 @@ paths:
               $ref: '#/components/schemas/DiffDocument'
       responses:
         '200':
-          description: The given AsyncAPI documents are equal.
+          description: The given AsyncAPI document is valid.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/DiffResult'
         '400':
-          description: The given AsyncAPI documents are not equal.
+          description: The given AsyncAPI document is not valid.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '422':
-          description: The given AsyncAPI documents are not equal due to invalid parameters in the request.
+          description: The given AsyncAPI document is not valid due to invalid parameters in the request.
           content:
             application/json:
               schema:
