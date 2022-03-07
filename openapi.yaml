@@ -1,5 +1,4 @@
 openapi: 3.1.0
-
 info:
   version: 0.1.0
   title: AsyncAPI Server API
@@ -100,12 +99,12 @@ paths:
 
   /bundle:
     post:
-      summary: Bundle the given AsyncAPI document.
+      summary: Bundle the given AsyncAPI document(s).
       operationId: bundle
       tags:
         - bundle
       requestBody:
-        description: Bundle the given AsyncAPI document with the AsyncAPI parser.
+        description: Bundle the given AsyncAPI document(s) with the `@asyncapi/bundler` library.
         required: true
         content:
           application/json:
@@ -119,13 +118,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Bundle"
         "400":
-          description: The given AsyncAPI document is not valid.
+          description: The given AsyncAPI(s) document is/are not valid.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
         "422":
-          description: The given AsyncAPI document is not valid due to invalid file path.
+          description: The given AsyncAPI document(s) is/are not valid due to invalid parameters in the request.
           content:
             application/json:
               schema:
@@ -296,7 +295,6 @@ components:
       properties:
         bundled:
           $ref: "#/components/schemas/AsyncAPIDocument"
-
     Problem:
       type: object
       properties:

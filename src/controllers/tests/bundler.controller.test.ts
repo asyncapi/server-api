@@ -11,12 +11,12 @@ describe('BundlerController', () => {
       return request(app.getServer())
         .post('/v1/bundle')
         .send({
-          files: ['../../fixtures/bundler/signup.yaml','../../fixtures/bundler/login.yaml'],
+          asyncapi: ['../../fixtures/bundler/signup.yaml', '../../fixtures/bundler/login.yaml'],
           options: {
             base: '../../fixtures/bundler/output.yaml',
           }
         })
         .expect(200);
     });
-  });    
+  });
 });
