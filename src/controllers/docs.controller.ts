@@ -4,9 +4,6 @@ import redoc from 'redoc-express';
 
 import { Controller } from '../interfaces';
 
-/**
- * Controller which exposes the Parser functionality, to validate the AsyncAPI document.
- */
 export class DocsController implements Controller {
   public basepath = '/docs';
 
