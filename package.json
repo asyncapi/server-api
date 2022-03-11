@@ -64,6 +64,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "js-yaml": "^4.1.0",
+    "redoc-express": "^1.0.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
