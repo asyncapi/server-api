@@ -1,8 +1,8 @@
 <h5 align="center">
   <br>
-  <a href="https://www.asyncapi.org"><img src="https://github.com/asyncapi/parser-nodejs/raw/master/assets/logo.png" alt="AsyncAPI logo" width="200"></a>
+  <a href="https://www.asyncapi.org"><img src="https://user-images.githubusercontent.com/60163079/157887904-c6328b3b-1423-4fd1-85ff-8d2bafe408d8.png" alt="AsyncAPI logo"></a>
   <br>
-  <em><b>Server API</b></em>
+  <!-- <em><b>Server API</b></em> -->
 </h5>
 <p align="center">
   <em>Server API providing official AsyncAPI tools</em>
