@@ -1,5 +1,3 @@
-# @format
-
 asyncapi: "2.2.0"
 info:
   title: Account Service

@@ -1,8 +1,8 @@
-import fs from 'fs';
 import { NextFunction, Request, Response, Router } from 'express';
 import { ProblemException } from '../exceptions/problem.exception';
 import { Controller } from '../interfaces';
 import bundler from '@asyncapi/bundler';
+import Document from '@asyncapi/bundler/lib/document.js';
 import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
 import path from 'path';
 
@@ -18,11 +18,10 @@ export class BundlerController implements Controller {
         status: 400,
       });
     }
-    // const bundle = await bundler(asyncapis);
-    // res.send(bundle);
     try {
-      const document = await bundler.bundle(asyncapis.map(asyncapi => fs.readFileSync(asyncapi)), { base: path.dirname(asyncapis[0]) });
-      res.status(200).json(document);
+      const document = await bundler.bundle(asyncapis, { base: path.dirname(asyncapis[0]) });
+      const doc = new Document(document).json();
+      res.status(200).json(doc);
     } catch (err) {
       return next(new ProblemException({
         type: 'internal-bundler-error',

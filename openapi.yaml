@@ -255,9 +255,11 @@ components:
     ConvertRequest:
       type: object
       required:
-        - asyncapi
         - asyncapis
+      optional:
+        - base  
       properties:
+<<<<<<< master
         asyncapi:
           $ref: '#/components/schemas/AsyncAPIDocument'
         version:
@@ -280,12 +282,15 @@ components:
       required:
         - asyncapis 
       properties:
+=======
+>>>>>>> removed parser and validate, added optional field in openapi.yaml
         asyncapis:
           type: array
           minItems: 1
           items:
             $ref: "#/components/schemas/AsyncAPIDocument"
         base:
+<<<<<<< master
           $ref: "#/components/schemas/AsyncAPIDocument"
       x-server-api:
         skipFieldsInValidation: [asyncapis, base]
@@ -296,6 +301,26 @@ components:
       properties:
         bundled:
           $ref: "#/components/schemas/AsyncAPIDocument"
+=======
+          type: string
+          description: Base directory to be used for bundling.
+          default: "."    
+    Bundle:
+      type: object
+      required:
+        - asyncapis
+      optional:
+        - base  
+      properties:
+        asyncapis:
+          type: array
+          items:
+            $ref: "#/components/schemas/AsyncAPIDocument"
+        base:
+          type: string
+          description: Base directory to be used for bundling.
+          default: "."    
+>>>>>>> removed parser and validate, added optional field in openapi.yaml
     Problem:
       type: object
       properties:
