@@ -10,9 +10,7 @@ describe('DiffController', () => {
       return request(app.getServer())
         .post('/v1/diff')
         .send({
-          asyncapi: './diff/asyncapi-diff-test-1.yaml',
-          other: './diff/asyncapi-diff-test-2.yaml',
-
+          asyncapis: ['./diff/asyncapi-diff-test-1.yaml','./diff/asyncapi-diff-test-2.yaml']
         })
         .expect(200);
     });
