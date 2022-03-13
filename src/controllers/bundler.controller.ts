@@ -1,29 +1,27 @@
 import fs from 'fs';
-import path from 'path';
 import { NextFunction, Request, Response, Router } from 'express';
 import { ProblemException } from '../exceptions/problem.exception';
 import { Controller } from '../interfaces';
 import bundler from '@asyncapi/bundler';
 import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
+import path from 'path';
 
 export class BundlerController implements Controller {
   public basepath = '/bundle';
   private async bundle(req: Request, res: Response, next: NextFunction) {
     const asyncapis: Array<string> = req.body.asyncapis || [req.body.asyncapi];
-    const options: any = {};
-    if (req.body.options) {
-      if (typeof req.body.options.base === 'string') {
-        options.base = req.body.options.base;
-      }
-      if (typeof req.body.options.parse === 'object') {
-        options.parse = req.body.options.parse;
-      }
-      if (typeof req.body.options.validate === 'boolean') {
-        options.validate = req.body.options.validate;
-      }
+    if (!asyncapis || !asyncapis.length) {
+      throw new ProblemException({
+        type: 'https://api.asyncapi.com/problem/asyncapi-missing',
+        title: 'Asyncapi missing',
+        detail: 'No Asyncapi provided',
+        status: 400,
+      });
     }
+    // const bundle = await bundler(asyncapis);
+    // res.send(bundle);
     try {
-      const document = await bundler.bundle(asyncapis.map(asyncapi => fs.readFileSync(path.resolve(asyncapi))), { base: options.base });
+      const document = await bundler.bundle(asyncapis.map(asyncapi => fs.readFileSync(asyncapi)), { base: path.dirname(asyncapis[0]) });
       res.status(200).json(document);
     } catch (err) {
       return next(new ProblemException({

@@ -118,7 +118,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Bundle"
         "400":
-          description: The given AsyncAPI(s) document is/are not valid.
+          description: The given AsyncAPI document(s) is/are not valid.
           content:
             application/json:
               schema:
@@ -256,6 +256,7 @@ components:
       type: object
       required:
         - asyncapi
+        - asyncapis
       properties:
         asyncapi:
           $ref: '#/components/schemas/AsyncAPIDocument'

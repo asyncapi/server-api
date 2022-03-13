@@ -11,10 +11,7 @@ describe('BundlerController', () => {
       return request(app.getServer())
         .post('/v1/bundle')
         .send({
-          asyncapi: ['../../fixtures/bundler/signup.yaml', '../../fixtures/bundler/login.yaml'],
-          options: {
-            base: '../../fixtures/bundler/output.yaml',
-          }
+          asyncapis: ['../../fixtures/bundler/signup.yaml', '../../fixtures/bundler/login.yaml'],
         })
         .expect(200);
     });
