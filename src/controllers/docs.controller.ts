@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Router } from 'express';
 
 import redoc from 'redoc-express';
 
@@ -11,8 +11,8 @@ export class DocsController implements Controller {
   public boot(): Router {
     const router = Router();
     
-    router.get('/docs/openapi.yaml', (req, res) => {
-      res.sendFile('.../openapi.yaml');
+    router.get(`${this.basepath}/openapi.yaml`, (_, res) => {
+      res.sendFile('openapi.yaml', { root: '.' });
     });
 
     router.post(
