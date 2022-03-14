@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import YAML from 'js-yaml';
 
 import { AsyncAPIDocument } from '@asyncapi/parser';
 
@@ -21,7 +20,7 @@ type ConvertRequestDto = {
   /**
    * Language to convert the file to.
    */
-  language?: string,
+  language?: 'json' | 'yaml' | 'yml',
   asyncapi: AsyncAPIDocument
 }
 
@@ -44,17 +43,8 @@ export class ConvertController implements Controller {
         version.toString(),
       );
 
-      if (!convertedSpec) {
-        return next(new ProblemException({
-          type: 'invalid-json',
-          title: 'Bad Request',
-          status: 400,
-          detail: 'Couldn\'t convert the spec to the requested version.'
-        }));
-      }
-      const convertedSpecObject = YAML.load(convertedSpec);
       res.json({
-        asyncapi: convertedSpecObject
+        asyncapi: convertedSpec
       });
     } catch (err: unknown) {
       if (err instanceof ProblemException) {

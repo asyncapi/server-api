@@ -6,43 +6,22 @@ import { ALL_SPECS } from '../../interfaces';
 
 import { ConvertController } from '../convert.controller';
 
-const validAsyncAPI2_0_0 = `
-asyncapi: 2.0.0
+const validJsonAsyncAPI2_0_0 = {
+  asyncapi: '2.0.0',
+  info: {
+    title: 'Super test',
+    version: '1.0.0'
+  },
+  channels: {}
+};
+
+const validYamlAsyncAPI2_3_0 = `
+asyncapi: 2.3.0
 info:
   title: Super test
   version: 1.0.0
-
-servers:
-  default:
-    url: 'test:{port}'
-    description: Test broker
-    variables:
-      port:
-        description: test
-    protocol: mqtt
-
-components:
-  messages:
-    lightMeasured:
-      summary: >-
-        Inform about environmental lighting conditions for a particular
-        streetlight.
-      payload:
-
-  schemas:
-    lightMeasuredPayload:
-      type: object
-      properties:
-        lumens:
-          type: integer
-          minimum: 0
-          description: Light intensity measured in lumens.
-
-channels:
-  'test':
-    publish:
-      message:
-        $ref: '#/components/messages/lightMeasured'
+channels: {}
+x-parser-spec-parsed: true
 `;
 
 describe('ConvertController', () => {
@@ -81,64 +60,57 @@ describe('ConvertController', () => {
         });
     });
 
-    it('should pass when converting to latest version', () => {
+    it('should throw error that the converter cannot convert to a lower version', () => {
       const app = new App([new ConvertController()]);
 
       return request(app.getServer())
         .post('/v1/convert')
         .send({
-          asyncapi: validAsyncAPI2_0_0,
-          version: '2.2.0'
+          asyncapi: validJsonAsyncAPI2_0_0,
+          version: '1.2.0'
+        })
+        .expect(422, {
+          type: 'https://api.asyncapi.com/problem/internal-converter-error',
+          title: 'Could not convert document',
+          status: 422,
+          detail: 'Cannot downgrade from 2.0.0 to 1.2.0.',
+        });
+    });
+
+    it('should pass when converting to 2.3.0 version', () => {
+      const app = new App([new ConvertController()]);
+
+      return request(app.getServer())
+        .post('/v1/convert')
+        .send({
+          asyncapi: validJsonAsyncAPI2_0_0,
+          version: '2.3.0'
         })
         .expect(200, {
           asyncapi: {
-            asyncapi: '2.2.0',
+            asyncapi: '2.3.0',
             info: {
               title: 'Super test',
               version: '1.0.0'
             },
-            servers: {
-              default: {
-                url: 'test:{port}',
-                description: 'Test broker',
-                variables: {
-                  port: {
-                    description: 'test'
-                  }
-                },
-                protocol: 'mqtt'
-              }
-            },
-            components: {
-              messages: {
-                lightMeasured: {
-                  summary: 'Inform about environmental lighting conditions for a particular streetlight.',
-                  payload: null
-                }
-              },
-              schemas: {
-                lightMeasuredPayload: {
-                  type: 'object',
-                  properties: {
-                    lumens: {
-                      type: 'integer',
-                      minimum: 0,
-                      description: 'Light intensity measured in lumens.'
-                    }
-                  }
-                }
-              }
-            },
-            channels: {
-              test: {
-                publish: {
-                  message: {
-                    $ref: '#/components/messages/lightMeasured'
-                  }
-                }
-              }
-            }
-          }
+            channels: {},
+            'x-parser-spec-parsed': true,
+          },
+        });
+    });
+
+    it('should correctly convert JSON to YAML', () => {
+      const app = new App([new ConvertController()]);
+
+      return request(app.getServer())
+        .post('/v1/convert')
+        .send({
+          asyncapi: validJsonAsyncAPI2_0_0,
+          version: '2.3.0',
+          language: 'yaml'
+        })
+        .expect(200, {
+          asyncapi: validYamlAsyncAPI2_3_0.trimStart(),
         });
     });
   });

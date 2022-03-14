@@ -144,6 +144,7 @@ components:
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.0.0.json
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.1.0.json
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.2.0.json
+        - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.3.0.json
     Template:
       type: object
       required:
