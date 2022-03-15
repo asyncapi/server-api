@@ -11,12 +11,12 @@ import { requestBodyValidationMiddleware } from './middlewares/request-body-vali
 import { problemMiddleware } from './middlewares/problem.middleware';
 
 import { logger } from './utils/logger';
+import { API_VERSION } from './constants';
 
 export class App {
   private app: express.Application;
   private port: string | number;
   private env: string;
-  private v1: string = 'v1';
 
   constructor(controller: Controller[]) {
     this.app = express();
@@ -54,7 +54,15 @@ export class App {
     this.app.use(bodyParser.text({ type: ['text/*'], limit: requestBodyLimit }));
     this.app.use(bodyParser.urlencoded({ extended: true, limit: requestBodyLimit }));
     this.app.use(bodyParser.json({ type: ['json', '*/json', '+json'], limit: requestBodyLimit }));
-    this.app.use(helmet());
+    this.app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          "script-src": ["'self'", "unpkg.com"],
+          "worker-src": ["'self' blob:"]
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    }));
   }
 
   private initializeValidation() {
@@ -64,7 +72,7 @@ export class App {
   private initializeControllers(controller: Controller[]) {
     controller.forEach(controller => {
       // in the `openapi.yaml` we have prefix `v1` for all paths
-      this.app.use('/v1/', controller.boot());
+      this.app.use(`/${API_VERSION}/`, controller.boot());
     });
   }
 

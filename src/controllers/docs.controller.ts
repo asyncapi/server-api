@@ -1,11 +1,11 @@
 import { Router } from 'express';
-
 import redoc from 'redoc-express';
 
 import { Controller } from '../interfaces';
 
-export class DocsController implements Controller {
+import { API_VERSION } from '../constants';
 
+export class DocsController implements Controller {
   public basepath = '/docs';
 
   public boot(): Router {
@@ -18,11 +18,10 @@ export class DocsController implements Controller {
     router.get(
       this.basepath,
       redoc({
-        title: 'API Docs',
-        specUrl: `/v1${this.basepath}/openapi.yaml`
-      })
+        title: 'OpenAPI Documentation',
+        specUrl: `/${API_VERSION}${this.basepath}/openapi.yaml`
+      }),
     );
-
     
     return router;
   }
