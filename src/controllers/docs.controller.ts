@@ -15,11 +15,11 @@ export class DocsController implements Controller {
       res.sendFile('openapi.yaml', { root: '.' });
     });
 
-    router.post(
-      `${this.basepath}`,
+    router.get(
+      this.basepath,
       redoc({
         title: 'API Docs',
-        specUrl: 'docs/openapi.yaml'
+        specUrl: `/v1${this.basepath}/openapi.yaml`
       })
     );
 
