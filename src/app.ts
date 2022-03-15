@@ -57,8 +57,8 @@ export class App {
     this.app.use(helmet({
       contentSecurityPolicy: {
         directives: {
-          "script-src": ["'self'", "unpkg.com"],
-          "worker-src": ["'self' blob:"]
+          'script-src': ['\'self\'', 'unpkg.com'],
+          'worker-src': ['\'self\' blob:']
         },
       },
       crossOriginEmbedderPolicy: false,
