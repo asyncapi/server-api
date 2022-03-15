@@ -57,10 +57,12 @@ export class App {
     this.app.use(helmet({
       contentSecurityPolicy: {
         directives: {
+          // for `/docs` path - we need to fetch redoc component from unpkg.com domain
           'script-src': ['\'self\'', 'unpkg.com'],
           'worker-src': ['\'self\' blob:']
         },
       },
+      // for `/docs` path
       crossOriginEmbedderPolicy: false,
     }));
   }
