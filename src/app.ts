@@ -16,6 +16,7 @@ export class App {
   private app: express.Application;
   private port: string | number;
   private env: string;
+  private v1: string = 'v1';
 
   constructor(controller: Controller[]) {
     this.app = express();
