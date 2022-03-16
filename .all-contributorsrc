@@ -1,0 +1,86 @@
+{
+  "projectName": "server-api",
+  "projectOwner": "asyncapi",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "magicmatatjahu",
+      "name": "Maciej Urbańczyk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20404945?v=4",
+      "profile": "https://github.com/magicmatatjahu",
+      "contributions": [
+        "maintenance",
+        "code",
+        "doc",
+        "bug",
+        "ideas",
+        "review",
+        "test",
+        "infra",
+        "mentoring"
+      ]
+    },
+    {
+      "login": "BOLT04",
+      "name": "David Pereira",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18630253?v=4",
+      "profile": "https://bolt04.github.io/react-ultimate-resume/",
+      "contributions": [
+        "maintenance",
+        "code",
+        "doc",
+        "bug",
+        "ideas",
+        "review",
+        "test",
+        "infra",
+        "mentoring"
+      ]
+    },
+    {
+      "login": "smoya",
+      "name": "Sergio Moya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1083296?v=4",
+      "profile": "https://github.com/smoya",
+      "contributions": [
+        "maintenance",
+        "code",
+        "doc",
+        "bug",
+        "ideas",
+        "review",
+        "test",
+        "infra",
+        "mentoring"
+      ]
+    },
+    {
+      "login": "ritik307",
+      "name": "Ritik Rawal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22374829?v=4",
+      "profile": "https://ritik307.github.io/portfolio/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "everly-gif",
+      "name": "Everly Precia Suresh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/77877486?v=4",
+      "profile": "https://everly-precia.netlify.app/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
