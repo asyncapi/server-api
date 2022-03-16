@@ -1,9 +1,12 @@
 [![AsyncAPI Server API](./.github/assets/banner.png)](https://www.asyncapi.com)
+
+Server API providing official AsyncAPI tools.
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Server API providing official AsyncAPI tools.
+---
 
 ## :loudspeaker: ATTENTION:
 
