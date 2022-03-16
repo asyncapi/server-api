@@ -32,4 +32,4 @@ RUN npm ci --only=production
 COPY openapi.yaml ./
 
 EXPOSE 80
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:docker"]

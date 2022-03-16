@@ -26,7 +26,8 @@
   },
   "scripts": {
     "start:dev": "npm run build:dev && cross-env NODE_ENV=development node dist/server.js",
-    "start:prod": "NODE_ENV=production node dist/server.js",
+    "start:prod": "npm run build:prod && cross-env NODE_ENV=production node dist/server.js",
+    "start:docker": "NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build:dev": "tsc",
     "build:prod": "tsc",

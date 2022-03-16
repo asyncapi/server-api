@@ -25,13 +25,34 @@ This package is still under development and has not published and reached versio
 
 - [NodeJS](https://nodejs.org/en/) >= 14
 
+## Using it locally
+
+Run:
+
+```bash
+npm install
+npm start:prod
+```
+
+server is ready to use under [http://localhost:80](http://localhost:80).
+
+## Using it via Docker
+
+Run:
+
+```bash
+docker run -it -p 80:80 asyncapi/server-api
+```
+
+server is ready to use under [http://localhost:80](http://localhost:80).
+
 ## Development
 
 1. Setup project by installing dependencies `npm install`
 2. Write code and tests.
 3. Make sure all tests pass `npm test`
 
-## Contributing
+## Contribution
 
 Read [CONTRIBUTING](https://github.com/asyncapi/.github/blob/master/CONTRIBUTING.md) guide.
 
