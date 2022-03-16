@@ -1,13 +1,6 @@
-<h5 align="center">
-  <br>
-  <a href="https://www.asyncapi.org"><img src="./.github/assets/banner.png" alt="AsyncAPI logo"></a>
-  <br>
-</h5>
-<p align="center">
-  <em>Server API providing official AsyncAPI tools</em>
-</p>
+![AsyncApi banner](./.github/assets/banner.png)
 
----
+Server API providing official AsyncAPI tools
 
 ## :loudspeaker: ATTENTION:
 
