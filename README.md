@@ -1,4 +1,4 @@
-![AsyncApi banner](./.github/assets/banner.png)
+[![AsyncAPI Server API](./.github/assets/banner.png)](https://www.asyncapi.com)
 
 Server API providing official AsyncAPI tools
 
