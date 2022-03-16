@@ -1,9 +1,12 @@
 [![AsyncAPI Server API](./.github/assets/banner.png)](https://www.asyncapi.com)
+
+Server API providing official AsyncAPI tools.
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Server API providing official AsyncAPI tools.
+---
 
 ## :loudspeaker: ATTENTION:
 
@@ -25,13 +28,34 @@ This package is still under development and has not published and reached versio
 
 - [NodeJS](https://nodejs.org/en/) >= 14
 
+## Using it locally
+
+Run:
+
+```bash
+npm install
+npm start:prod
+```
+
+server is ready to use on [http://localhost:80](http://localhost:80).
+
+## Using it via Docker
+
+Run:
+
+```bash
+docker run -it -p 80:80 asyncapi/server-api
+```
+
+server is ready to use on [http://localhost:80](http://localhost:80).
+
 ## Development
 
 1. Setup project by installing dependencies `npm install`
 2. Write code and tests.
 3. Make sure all tests pass `npm test`
 
-## Contributing
+## Contribution
 
 Read [CONTRIBUTING](https://github.com/asyncapi/.github/blob/master/CONTRIBUTING.md) guide.
 
