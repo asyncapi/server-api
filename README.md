@@ -34,7 +34,7 @@ npm install
 npm start:prod
 ```
 
-server is ready to use under [http://localhost:80](http://localhost:80).
+server is ready to use on [http://localhost:80](http://localhost:80).
 
 ## Using it via Docker
 
@@ -44,7 +44,7 @@ Run:
 docker run -it -p 80:80 asyncapi/server-api
 ```
 
-server is ready to use under [http://localhost:80](http://localhost:80).
+server is ready to use on [http://localhost:80](http://localhost:80).
 
 ## Development
 
