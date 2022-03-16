@@ -1,6 +1,6 @@
 [![AsyncAPI Server API](./.github/assets/banner.png)](https://www.asyncapi.com)
 
-Server API providing official AsyncAPI tools
+Server API providing official AsyncAPI tools.
 
 ## :loudspeaker: ATTENTION:
 
