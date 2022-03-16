@@ -1,14 +1,6 @@
-<h5 align="center">
-  <br>
-  <a href="https://www.asyncapi.org"><img src="https://github.com/asyncapi/parser-nodejs/raw/master/assets/logo.png" alt="AsyncAPI logo" width="200"></a>
-  <br>
-  <em><b>Server API</b></em>
-</h5>
-<p align="center">
-  <em>Server API providing official AsyncAPI tools</em>
-</p>
+[![AsyncAPI Server API](./.github/assets/banner.png)](https://www.asyncapi.com)
 
----
+Server API providing official AsyncAPI tools.
 
 ## :loudspeaker: ATTENTION:
 
