@@ -43,15 +43,15 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 80
-            initialDelaySeconds: 30
-            periodSeconds: 60
+              port: {{ .Values.ports.http }}
+            initialDelaySeconds: {{ .Values.initialDelaySeconds.liveness }}
+            periodSeconds: {{ .Values.periodSeconds.liveness }}
           readinessProbe:
             httpGet:
               path: /
-              port: 80
-            initialDelaySeconds: 30
-            periodSeconds: 30
+              port: {{ .Values.ports.http }}
+            initialDelaySeconds: {{ .Values.initialDelaySeconds.readiness }}
+            periodSeconds: {{ .Values.periodSeconds.readiness }}
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
