@@ -17,6 +17,14 @@ ports:
   # Port where the Server API will be available.
   http: 80
 
+#periodSeconds for livenees and Readiness Ports
+periodSeconds:
+  liveness: 10
+  readiness: 6
+#initialDelaySeconds for liveness and Readiness Ports
+initialDelaySeconds:
+  liveness: 30
+  readiness: 30
 # Env vars. Needed for configuring the app.
 env: {}
 
