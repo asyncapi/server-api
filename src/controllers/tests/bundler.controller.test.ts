@@ -11,8 +11,32 @@ describe('BundlerController', () => {
       return request(app.getServer())
         .post('/v1/bundle')
         .send({
-          asyncapis: ['../../fixtures/bundler/signup.yaml', '../../fixtures/bundler/login.yaml'],
-          base: '../../fixtures/bundler/output.yaml',
+          asyncapis: [{
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
+            },
+            channels: {
+              'test-channel': {
+                messages: {
+                  'test-message': {
+                    payload: {
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          }],
+          base: {
+            asyncapi: '2.2.0',
+            info: {
+              title: 'Test Service',
+              version: '1.0.0',
+            },
+            channels: {},
+          }
         })
         .expect(200);
     });

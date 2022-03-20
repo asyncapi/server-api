@@ -10,14 +10,6 @@ export class BundlerController implements Controller {
   public basepath = '/bundle';
   private async bundle(req: Request, res: Response, next: NextFunction) {
     const asyncapis: Array<string> = req.body.asyncapis || [req.body.asyncapi];
-    if (!asyncapis || !asyncapis.length) {
-      throw new ProblemException({
-        type: 'https://api.asyncapi.com/problem/asyncapi-missing',
-        title: 'Asyncapi missing',
-        detail: 'No Asyncapi provided',
-        status: 400,
-      });
-    }
     try {
       const document = await bundler.bundle(asyncapis, { base: path.dirname(asyncapis[0]) });
       const doc = new Document(document).json();
