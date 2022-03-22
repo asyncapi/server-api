@@ -38,6 +38,12 @@ describe('BundlerController', () => {
             channels: {},
           }
         })
+        .expect('Content-Type', /json/)
+        .expect((res) => {
+          console.log(res.body);
+          expect(res.body).toHaveProperty('asyncapi');
+          expect(res.body).toHaveProperty('info');
+        })
         .expect(200);
     });
   });
