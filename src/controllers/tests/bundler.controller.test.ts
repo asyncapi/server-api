@@ -8,7 +8,7 @@ describe('BundlerController', () => {
   describe('[POST] /bundle', () => {
     it('should bundle files', async () => {
       const app = new App([new BundlerController()]);
-      return request(app.getServer())
+      const response = await request(app.getServer())
         .post('/v1/bundle')
         .send({
           asyncapis: [{
@@ -38,13 +38,9 @@ describe('BundlerController', () => {
             channels: {},
           }
         })
-        .expect('Content-Type', /json/)
-        .expect((res) => {
-          console.log(res.body);
-          expect(res.body).toHaveProperty('asyncapi');
-          expect(res.body).toHaveProperty('info');
-        })
-        .expect(200);
+        .set('Accept', 'application/json');
+      expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
+      expect(response.status).toBe(200);
     });
   });
 });
