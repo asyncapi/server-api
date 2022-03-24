@@ -7,12 +7,84 @@ describe('DiffController', () => {
   describe('[POST] /diff', () => {
     it('should diff files', async () => {
       const app = new App([new DiffController()]);
-      return request(app.getServer())
+      const asyncapi1 = {
+        version: '3.0.0',
+        info: {
+          title: 'Test API',
+          version: '1.0.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              responses: {
+                200: {
+                  body: {
+                    type: 'object',
+                    properties: {
+                      test: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const asyncapi2 = {
+        version: '2.0.0',
+        info: {
+          title: 'Test API',
+          version: '1.0.0',
+        },
+        paths: {
+          '/test': {
+            get: {
+              responses: {
+                200: {
+                  body: {
+                    type: 'object',
+                    properties: {
+                      test: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      await request(app.getServer())
         .post('/v1/diff')
         .send({
-          asyncapis: ['./diff/asyncapi-diff-test-1.yaml','./diff/asyncapi-diff-test-2.yaml']
+          asyncapis: [asyncapi1, asyncapi2],
         })
-        .expect(200);
+        .expect(200, {
+          diff: {
+            added: [
+              {
+                path: '/test',
+                method: 'get',
+                response: {
+                  status: 200,
+                  body: {
+                    type: 'object',
+                    properties: {
+                      test: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+            removed: [],
+          },
+        });
     });
   });    
 });
