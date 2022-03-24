@@ -21,7 +21,6 @@ info:
   title: Super test
   version: 1.0.0
 channels: {}
-x-parser-spec-parsed: true
 `;
 
 describe('ConvertController', () => {
@@ -52,7 +51,7 @@ describe('ConvertController', () => {
               schemaPath: '#/properties/version/enum',
               keyword: 'enum',
               params: {
-                allowedValues: ALL_SPECS
+                allowedValues: [...ALL_SPECS, 'latest'],
               },
               message: 'must be equal to one of the allowed values'
             }
@@ -87,14 +86,13 @@ describe('ConvertController', () => {
           version: '2.3.0'
         })
         .expect(200, {
-          asyncapi: {
+          converted: {
             asyncapi: '2.3.0',
             info: {
               title: 'Super test',
               version: '1.0.0'
             },
             channels: {},
-            'x-parser-spec-parsed': true,
           },
         });
     });
@@ -110,7 +108,7 @@ describe('ConvertController', () => {
           language: 'yaml'
         })
         .expect(200, {
-          asyncapi: validYamlAsyncAPI2_3_0.trimStart(),
+          converted: validYamlAsyncAPI2_3_0.trimStart(),
         });
     });
   });

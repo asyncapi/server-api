@@ -1,29 +1,34 @@
 import { convert } from '@asyncapi/converter';
-import { AsyncAPIDocument } from '@asyncapi/parser';
 
 import YAML from 'js-yaml';
 import { ProblemException } from '../exceptions/problem.exception';
-import { LAST_SPEC_VERSION } from '../interfaces';
+import { AsyncAPIDocument, LAST_SPEC_VERSION, SpecsEnum } from '../interfaces';
+
+import type { ConvertVersion } from '@asyncapi/converter';
 
 /**
  * Service providing `@asyncapi/converter` functionality.
  */
 export class ConvertService {
   /**
-   * Convert the given spec to the desired language.
+   * Convert the given spec to the desired version and format.
    * @param spec AsyncAPI spec
    * @param language Language to convert to, YAML or JSON
-   * @param version [version] AsyncAPI spec version
+   * @param version AsyncAPI spec version
    * @returns converted spec
    */
-  public async convertSpec(
-    spec: AsyncAPIDocument | string,
-    language: 'json' | 'yaml' | 'yml',
-    version: string = LAST_SPEC_VERSION,
+  public async convert(
+    spec: string | AsyncAPIDocument,
+    version: SpecsEnum = LAST_SPEC_VERSION,
+    language?: 'json' | 'yaml' | 'yml',
   ): Promise<string> {
+    if (version === 'latest') {
+      version = LAST_SPEC_VERSION;
+    }
+
     try {
       const asyncapiSpec = typeof spec === 'object' ? JSON.stringify(spec) : spec;
-      const convertedSpec = convert(asyncapiSpec, version);
+      const convertedSpec = convert(asyncapiSpec, version as ConvertVersion);
 
       if (!language) {
         return convertedSpec;

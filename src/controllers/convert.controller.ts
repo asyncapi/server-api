@@ -1,17 +1,15 @@
 import { NextFunction, Request, Response, Router } from 'express';
 
-import { AsyncAPIDocument } from '@asyncapi/parser';
-
-import { Controller, SpecsEnum } from '../interfaces';
+import { Controller, AsyncAPIDocument, SpecsEnum } from '../interfaces';
 
 import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
 
 import { ConvertService } from '../services/convert.service';
 
 import { ProblemException } from '../exceptions/problem.exception';
-import { parse, prepareParserConfig } from '../utils/parser';
 
 type ConvertRequestDto = {
+  asyncapi: AsyncAPIDocument;
   /**
    * Spec version to upgrade to.
    * Default is 'latest'.
@@ -21,7 +19,6 @@ type ConvertRequestDto = {
    * Language to convert the file to.
    */
   language?: 'json' | 'yaml' | 'yml',
-  asyncapi: AsyncAPIDocument
 }
 
 /**
@@ -35,16 +32,14 @@ export class ConvertController implements Controller {
   private async convert(req: Request, res: Response, next: NextFunction) {
     try {
       const { version, language, asyncapi } = req.body as ConvertRequestDto;
-
-      await parse(asyncapi, prepareParserConfig(req));
-      const convertedSpec = await this.convertService.convertSpec(
+      const convertedSpec = await this.convertService.convert(
         asyncapi,
+        version,
         language,
-        version.toString(),
       );
 
       res.json({
-        asyncapi: convertedSpec
+        converted: convertedSpec
       });
     } catch (err: unknown) {
       if (err instanceof ProblemException) {

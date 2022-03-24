@@ -215,7 +215,7 @@ components:
     ConvertResponse:
       type: object
       properties:
-        asyncapi:
+        converted:
           $ref: '#/components/schemas/AsyncAPIDocument'
     Problem:
       type: object

@@ -1,5 +1,6 @@
 import specs from '@asyncapi/specs';
 import { Router } from 'express';
+
 export interface Controller {
   basepath: string;
   boot(): Router;
@@ -14,7 +15,9 @@ export interface Problem {
   [key: string]: any;
 }
 
-export const ALL_SPECS = [...Object.keys(specs), 'latest'];
+export type AsyncAPIDocument = { asyncapi: string } & Record<string, unknown>;
+
+export const ALL_SPECS = [...Object.keys(specs)];
 export const LAST_SPEC_VERSION = ALL_SPECS[ALL_SPECS.length - 1];
 
-export type SpecsEnum = keyof typeof specs;
+export type SpecsEnum = keyof typeof specs | 'latest';
