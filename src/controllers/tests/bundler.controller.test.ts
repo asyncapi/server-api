@@ -8,7 +8,7 @@ describe('BundlerController', () => {
   describe('[POST] /bundle', () => {
     it('should bundle files', async () => {
       const app = new App([new BundlerController()]);
-      const response = await request(app.getServer())
+      await request(app.getServer())
         .post('/v1/bundle')
         .send({
           asyncapis: [{
@@ -17,30 +17,66 @@ describe('BundlerController', () => {
               title: 'Test Service',
               version: '1.0.0',
             },
+            servers: {},
             channels: {
-              'test-channel': {
-                messages: {
-                  'test-message': {
+              'test-channel-2': {
+                publish: {
+                  message: {
                     payload: {
                       type: 'object',
                     },
                   },
-                },
+                }
               },
             },
           }],
           base: {
             asyncapi: '2.2.0',
             info: {
-              title: 'Test Service',
-              version: '1.0.0',
+              title: 'Merged test service',
+              version: '1.2.0',
             },
-            channels: {},
+            servers: {},
+            channels: {
+              'test-channel-1': {
+                publish: {
+                  message: {
+                    payload: {
+                      type: 'object',
+                    },
+                  },
+                }
+              },
+            },
           }
-        })
-        .set('Accept', 'application/json');
-      expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
-      expect(response.status).toBe(200);
+        }).
+        expect(200, {
+          bundled: {
+            asyncapi: '2.2.0',
+            info: { title: 'Merged test service', version: '1.2.0' },
+            servers: {},
+            channels: {
+              'test-channel-1': {
+                publish: {
+                  message: {
+                    payload: {
+                      type: 'object',
+                    },
+                  },
+                }
+              },
+              'test-channel-2': {
+                publish: {
+                  message: {
+                    payload: {
+                      type: 'object',
+                    },
+                  },
+                }
+              },
+            }
+          }
+        });
     });
   });
 });
