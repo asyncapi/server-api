@@ -42,6 +42,7 @@
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@asyncapi/avro-schema-parser": "^1.0.1",
+    "@asyncapi/converter": "^0.10.0",
     "@asyncapi/dotnet-nats-template": "^0.4.5",
     "@asyncapi/generator": "^1.9.0",
     "@asyncapi/go-watermill-template": "^0.1.38",
@@ -56,6 +57,7 @@
     "@asyncapi/parser": "^1.14.1",
     "@asyncapi/python-paho-template": "^0.2.12",
     "@asyncapi/raml-dt-schema-parser": "^2.0.1",
+    "@asyncapi/specs": "^2.13.1",
     "@asyncapi/ts-nats-template": "^0.5.15",
     "ajv": "^8.8.2",
     "archiver": "^5.3.0",
