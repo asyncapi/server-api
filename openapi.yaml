@@ -23,25 +23,23 @@ paths:
       tags:
         - generate
         - generator
-        - template
       externalDocs:
-        name: Website for the AsyncAPI Generator
-        url: https://www.asyncapi.com/tools/generator
+        name: Github Repository for the AsyncAPI Generator
+        url: https://github.com/asyncapi/generator
       requestBody:
         description: Template details to be generated.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Template'
+              $ref: '#/components/schemas/GenerateRequest'
       responses:
         '200':
           description: Template successfully generated.
           content:
             application/zip:
               schema:
-                type: string
-                format: binary
+              $ref: '#/components/schemas/GenerateResponse'
         '400':
           description: Failed to generate the given template due to invalid AsyncAPI document.
           content:
@@ -67,13 +65,17 @@ paths:
       operationId: validate
       tags:
         - validate
+        - validator
+      externalDocs:
+        name: Github Repository for the AsyncAPI Parser
+        url: https://github.com/asyncapi/parser-js
       requestBody:
         description: Validate the given AsyncAPI document with the AsyncAPI parser.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ValidateDocument'
+              $ref: '#/components/schemas/ValidateRequest'
       responses:
         '204':
           description: The given AsyncAPI document is valid.
@@ -102,6 +104,10 @@ paths:
       operationId: convert
       tags:
         - convert
+        - converter
+      externalDocs:
+        name: Github Repository for the AsyncAPI Converter
+        url: https://github.com/asyncapi/converter-js
       requestBody:
         description: Parameters to convert the spec.
         required: true
@@ -138,14 +144,35 @@ paths:
 components:
   schemas:
     AsyncAPIDocument:
-      description: AsyncAPI document in JSON or YAML
+      description: AsyncAPI document in JSON or YAML.
       oneOf:
         - type: string # can be in YAML format
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.0.0.json
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.1.0.json
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.2.0.json
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.3.0.json
-    Template:
+    AsyncAPIDocuments:
+      type: array
+      description: AsyncAPI documents in JSON or YAML.
+      minItems: 1
+      items:
+        $ref: '#/components/schemas/AsyncAPIDocument'
+    SpecVersions:
+      type: string
+      description: Valid specification versions for the AsyncAPI document.
+      enum:
+        - '1.0.0'
+        - '1.1.0'
+        - '1.2.0'
+        - '2.0.0-rc1'
+        - '2.0.0-rc2'
+        - '2.0.0'
+        - '2.1.0'
+        - '2.2.0'
+        - '2.3.0'
+        - 'latest'
+
+    GenerateRequest:
       type: object
       required:
         - asyncapi
@@ -175,13 +202,18 @@ components:
             which is usually located in the template's repository.
             This field is optional but may be required for some templates.
           additionalProperties: true
-    ValidateDocument:
+    GenerateResponse:
+      type: string
+      format: binary
+
+    ValidateRequest:
       type: object
       required:
         - asyncapi
       properties:
         asyncapi:
           $ref: '#/components/schemas/AsyncAPIDocument'
+
     ConvertRequest:
       type: object
       required:
@@ -198,25 +230,12 @@ components:
             - 'yaml'
             - 'yml'
             - 'json'
-    SpecVersions:
-      type: string
-      description: Valid spec versions for the AsyncAPI document.
-      enum:
-        - '1.0.0'
-        - '1.1.0'
-        - '1.2.0'
-        - '2.0.0-rc1'
-        - '2.0.0-rc2'
-        - '2.0.0'
-        - '2.1.0'
-        - '2.2.0'
-        - '2.3.0'
-        - 'latest'
     ConvertResponse:
       type: object
       properties:
         converted:
           $ref: '#/components/schemas/AsyncAPIDocument'
+
     Problem:
       type: object
       properties:

@@ -25,8 +25,9 @@ channels: {}
 
 describe('ConvertController', () => {
   describe('[POST] /convert', () => {
-    it('should throw error with invalid version', () => {
+    it('should throw error with invalid version', async () => {
       const app = new App([new ConvertController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/convert')
@@ -59,8 +60,9 @@ describe('ConvertController', () => {
         });
     });
 
-    it('should throw error that the converter cannot convert to a lower version', () => {
+    it('should throw error that the converter cannot convert to a lower version', async () => {
       const app = new App([new ConvertController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/convert')
@@ -76,8 +78,9 @@ describe('ConvertController', () => {
         });
     });
 
-    it('should pass when converting to 2.3.0 version', () => {
+    it('should pass when converting to 2.3.0 version', async () => {
       const app = new App([new ConvertController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/convert')
@@ -97,8 +100,9 @@ describe('ConvertController', () => {
         });
     });
 
-    it('should pass when converting to latest version', () => {
+    it('should pass when converting to latest version', async () => {
       const app = new App([new ConvertController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/convert')
@@ -117,8 +121,9 @@ describe('ConvertController', () => {
         });
     });
 
-    it('should correctly convert JSON to YAML', () => {
+    it('should correctly convert JSON to YAML', async () => {
       const app = new App([new ConvertController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/convert')

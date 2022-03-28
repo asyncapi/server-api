@@ -80,6 +80,7 @@ describe('ValidateController', () => {
   describe('[POST] /validate', () => {
     it('should validate AsyncAPI document in JSON', async () => {
       const app = new App([new ValidateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/validate')
@@ -91,6 +92,7 @@ describe('ValidateController', () => {
 
     it('should validate AsyncAPI document in YAML', async () => {
       const app = new App([new ValidateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/validate')
@@ -102,6 +104,7 @@ describe('ValidateController', () => {
 
     it('should throw error when sent an empty document', async () => {
       const app = new App([new ValidateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/validate')
@@ -126,6 +129,7 @@ describe('ValidateController', () => {
 
     it('should throw error when sent an invalid AsyncAPI document', async () => {
       const app = new App([new ValidateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/validate')

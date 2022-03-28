@@ -3,7 +3,7 @@ import { Router } from 'express';
 
 export interface Controller {
   basepath: string;
-  boot(): Router;
+  boot(): Router | Promise<Router>;
 }
 
 export interface Problem {

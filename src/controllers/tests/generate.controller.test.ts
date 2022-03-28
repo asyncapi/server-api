@@ -9,6 +9,7 @@ describe('GeneratorController', () => {
   describe('[POST] /generate', () => {
     it('should generate template ', async () => {
       const app = new App([new GenerateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/generate')
@@ -31,6 +32,7 @@ describe('GeneratorController', () => {
 
     it('should pass when sent template parameters are empty', async () => {
       const app = new App([new GenerateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/generate')
@@ -50,6 +52,7 @@ describe('GeneratorController', () => {
 
     it('should throw error when sent template parameters are invalid', async () => {
       const app = new App([new GenerateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/generate')
@@ -87,6 +90,7 @@ describe('GeneratorController', () => {
 
     it('should throw error when required parameter is not sent', async () => {
       const app = new App([new GenerateController()]);
+      await app.init();
 
       return request(app.getServer())
         .post('/v1/generate')

@@ -21,6 +21,7 @@ describe('problemMiddleware', () => {
         },
       });
       const app = new App([new TestController()]);
+      await app.init();
 
       return await request(app.getServer())
         .post('/v1/test')
@@ -41,6 +42,7 @@ describe('problemMiddleware', () => {
         },
       });
       const app = new App([new TestController()]);
+      await app.init();
 
       return await request(app.getServer())
         .post('/v1/test')

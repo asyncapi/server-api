@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 
 import { Controller, AsyncAPIDocument, SpecsEnum } from '../interfaces';
 
-import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
+import { validationMiddleware } from '../middlewares/validation.middleware';
 
 import { ConvertService } from '../services/convert.service';
 
@@ -55,12 +55,18 @@ export class ConvertController implements Controller {
     }
   }
 
-  public boot(): Router {
+  public async boot(): Promise<Router> {
     const router = Router();
 
     router.post(
-      `${this.basepath}`,
-      documentValidationMiddleware,
+      this.basepath,
+      await validationMiddleware({ 
+        path: this.basepath, 
+        method: 'post',
+        documents: {
+          asyncapi: 'single',
+        }
+      }),
       this.convert.bind(this)
     );
 
