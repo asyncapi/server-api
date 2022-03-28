@@ -7,13 +7,15 @@ import { parse, prepareParserConfig, tryConvertToProblemException } from '../uti
  */
 export async function documentValidationMiddleware(req: Request, _: Response, next: NextFunction) {
   try {
-    const asyncapi = req.body?.asyncapi;
+    let asyncapi = req.body?.asyncapi;
     if (!asyncapi) {
       return next();
     }
+    if (typeof asyncapi === 'object') {
+      asyncapi = JSON.parse(JSON.stringify(asyncapi));
+    }
 
     const parsedDocument = await parse(asyncapi, prepareParserConfig(req));
-
     req.parsedDocument = parsedDocument;
     next();
   } catch (err: any) {

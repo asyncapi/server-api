@@ -104,7 +104,7 @@ describe('ValidateController', () => {
       const app = new App([new ValidateController()]);
 
       return request(app.getServer())
-        .post('/validate')
+        .post('/v1/validate')
         .send({})
         .expect(422, {
           type: ProblemException.createType('invalid-request-body'),
