@@ -78,7 +78,7 @@ async function validateSingleDocument(asyncapi: string | AsyncAPIDocument, parse
   if (typeof asyncapi === 'object') {
     asyncapi = JSON.parse(JSON.stringify(asyncapi));
   }
-  return await parse(asyncapi, parserConfig);
+  await parse(asyncapi, parserConfig);
 }
 
 async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>, parserConfig: ReturnType<typeof prepareParserConfig>) {
