@@ -255,9 +255,7 @@ components:
     ConvertRequest:
       type: object
       required:
-        - asyncapis
-      optional:
-        - base  
+        - asyncapi
       properties:
         asyncapi:
           $ref: '#/components/schemas/AsyncAPIDocument'

@@ -3,7 +3,6 @@ import { ProblemException } from '../exceptions/problem.exception';
 import { Controller } from '../interfaces';
 import bundler from '@asyncapi/bundler';
 import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
-import path from 'path';
 
 export class BundlerController implements Controller {
   public basepath = '/bundle';
