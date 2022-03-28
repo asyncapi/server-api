@@ -97,6 +97,26 @@ describe('ConvertController', () => {
         });
     });
 
+    it('should pass when converting to latest version', () => {
+      const app = new App([new ConvertController()]);
+
+      return request(app.getServer())
+        .post('/v1/convert')
+        .send({
+          asyncapi: validJsonAsyncAPI2_0_0,
+        })
+        .expect(200, {
+          converted: {
+            asyncapi: '2.3.0',
+            info: {
+              title: 'Super test',
+              version: '1.0.0'
+            },
+            channels: {},
+          },
+        });
+    });
+
     it('should correctly convert JSON to YAML', () => {
       const app = new App([new ConvertController()]);
 

@@ -51,6 +51,19 @@ describe('ConvertService', () => {
       });
     });
 
+    it('should pass when converting to latest version', async () => {
+      const converted = await convertService.convert(validJsonAsyncAPI2_0_0);
+
+      expect(converted).toEqual({
+        asyncapi: '2.3.0',
+        info: {
+          title: 'Super test',
+          version: '1.0.0'
+        },
+        channels: {},
+      });
+    });
+
     it('should correctly convert JSON to YAML', async () => {
       const converted = await convertService.convert(validJsonAsyncAPI2_0_0, '2.3.0', 'yaml');
 
