@@ -182,26 +182,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+
   /diff:
     post:
       summary: Compare the given AsyncAPI documents.
       operationId: diff
       tags:
         - diff
+        - differ
+      externalDocs:
+        name: Github Repository for the AsyncAPI Diff
+        url: https://github.com/asyncapi/diff
       requestBody:
         description: Compare the given AsyncAPI documents.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DiffDocument'
+              $ref: '#/components/schemas/DiffRequest'
       responses:
         '200':
           description: Successfully received changes between two AsyncAPI documents.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiffResult'
+                $ref: '#/components/schemas/DiffResponse'
         '400':
           description: One of the AsyncAPI documents is not valid.
           content:
@@ -220,6 +225,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+
 components:
   schemas:
     AsyncAPIDocument:
@@ -331,6 +337,24 @@ components:
       properties:
         bundled:
           $ref: "#/components/schemas/AsyncAPIDocument"
+
+    DiffRequest:
+      type: object
+      required:
+        - asyncapis
+      properties:
+        asyncapis:
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            $ref: '#/components/schemas/AsyncAPIDocument'
+    DiffResponse:
+      type: object
+      properties:
+        diff:
+          type: [object, string]
+          description: The diff between the two AsyncAPI documents.
 
     Problem:
       type: object

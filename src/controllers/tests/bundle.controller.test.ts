@@ -79,7 +79,7 @@ describe('BundleController', () => {
         });
     });
 
-    it('throw error with invalid AsyncAPI document in the `base` list', async () => {
+    it('should throw error with invalid AsyncAPI document in the `base` list', async () => {
       const app = new App([new BundleController()]);
       await app.init();
 
@@ -142,7 +142,7 @@ describe('BundleController', () => {
         });
     });
 
-    it('throw error with invalid AsyncAPI document in the `asyncapis` list', async () => {
+    it('should throw error with invalid AsyncAPI document in the `asyncapis` list', async () => {
       const app = new App([new BundleController()]);
       await app.init();
 
