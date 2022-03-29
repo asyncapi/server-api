@@ -1,5 +1,4 @@
 openapi: 3.1.0
-
 info:
   version: 0.1.0
   title: AsyncAPI Server API
@@ -34,30 +33,30 @@ paths:
             schema:
               $ref: '#/components/schemas/GenerateRequest'
       responses:
-        '200':
+        "200":
           description: Template successfully generated.
           content:
             application/zip:
               schema:
-              $ref: '#/components/schemas/GenerateResponse'
+                $ref: '#/components/schemas/GenerateResponse'
         '400':
           description: Failed to generate the given template due to invalid AsyncAPI document.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
-        '422':
+                $ref: "#/components/schemas/Problem"
+        "422":
           description: Failed to generate the given template due to invalid parameters.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
         default:
           description: Unexpected problem.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
 
   /validate:
     post:
@@ -77,26 +76,26 @@ paths:
             schema:
               $ref: '#/components/schemas/ValidateRequest'
       responses:
-        '204':
+        "204":
           description: The given AsyncAPI document is valid.
-        '400':
+        "400":
           description: The given AsyncAPI document is not valid.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
-        '422':
+                $ref: "#/components/schemas/Problem"
+        "422":
           description: The given AsyncAPI document is not valid due to invalid parameters in the request.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
         default:
           description: Unexpected problem.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
 
   /convert:
     post:
@@ -119,7 +118,7 @@ paths:
         '200':
           description: AsyncAPI document successfully converted.
           content:
-            application/zip:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ConvertResponse'
         '400':
@@ -134,6 +133,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /bundle:
+    post:
+      summary: Bundle the given AsyncAPI document(s).
+      operationId: bundle
+      tags:
+        - bundle
+        - bundler
+      externalDocs:
+        name: Github Repository for the AsyncAPI Bundler
+        url: https://github.com/asyncapi/bundler
+      requestBody:
+        description: Bundle the given AsyncAPI document(s) to single one.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BundleRequest"
+      responses:
+        "200":
+          description: AsyncAPI document(s) successfully bundled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BundleResponse"
+        "400":
+          description: The given AsyncAPI document(s) is/are not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The given AsyncAPI document(s) is/are not valid due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         default:
           description: Unexpected problem.
           content:
@@ -179,22 +221,22 @@ components:
         - template
       properties:
         asyncapi:
-          $ref: '#/components/schemas/AsyncAPIDocument'
+          $ref: "#/components/schemas/AsyncAPIDocument"
         template:
           type: string
           description: Template name to be generated.
           enum:
-            - '@asyncapi/dotnet-nats-template'
-            - '@asyncapi/go-watermill-template'
-            - '@asyncapi/html-template'
-            - '@asyncapi/java-spring-cloud-stream-template'
-            - '@asyncapi/java-spring-template'
-            - '@asyncapi/java-template'
-            - '@asyncapi/markdown-template'
-            - '@asyncapi/nodejs-template'
-            - '@asyncapi/nodejs-ws-template'
-            - '@asyncapi/python-paho-template'
-            - '@asyncapi/ts-nats-template'
+            - "@asyncapi/dotnet-nats-template"
+            - "@asyncapi/go-watermill-template"
+            - "@asyncapi/html-template"
+            - "@asyncapi/java-spring-cloud-stream-template"
+            - "@asyncapi/java-spring-template"
+            - "@asyncapi/java-template"
+            - "@asyncapi/markdown-template"
+            - "@asyncapi/nodejs-template"
+            - "@asyncapi/nodejs-ws-template"
+            - "@asyncapi/python-paho-template"
+            - "@asyncapi/ts-nats-template"
         parameters:
           type: object
           description: |
@@ -236,6 +278,23 @@ components:
         converted:
           $ref: '#/components/schemas/AsyncAPIDocument'
 
+    BundleRequest:
+      type: object
+      required:
+        - asyncapis 
+      properties:
+        asyncapis:
+          $ref: "#/components/schemas/AsyncAPIDocuments"
+        base:
+          $ref: "#/components/schemas/AsyncAPIDocument"
+    BundleResponse:
+      type: object
+      required:
+        - bundled 
+      properties:
+        bundled:
+          $ref: "#/components/schemas/AsyncAPIDocument"
+
     Problem:
       type: object
       properties:
@@ -246,8 +305,8 @@ components:
             An absolute URI that identifies the problem type. When dereferenced,
             it SHOULD provide human-readable documentation for the problem type
             (e.g., using HTML).
-          default: 'about:blank'
-          example: 'https://api.asyncapi.com/problem/invalid-template-parameters'
+          default: "about:blank"
+          example: "https://api.asyncapi.com/problem/invalid-template-parameters"
         title:
           type: string
           description: |
