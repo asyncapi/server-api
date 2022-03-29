@@ -151,9 +151,7 @@ export class GenerateController implements Controller {
       await validationMiddleware({ 
         path: this.basepath, 
         method: 'post',
-        documents: {
-          asyncapi: 'single',
-        }
+        documents: ['asyncapi'],
       }),
       this.generate.bind(this)
     );

@@ -20,9 +20,7 @@ describe('validationMiddleware', () => {
         await validationMiddleware({
           path: '/generate',
           method: 'post',
-          documents: {
-            asyncapi: 'single',
-          }
+          documents: ['asyncapi'],
         }),
       ],
     });
@@ -58,9 +56,7 @@ describe('validationMiddleware', () => {
         await validationMiddleware({
           path: '/generate',
           method: 'post',
-          documents: {
-            asyncapi: 'single',
-          }
+          documents: ['asyncapi'],
         }),
       ],
     });
@@ -112,9 +108,7 @@ describe('validationMiddleware', () => {
         await validationMiddleware({
           path: '/generate',
           method: 'post',
-          documents: {
-            asyncapi: 'single',
-          }
+          documents: ['asyncapi'],
         }),
       ],
     });
@@ -179,9 +173,7 @@ describe('validationMiddleware', () => {
         await validationMiddleware({
           path: '/generate',
           method: 'post',
-          documents: {
-            asyncapi: 'single',
-          }
+          documents: ['asyncapi'],
         }),
       ],
     });

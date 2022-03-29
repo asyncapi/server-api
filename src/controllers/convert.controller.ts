@@ -63,9 +63,7 @@ export class ConvertController implements Controller {
       await validationMiddleware({ 
         path: this.basepath, 
         method: 'post',
-        documents: {
-          asyncapi: 'single',
-        }
+        documents: ['asyncapi'],
       }),
       this.convert.bind(this)
     );

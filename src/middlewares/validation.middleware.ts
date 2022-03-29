@@ -11,7 +11,7 @@ import type { AsyncAPIDocument } from '../interfaces';
 export interface ValidationMiddlewareOptions {
   path: string;
   method: 'all' | 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head',
-  documents?: Record<string, 'single' | 'list'>;
+  documents?: Array<string>;
   version?: 'v1';
 }
 
@@ -43,12 +43,12 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   if (!schema) return;
 
   schema = { ...schema };
-  schema['$schema'] = 'http://json-schema.org/draft-07/schema#';
+  schema['$schema'] = 'http://json-schema.org/draft-07/schema';
 
   if (options.documents && schema.properties) {
     schema.properties = { ...schema.properties };
-    Object.keys(options.documents).forEach(field => {
-      if (options.documents[String(field)] === 'list') {
+    options.documents.forEach(field => {
+      if (schema.properties[String(field)].items) {
         schema.properties[String(field)] = { ...schema.properties[String(field)] };
         schema.properties[String(field)].items = true;
       } else {
@@ -93,7 +93,7 @@ async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>
 export async function validationMiddleware(options: ValidationMiddlewareOptions) {
   options.version = options.version || 'v1';
   const validate = await compileAjv(options);
-  const documents = Object.entries(options.documents);
+  const documents = options.documents;
 
   return async function (req: Request, _: Response, next: NextFunction) {
     // validate request body
@@ -106,9 +106,9 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
     // validate AsyncAPI document(s)
     const parserConfig = prepareParserConfig(req);
     try {
-      for (const [field, type] of documents) {
+      for (const field of documents) {
         const body = req.body[String(field)];
-        if (type === 'list') {
+        if (Array.isArray(body)) {
           await validateListDocuments(body, parserConfig);
         } else {
           await validateSingleDocument(body, parserConfig);

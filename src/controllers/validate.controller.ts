@@ -22,9 +22,7 @@ export class ValidateController implements Controller {
       await validationMiddleware({ 
         path: this.basepath, 
         method: 'post',
-        documents: {
-          asyncapi: 'single',
-        }
+        documents: ['asyncapi'],
       }),
       this.validate.bind(this)
     );
