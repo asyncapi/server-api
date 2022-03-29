@@ -97,45 +97,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
-  /bundle:
-    post:
-      summary: Bundle the given AsyncAPI document(s).
-      operationId: bundle
-      tags:
-        - bundle
-      requestBody:
-        description: Bundle the given AsyncAPI document(s) with the `@asyncapi/bundler` library.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BundleDocument"
-      responses:
-        "200":
-          description: The given AsyncAPI document is bundled.
-          content:
-            application/zip:
-              schema:
-                $ref: "#/components/schemas/Bundle"
-        "400":
-          description: The given AsyncAPI document(s) is/are not valid.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "422":
-          description: The given AsyncAPI document(s) is/are not valid due to invalid parameters in the request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        default:
-          description: Unexpected problem.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Problem'
-
   /convert:
     post:
       summary: Convert the given AsyncAPI document to the specified version.
@@ -157,7 +118,7 @@ paths:
         '200':
           description: AsyncAPI document successfully converted.
           content:
-            application/zip:
+            application/json:
               schema:
                 $ref: '#/components/schemas/ConvertResponse'
         '400':
@@ -172,6 +133,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /bundle:
+    post:
+      summary: Bundle the given AsyncAPI document(s).
+      operationId: bundle
+      tags:
+        - bundle
+        - bundler
+      externalDocs:
+        name: Github Repository for the AsyncAPI Bundler
+        url: https://github.com/asyncapi/bundler
+      requestBody:
+        description: Bundle the given AsyncAPI document(s) to single one.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BundleRequest"
+      responses:
+        "200":
+          description: AsyncAPI document(s) successfully bundled.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BundleResponse"
+        "400":
+          description: The given AsyncAPI document(s) is/are not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The given AsyncAPI document(s) is/are not valid due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         default:
           description: Unexpected problem.
           content:
@@ -274,27 +278,23 @@ components:
         converted:
           $ref: '#/components/schemas/AsyncAPIDocument'
 
-    BundleDocument:
+    BundleRequest:
       type: object
       required:
         - asyncapis 
       properties:
         asyncapis:
-          type: array
-          minItems: 1
-          items:
-            $ref: "#/components/schemas/AsyncAPIDocument"
+          $ref: "#/components/schemas/AsyncAPIDocuments"
         base:
           $ref: "#/components/schemas/AsyncAPIDocument"
-      x-server-api:
-        skipFieldsInValidation: [asyncapis, base]
-    Bundle:
+    BundleResponse:
       type: object
       required:
         - bundled 
       properties:
         bundled:
           $ref: "#/components/schemas/AsyncAPIDocument"
+
     Problem:
       type: object
       properties:
