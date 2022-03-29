@@ -5,7 +5,7 @@ import Ajv from 'ajv';
 
 import { Controller } from '../interfaces';
 
-import { documentValidationMiddleware } from '../middlewares/document-validation.middleware';
+import { validationMiddleware } from '../middlewares/validation.middleware';
 
 import { ArchiverService } from '../services/archiver.service';
 import { GeneratorService } from '../services/generator.service';
@@ -137,7 +137,7 @@ export class GenerateController implements Controller {
     };
   }
 
-  public boot(): Router {
+  public async boot(): Promise<Router> {
     this.ajv = new Ajv({
       inlineRefs: true,
       allErrors: true,
@@ -148,7 +148,11 @@ export class GenerateController implements Controller {
 
     router.post(
       `${this.basepath}`,
-      documentValidationMiddleware,
+      await validationMiddleware({ 
+        path: this.basepath, 
+        method: 'post',
+        documents: ['asyncapi'],
+      }),
       this.generate.bind(this)
     );
 

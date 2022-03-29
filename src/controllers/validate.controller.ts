@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { Request, Response, Router } from 'express';
+
+import { validationMiddleware } from '../middlewares/validation.middleware';
 
 import { Controller } from '../interfaces';
-
-import { parse, prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
 
 /**
  * Controller which exposes the Parser functionality, to validate the AsyncAPI document.
@@ -10,22 +10,20 @@ import { parse, prepareParserConfig, tryConvertToProblemException } from '../uti
 export class ValidateController implements Controller {
   public basepath = '/validate';
 
-  private async validate(req: Request, res: Response, next: NextFunction) {
-    try {
-      const options = prepareParserConfig(req);
-      await parse(req.body?.asyncapi, options);
-
-      res.status(204).end();
-    } catch (err: unknown) {
-      return next(tryConvertToProblemException(err));
-    }
+  private async validate(_: Request, res: Response) {
+    res.status(204).end();
   }
 
-  public boot(): Router {
+  public async boot(): Promise<Router> {
     const router = Router();
 
     router.post(
       `${this.basepath}`,
+      await validationMiddleware({ 
+        path: this.basepath, 
+        method: 'post',
+        documents: ['asyncapi'],
+      }),
       this.validate.bind(this)
     );
 

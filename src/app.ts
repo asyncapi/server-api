@@ -7,7 +7,6 @@ import helmet from 'helmet';
 
 import { Controller } from './interfaces';
 
-import { requestBodyValidationMiddleware } from './middlewares/request-body-validation.middleware';
 import { problemMiddleware } from './middlewares/problem.middleware';
 
 import { logger } from './utils/logger';
@@ -18,19 +17,21 @@ export class App {
   private port: string | number;
   private env: string;
 
-  constructor(controller: Controller[]) {
+  constructor(
+    private readonly controllers: Controller[]
+  ) {
     this.app = express();
     this.port = process.env.PORT || 80;
     this.env = process.env.NODE_ENV || 'development';
+  }
 
+  public async init() {
     // initialize core middlewares
-    this.initializeMiddlewares();
-    // initialize validation middlewares
-    this.initializeValidation();
-    // initialize all controllers
-    this.initializeControllers(controller);
+    await this.initializeMiddlewares();
+    // initialize controllers
+    await this.initializeControllers();
     // initialize error handling
-    this.initializeErrorHandling();
+    await this.initializeErrorHandling();
   }
 
   public listen() {
@@ -46,7 +47,7 @@ export class App {
     return this.app;
   }
 
-  private initializeMiddlewares() {
+  private async initializeMiddlewares() {
     const requestBodyLimit = config.get<string>('request.body.limit');
 
     this.app.use(cors({ origin: config.get('cors.origin'), credentials: config.get('cors.credentials') }));
@@ -67,18 +68,13 @@ export class App {
     }));
   }
 
-  private initializeValidation() {
-    this.app.use(requestBodyValidationMiddleware);
+  private async initializeControllers() {
+    for (const controller of this.controllers) {
+      this.app.use(`/${API_VERSION}/`, await controller.boot());
+    }
   }
 
-  private initializeControllers(controller: Controller[]) {
-    controller.forEach(controller => {
-      // in the `openapi.yaml` we have prefix `v1` for all paths
-      this.app.use(`/${API_VERSION}/`, controller.boot());
-    });
-  }
-
-  private initializeErrorHandling() {
+  private async initializeErrorHandling() {
     this.app.use(problemMiddleware);
   }
 }

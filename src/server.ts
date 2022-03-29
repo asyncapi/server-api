@@ -10,10 +10,14 @@ import { ValidateController } from './controllers/validate.controller';
 import { ConvertController } from './controllers/convert.controller';
 import { DocsController } from './controllers/docs.controller';
 
-const app = new App([
-  new GenerateController(),
-  new ValidateController(),
-  new ConvertController(),
-  new DocsController()
-]);
-app.listen();
+async function main() {
+  const app = new App([
+    new GenerateController(),
+    new ValidateController(),
+    new ConvertController(),
+    new DocsController()
+  ]);
+  await app.init();
+  app.listen();
+}
+main();
