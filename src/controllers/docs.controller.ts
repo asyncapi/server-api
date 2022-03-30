@@ -5,6 +5,9 @@ import { Controller } from '../interfaces';
 
 import { API_VERSION } from '../constants';
 
+/**
+ * Controller which exposes the OpenAPI documentation rendered by Redoc.
+ */
 export class DocsController implements Controller {
   public basepath = '/docs';
 

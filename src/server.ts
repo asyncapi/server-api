@@ -10,6 +10,7 @@ import { ValidateController } from './controllers/validate.controller';
 import { ConvertController } from './controllers/convert.controller';
 import { BundleController } from './controllers/bundle.controller';
 import { DiffController } from './controllers/diff.controller';
+import { OptimizeController } from './controllers/optimize.controller';
 import { DocsController } from './controllers/docs.controller';
 
 async function main() {
@@ -19,6 +20,7 @@ async function main() {
     new ConvertController(),
     new BundleController(),
     new DiffController(),
+    new OptimizeController(),
     new DocsController()
   ]);
   await app.init();

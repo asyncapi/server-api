@@ -22,7 +22,7 @@ type ConvertRequestDto = {
 }
 
 /**
- * Controller which exposes the Convert functionality
+ * Controller which exposes the Converter functionality.
  */
 export class ConvertController implements Controller {
   public basepath = '/convert';

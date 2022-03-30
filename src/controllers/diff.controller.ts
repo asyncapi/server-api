@@ -6,6 +6,9 @@ import { validationMiddleware } from '../middlewares/validation.middleware';
 import { ProblemException } from '../exceptions/problem.exception';
 import { Controller} from '../interfaces';
 
+/**
+ * Controller which exposes the Diff functionality.
+ */
 export class DiffController implements Controller {
   public basepath = '/diff';
 

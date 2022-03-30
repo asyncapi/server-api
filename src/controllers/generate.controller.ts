@@ -14,7 +14,7 @@ import { ProblemException } from '../exceptions/problem.exception';
 import { prepareParserConfig } from '../utils/parser';
 
 /**
- * Controller which exposes the Generator functionality
+ * Controller which exposes the Generator functionality.
  */
 export class GenerateController implements Controller {
   public basepath = '/generate';
@@ -45,12 +45,12 @@ export class GenerateController implements Controller {
           tmpDir,
           prepareParserConfig(req),
         );
-      } catch (genErr: unknown) {
+      } catch (err: unknown) {
         return next(new ProblemException({
           type: 'internal-generator-error',
           title: 'Internal Generator error',
           status: 500,
-          detail: (genErr as Error).message,
+          detail: (err as Error).message,
         }));
       }
 
