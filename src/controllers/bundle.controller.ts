@@ -6,6 +6,9 @@ import { validationMiddleware } from '../middlewares/validation.middleware';
 import { ProblemException } from '../exceptions/problem.exception';
 import { Controller } from '../interfaces';
 
+/**
+ * Controller which exposes the Bundler functionality.
+ */
 export class BundleController implements Controller {
   public basepath = '/bundle';
 
