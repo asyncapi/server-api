@@ -1,4 +1,5 @@
 import specs from '@asyncapi/specs';
+import { AsyncAPIDocument as ParserAsyncAPIDocument } from '@asyncapi/parser';
 import { Router } from 'express';
 
 export interface Controller {
@@ -16,6 +17,12 @@ export interface Problem {
 }
 
 export type AsyncAPIDocument = { asyncapi: string } & Record<string, unknown>;
+export type ParsedAsyncAPIDocument = {
+  raw: string | AsyncAPIDocument;
+  parsed: ParserAsyncAPIDocument;
+}
+
+export type References = Record<string, unknown>;
 
 export const ALL_SPECS = [...Object.keys(specs)];
 export const LAST_SPEC_VERSION = ALL_SPECS[ALL_SPECS.length - 1];

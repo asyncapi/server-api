@@ -242,6 +242,32 @@ components:
       minItems: 1
       items:
         $ref: '#/components/schemas/AsyncAPIDocument'
+    AsyncAPIDocumentInput:
+      description: AsyncAPI document in JSON or YAML with probable references.
+      oneOf: 
+        - $ref: '#/components/schemas/AsyncAPIDocument'
+        - type: object
+          properties:
+            document:
+              $ref: '#/components/schemas/AsyncAPIDocument'
+            references:
+              $ref: '#/components/schemas/DocumentReferences'
+          required:
+            - document
+            - references
+    AsyncAPIDocumentsInput:
+      type: array
+      description: AsyncAPI documents
+      minItems: 1
+      items:
+        $ref: '#/components/schemas/AsyncAPIDocumentInput'
+    DocumentReferences:
+      type: object
+      description: A dictionary where key is a reference and value is the value for the reference.
+      propertyNames:
+        type: string
+      additionalProperties:
+        type: string
     SpecVersions:
       type: string
       description: Valid specification versions for the AsyncAPI document.
@@ -256,6 +282,7 @@ components:
         - '2.2.0'
         - '2.3.0'
         - 'latest'
+    
 
     GenerateRequest:
       type: object
@@ -264,7 +291,7 @@ components:
         - template
       properties:
         asyncapi:
-          $ref: "#/components/schemas/AsyncAPIDocument"
+          $ref: "#/components/schemas/AsyncAPIDocumentInput"
         template:
           type: string
           description: Template name to be generated.
@@ -297,7 +324,7 @@ components:
         - asyncapi
       properties:
         asyncapi:
-          $ref: '#/components/schemas/AsyncAPIDocument'
+          $ref: '#/components/schemas/AsyncAPIDocumentInput'
 
     ConvertRequest:
       type: object
@@ -305,7 +332,7 @@ components:
         - asyncapi
       properties:
         asyncapi:
-          $ref: '#/components/schemas/AsyncAPIDocument'
+          $ref: '#/components/schemas/AsyncAPIDocumentInput'
         version:
           $ref: '#/components/schemas/SpecVersions'
         language:
@@ -327,9 +354,9 @@ components:
         - asyncapis 
       properties:
         asyncapis:
-          $ref: "#/components/schemas/AsyncAPIDocuments"
+          $ref: "#/components/schemas/AsyncAPIDocumentsInput"
         base:
-          $ref: "#/components/schemas/AsyncAPIDocument"
+          $ref: "#/components/schemas/AsyncAPIDocumentInput"
     BundleResponse:
       type: object
       required:
@@ -348,7 +375,7 @@ components:
           minItems: 2
           maxItems: 2
           items:
-            $ref: '#/components/schemas/AsyncAPIDocument'
+            $ref: '#/components/schemas/AsyncAPIDocumentInput'
     DiffResponse:
       type: object
       properties:

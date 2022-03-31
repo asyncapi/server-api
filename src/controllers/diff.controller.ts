@@ -4,16 +4,16 @@ import { diff } from '@asyncapi/diff';
 import { validationMiddleware } from '../middlewares/validation.middleware';
 
 import { ProblemException } from '../exceptions/problem.exception';
-import { Controller} from '../interfaces';
+import { Controller, ParsedAsyncAPIDocument } from '../interfaces';
 
 export class DiffController implements Controller {
   public basepath = '/diff';
 
   private async diff(req: Request, res: Response, next: NextFunction) {
-    const { asyncapis } = req.body;
+    const asyncapis = req.asyncapi.documents.asyncapis as Array<ParsedAsyncAPIDocument>;
 
     try {
-      const output = diff(asyncapis[0], asyncapis[1]).getOutput();
+      const output = diff(asyncapis[0].raw, asyncapis[1].raw).getOutput();
       res.status(200).json({ diff: output });
     } catch (err) {
       return next(new ProblemException({
