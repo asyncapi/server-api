@@ -46,8 +46,8 @@ export class ParserService {
       return {
         parsed,
         raw: document,
-      }
-    } catch(err: unknown) {
+      };
+    } catch (err: unknown) {
       throw this.tryConvertToProblem(err);
     }
   }
@@ -118,7 +118,7 @@ export class ParserService {
         read(file: { url: string }) {
           return serializeRefs[String(file.url)];
         }
-      }
+      };
     }
 
     return {

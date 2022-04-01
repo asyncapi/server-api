@@ -7,7 +7,7 @@ import { ProblemException } from '../../exceptions/problem.exception';
 describe('ParserService', () => {
   const parserService = new ParserService();
   const req = {
-    header() { return '' },
+    header() { return ''; },
   } as unknown as Request;
 
   describe('.parse()', () => {
@@ -204,13 +204,9 @@ describe('ParserService', () => {
       expect(parsed).toEqual(undefined);
       expect(err).toBeInstanceOf(ProblemException);
       expect(ProblemException.toJSON(err).type).toEqual(ProblemException.createType('dereference-error'));
-    })
+    });
 
     it('should throw error due to invalid AsyncAPI document', async () => {
-      const options = ParserService.createConfig({
-        header() { return '' },
-      } as any);
-
       let err: ProblemException;
       let parsed: AsyncAPIDocument;
       try {

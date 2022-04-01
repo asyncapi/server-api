@@ -10,5 +10,5 @@ export function retrieveDocument(body: string | AsyncAPIDocument | { document: s
   return {
     document: body as string | AsyncAPIDocument,
     references: undefined,
-  }
+  };
 }
