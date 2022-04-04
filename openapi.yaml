@@ -21,7 +21,7 @@ paths:
       operationId: validate
       tags:
         - validate
-        - validator
+        - parser
       externalDocs:
         name: Github Repository for the AsyncAPI Parser
         url: https://github.com/asyncapi/parser-js
@@ -57,7 +57,7 @@ paths:
   /parse:
     post:
       summary: Parse the given AsyncAPI document.
-      operationId: validate
+      operationId: parse
       tags:
         - parse
         - parser
@@ -72,7 +72,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ParseRequest'
       responses:
-        "204":
+        "200":
           description: AsyncAPI document successfully parsed.
           content:
             application/json:
