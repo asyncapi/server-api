@@ -1,8 +1,6 @@
 // @ts-ignore
 import AsyncAPIGenerator from '@asyncapi/generator';
-import { AsyncAPIDocument } from '@asyncapi/parser';
-
-import { prepareParserConfig } from '../utils/parser';
+import { AsyncAPIDocument, ParserOptions } from '@asyncapi/parser';
 
 /**
  * Service providing `@asyncapi/generate` functionality.
@@ -13,7 +11,7 @@ export class GeneratorService {
     template: string,
     parameters: Record<string, any>,
     destDir: string,
-    parserOptions: ReturnType<typeof prepareParserConfig>,
+    parserOptions: ParserOptions,
   ) {
     const generator = new AsyncAPIGenerator(template, destDir, {
       forceWrite: true,

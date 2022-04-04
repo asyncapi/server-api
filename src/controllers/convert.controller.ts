@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 
-import { Controller, AsyncAPIDocument, SpecsEnum } from '../interfaces';
+import { Controller, AsyncAPIDocument, SpecsEnum, ParsedAsyncAPIDocument } from '../interfaces';
 
 import { validationMiddleware } from '../middlewares/validation.middleware';
 
@@ -31,9 +31,10 @@ export class ConvertController implements Controller {
 
   private async convert(req: Request, res: Response, next: NextFunction) {
     try {
-      const { version, language, asyncapi } = req.body as ConvertRequestDto;
+      const asyncapi = req.asyncapi.documents.asyncapi as ParsedAsyncAPIDocument;
+      const { version, language } = req.body as ConvertRequestDto;
       const convertedSpec = await this.convertService.convert(
-        asyncapi,
+        asyncapi.raw,
         version,
         language,
       );

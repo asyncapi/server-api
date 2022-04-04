@@ -7,7 +7,7 @@ import { GenerateController } from '../generate.controller';
 
 describe('GeneratorController', () => {
   describe('[POST] /generate', () => {
-    it('should generate template ', async () => {
+    it('should generate template', async () => {
       const app = new App([new GenerateController()]);
       await app.init();
 
@@ -30,7 +30,7 @@ describe('GeneratorController', () => {
         .expect(200);
     });
 
-    it('should pass when sent template parameters are empty', async () => {
+    it('should generate when sent template parameters are empty', async () => {
       const app = new App([new GenerateController()]);
       await app.init();
 
@@ -46,6 +46,54 @@ describe('GeneratorController', () => {
             channels: {},
           },
           template: '@asyncapi/html-template',
+        })
+        .expect(200);
+    });
+
+    it('should generate template with document references', async () => {
+      const app = new App([new GenerateController()]);
+      await app.init();
+
+      return request(app.getServer())
+        .post('/v1/generate')
+        .send({
+          asyncapi: {
+            document: {
+              asyncapi: '2.0.0',
+              info: {
+                title: 'Super test',
+                version: '1.0.0'
+              },
+              channels: {
+                someChannel1: {
+                  $ref: '../some-file.json#/components/someChannel',
+                },
+                someChannel2: {
+                  $ref: '../../another-file.json#/components/someChannel',
+                }
+              }
+            },
+            references: {
+              '../some-file.json': {
+                components: {
+                  someChannel: {
+                    $ref: '../another-file.json#/components/someChannel',
+                  }
+                }
+              },
+              '../../another-file.json': {
+                components: {
+                  someChannel: {
+                    subscribe: {},
+                  }
+                }
+              }
+            }
+          },
+          template: '@asyncapi/html-template',
+          parameters: {
+            version: '2.1.37',
+          }
         })
         .expect(200);
     });

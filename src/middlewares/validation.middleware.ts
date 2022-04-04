@@ -3,10 +3,9 @@ import { Request, Response, NextFunction } from 'express';
 import { ProblemException } from '../exceptions/problem.exception';
 import { createAjvInstance } from '../utils/ajv';
 import { getAppOpenAPI } from '../utils/app-openapi';
-import { parse, prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
+import { ParserService } from '../services/parser.service';
 
 import type { ValidateFunction } from 'ajv';
-import type { AsyncAPIDocument } from '../interfaces';
 
 export interface ValidationMiddlewareOptions {
   path: string;
@@ -15,6 +14,7 @@ export interface ValidationMiddlewareOptions {
   version?: 'v1';
 }
 
+const parserService = new ParserService();
 const ajvInstance = createAjvInstance();
 
 /**
@@ -46,17 +46,19 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   schema['$schema'] = 'http://json-schema.org/draft-07/schema';
 
   if (options.documents && schema.properties) {
-    schema.properties = { ...schema.properties };
     options.documents.forEach(field => {
+      // handle union of raw document or with references
+      if (schema.properties[String(field)].oneOf) {
+        schema.properties[String(field)].oneOf = [true];
+        return;
+      }
+
+      // handle list of documents
       if (schema.properties[String(field)].items) {
-        schema.properties[String(field)] = { ...schema.properties[String(field)] };
         schema.properties[String(field)].items = true;
-      } else {
-        schema.properties[String(field)] = true;
       }
     });
   }
-
   return ajvInstance.compile(schema);
 }
 
@@ -71,19 +73,6 @@ async function validateRequestBody(validate: ValidateFunction, body: any) {
       status: 422,
       validationErrors: errors as any,
     });
-  }
-}
-
-async function validateSingleDocument(asyncapi: string | AsyncAPIDocument, parserConfig: ReturnType<typeof prepareParserConfig>) {
-  if (typeof asyncapi === 'object') {
-    asyncapi = JSON.parse(JSON.stringify(asyncapi));
-  }
-  await parse(asyncapi, parserConfig);
-}
-
-async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>, parserConfig: ReturnType<typeof prepareParserConfig>) {
-  for (const asyncapi of asyncapis) {
-    await validateSingleDocument(asyncapi, parserConfig);
   }
 }
 
@@ -104,20 +93,27 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
     }
 
     // validate AsyncAPI document(s)
-    const parserConfig = prepareParserConfig(req);
     try {
+      req.asyncapi = { documents: {} };
       for (const field of documents) {
-        const body = req.body[String(field)];
-        if (Array.isArray(body)) {
-          await validateListDocuments(body, parserConfig);
+        const document = req.body[String(field)];
+
+        if (Array.isArray(document)) {
+          const docs = [];
+          req.asyncapi.documents[String(field)] = docs;
+          for (const asyncapi of document) {
+            const { parsed, raw } = await parserService.parse(asyncapi, req);
+            docs.push({ parsed, raw });
+          }
         } else {
-          await validateSingleDocument(body, parserConfig);
+          const { parsed, raw } = await parserService.parse(document, req);
+          req.asyncapi.documents[String(field)] = { parsed, raw };
         }
       }
 
       next();
     } catch (err: unknown) {
-      return next(tryConvertToProblemException(err));
+      return next(err);
     }
   };
 }

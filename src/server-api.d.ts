@@ -1,7 +1,9 @@
-import { AsyncAPIDocument } from '@asyncapi/parser';
+import type { ParsedAsyncAPIDocument } from './interfaces';
 
 declare module 'express' {
   export interface Request {
-    parsedDocument?: AsyncAPIDocument;
+    asyncapi: {
+      documents: Record<string, ParsedAsyncAPIDocument | Array<ParsedAsyncAPIDocument>>;
+    };
   }
 }

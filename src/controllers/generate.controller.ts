@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { NextFunction, Request, Response, Router } from 'express';
 import Ajv from 'ajv';
+import { AsyncAPIDocument } from '@asyncapi/parser';
 
 import { Controller } from '../interfaces';
 
@@ -10,8 +11,10 @@ import { validationMiddleware } from '../middlewares/validation.middleware';
 import { ArchiverService } from '../services/archiver.service';
 import { GeneratorService } from '../services/generator.service';
 
+import { ParserService } from '../services/parser.service';
 import { ProblemException } from '../exceptions/problem.exception';
-import { prepareParserConfig } from '../utils/parser';
+import { retrieveDocument } from '../utils/retrieve-document';
+import { createAjvInstance } from '../utils/ajv';
 
 /**
  * Controller which exposes the Generator functionality
@@ -31,19 +34,19 @@ export class GenerateController implements Controller {
     }
 
     const zip = this.archiverService.createZip(res);
-
     let tmpDir: string;
     try {
       tmpDir = await this.archiverService.createTempDirectory();
       const { asyncapi, template, parameters } = req.body;
+      const { document, references } = retrieveDocument(asyncapi);
 
       try {
         await this.generatorService.generate(
-          asyncapi,
+          document as string | AsyncAPIDocument,
           template,
           parameters,
           tmpDir,
-          prepareParserConfig(req),
+          ParserService.createConfig(req, references),
         );
       } catch (genErr: unknown) {
         return next(new ProblemException({
@@ -138,12 +141,7 @@ export class GenerateController implements Controller {
   }
 
   public async boot(): Promise<Router> {
-    this.ajv = new Ajv({
-      inlineRefs: true,
-      allErrors: true,
-      schemaId: 'id',
-      logger: false,
-    });
+    this.ajv = createAjvInstance();
     const router = Router();
 
     router.post(
