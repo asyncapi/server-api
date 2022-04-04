@@ -124,12 +124,6 @@ export class ParserService {
     return {
       resolve: {
         file: fileResolver,
-        http: {
-          headers: {
-            Cookie: req.header('Cookie'),
-          },
-          withCredentials: true,
-        },
       },
     };
   }

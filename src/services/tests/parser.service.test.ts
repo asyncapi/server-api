@@ -206,6 +206,31 @@ describe('ParserService', () => {
       expect(ProblemException.toJSON(err).type).toEqual(ProblemException.createType('dereference-error'));
     });
 
+    it('should throw error due to non existing reference - check fs', async () => {
+      let err: ProblemException;
+      let parsed: AsyncAPIDocument;
+      try {
+        ({ parsed } = await parserService.parse({
+          asyncapi: '2.0.0',
+          info: {
+            title: 'Super test',
+            version: '1.0.0'
+          },
+          channels: {
+            someChannel: {
+              $ref: './openapi.yaml',
+            }
+          }
+        }, req));
+      } catch (e) {
+        err = e;
+      }
+
+      expect(parsed).toEqual(undefined);
+      expect(err).toBeInstanceOf(ProblemException);
+      expect(ProblemException.toJSON(err).type).toEqual(ProblemException.createType('dereference-error'));
+    });
+
     it('should throw error due to invalid AsyncAPI document', async () => {
       let err: ProblemException;
       let parsed: AsyncAPIDocument;
