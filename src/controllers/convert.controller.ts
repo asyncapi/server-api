@@ -38,7 +38,7 @@ export class ConvertController implements Controller {
         language,
       );
 
-      res.json({
+      res.status(200).json({
         converted: convertedSpec
       });
     } catch (err: unknown) {

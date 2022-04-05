@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { AsyncAPIDocument } from '@asyncapi/parser';
 
 import { ProblemException } from '../exceptions/problem.exception';
 import { createAjvInstance } from '../utils/ajv';
@@ -6,7 +7,6 @@ import { getAppOpenAPI } from '../utils/app-openapi';
 import { parse, prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
 
 import type { ValidateFunction } from 'ajv';
-import type { AsyncAPIDocument } from '../interfaces';
 
 export interface ValidationMiddlewareOptions {
   path: string;
@@ -78,13 +78,16 @@ async function validateSingleDocument(asyncapi: string | AsyncAPIDocument, parse
   if (typeof asyncapi === 'object') {
     asyncapi = JSON.parse(JSON.stringify(asyncapi));
   }
-  await parse(asyncapi, parserConfig);
+  return parse(asyncapi, parserConfig);
 }
 
 async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>, parserConfig: ReturnType<typeof prepareParserConfig>) {
+  const parsedDocuments: Array<AsyncAPIDocument> = [];
   for (const asyncapi of asyncapis) {
-    await validateSingleDocument(asyncapi, parserConfig);
+    const parsed = await validateSingleDocument(asyncapi, parserConfig);
+    parsedDocuments.push(parsed);
   }
+  return parsedDocuments;
 }
 
 /**
@@ -106,12 +109,15 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
     // validate AsyncAPI document(s)
     const parserConfig = prepareParserConfig(req);
     try {
+      req.asyncapi = req.asyncapi || {};
       for (const field of documents) {
         const body = req.body[String(field)];
         if (Array.isArray(body)) {
-          await validateListDocuments(body, parserConfig);
+          const parsed = await validateListDocuments(body, parserConfig);
+          req.asyncapi.parsedDocuments = parsed;
         } else {
-          await validateSingleDocument(body, parserConfig);
+          const parsed = await validateSingleDocument(body, parserConfig);
+          req.asyncapi.parsedDocument = parsed;
         }
       }
 

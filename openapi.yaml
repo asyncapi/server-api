@@ -15,6 +15,88 @@ servers:
   - url: https://api.asyncapi.com/v1
 
 paths:
+  /validate:
+    post:
+      summary: Validate the given AsyncAPI document.
+      operationId: validate
+      tags:
+        - validate
+        - parser
+      externalDocs:
+        name: Github Repository for the AsyncAPI Parser
+        url: https://github.com/asyncapi/parser-js
+      requestBody:
+        description: Validate the given AsyncAPI document.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateRequest'
+      responses:
+        "204":
+          description: The given AsyncAPI document is valid.
+        "400":
+          description: The given AsyncAPI document is not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The given AsyncAPI document is not valid due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /parse:
+    post:
+      summary: Parse the given AsyncAPI document.
+      operationId: parse
+      tags:
+        - parse
+        - parser
+      externalDocs:
+        name: Github Repository for the AsyncAPI Parser
+        url: https://github.com/asyncapi/parser-js
+      requestBody:
+        description: Parse the given AsyncAPI document.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParseRequest'
+      responses:
+        "200":
+          description: AsyncAPI document successfully parsed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParseResponse"
+        "400":
+          description: The given AsyncAPI document is not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The given AsyncAPI document is not valid due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /generate:
     post:
       summary: Generate the given AsyncAPI template.
@@ -47,45 +129,6 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "422":
           description: Failed to generate the given template due to invalid parameters.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        default:
-          description: Unexpected problem.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-
-  /validate:
-    post:
-      summary: Validate the given AsyncAPI document.
-      operationId: validate
-      tags:
-        - validate
-        - validator
-      externalDocs:
-        name: Github Repository for the AsyncAPI Parser
-        url: https://github.com/asyncapi/parser-js
-      requestBody:
-        description: Validate the given AsyncAPI document with the AsyncAPI parser.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ValidateRequest'
-      responses:
-        "204":
-          description: The given AsyncAPI document is valid.
-        "400":
-          description: The given AsyncAPI document is not valid.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "422":
-          description: The given AsyncAPI document is not valid due to invalid parameters in the request.
           content:
             application/json:
               schema:
@@ -257,6 +300,29 @@ components:
         - '2.3.0'
         - 'latest'
 
+    ValidateRequest:
+      type: object
+      required:
+        - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
+
+    ParseRequest:
+      type: object
+      required:
+        - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
+    ParseResponse:
+      type: object
+      required:
+        - parsed
+      properties:
+        parsed:
+          type: string
+
     GenerateRequest:
       type: object
       required:
@@ -290,14 +356,6 @@ components:
     GenerateResponse:
       type: string
       format: binary
-
-    ValidateRequest:
-      type: object
-      required:
-        - asyncapi
-      properties:
-        asyncapi:
-          $ref: '#/components/schemas/AsyncAPIDocument'
 
     ConvertRequest:
       type: object
