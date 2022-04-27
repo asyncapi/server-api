@@ -10,8 +10,8 @@ const validJsonAsyncAPI2_0_0 = {
   channels: {}
 };
 
-const validYamlAsyncAPI2_3_0 = `
-asyncapi: 2.3.0
+const validYamlAsyncAPI2_4_0 = `
+asyncapi: 2.4.0
 info:
   title: Super test
   version: 1.0.0
@@ -38,11 +38,11 @@ describe('ConvertService', () => {
       }));
     });
 
-    it('should pass when converting to 2.3.0 version', async () => {
-      const converted = await convertService.convert(validJsonAsyncAPI2_0_0, '2.3.0');
+    it('should pass when converting to 2.4.0 version', async () => {
+      const converted = await convertService.convert(validJsonAsyncAPI2_0_0, '2.4.0');
 
       expect(converted).toEqual({
-        asyncapi: '2.3.0',
+        asyncapi: '2.4.0',
         info: {
           title: 'Super test',
           version: '1.0.0'
@@ -55,7 +55,7 @@ describe('ConvertService', () => {
       const converted = await convertService.convert(validJsonAsyncAPI2_0_0);
 
       expect(converted).toEqual({
-        asyncapi: '2.3.0',
+        asyncapi: '2.4.0',
         info: {
           title: 'Super test',
           version: '1.0.0'
@@ -65,9 +65,9 @@ describe('ConvertService', () => {
     });
 
     it('should correctly convert JSON to YAML', async () => {
-      const converted = await convertService.convert(validJsonAsyncAPI2_0_0, '2.3.0', 'yaml');
+      const converted = await convertService.convert(validJsonAsyncAPI2_0_0, '2.4.0', 'yaml');
 
-      expect(converted).toEqual(validYamlAsyncAPI2_3_0.trimStart());
+      expect(converted).toEqual(validYamlAsyncAPI2_4_0.trimStart());
     });
   });
 });
