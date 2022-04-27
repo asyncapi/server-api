@@ -16,7 +16,7 @@ const validJsonAsyncAPI2_0_0 = {
 };
 
 const validYamlAsyncAPI2_3_0 = `
-asyncapi: 2.3.0
+asyncapi: 2.4.0
 info:
   title: Super test
   version: 1.0.0
@@ -78,7 +78,7 @@ describe('ConvertController', () => {
         });
     });
 
-    it('should pass when converting to 2.3.0 version', async () => {
+    it('should pass when converting to 2.4.0 version', async () => {
       const app = new App([new ConvertController()]);
       await app.init();
 
@@ -86,11 +86,11 @@ describe('ConvertController', () => {
         .post('/v1/convert')
         .send({
           asyncapi: validJsonAsyncAPI2_0_0,
-          version: '2.3.0'
+          version: '2.4.0'
         })
         .expect(200, {
           converted: {
-            asyncapi: '2.3.0',
+            asyncapi: '2.4.0',
             info: {
               title: 'Super test',
               version: '1.0.0'
@@ -111,7 +111,7 @@ describe('ConvertController', () => {
         })
         .expect(200, {
           converted: {
-            asyncapi: '2.3.0',
+            asyncapi: '2.4.0',
             info: {
               title: 'Super test',
               version: '1.0.0'
@@ -129,7 +129,7 @@ describe('ConvertController', () => {
         .post('/v1/convert')
         .send({
           asyncapi: validJsonAsyncAPI2_0_0,
-          version: '2.3.0',
+          version: '2.4.0',
           language: 'yaml'
         })
         .expect(200, {
