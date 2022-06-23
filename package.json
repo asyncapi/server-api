@@ -45,7 +45,7 @@
     "@asyncapi/bundler": "^0.1.2",
     "@asyncapi/converter": "^0.11.0",
     "@asyncapi/diff": "^0.4.0",
-    "@asyncapi/dotnet-nats-template": "^0.4.14",
+    "@asyncapi/dotnet-nats-template": "^0.5.0",
     "@asyncapi/generator": "^1.9.5",
     "@asyncapi/go-watermill-template": "^0.2.5",
     "@asyncapi/html-template": "^0.24.10",
