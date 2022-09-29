@@ -55,7 +55,7 @@ describe('ConvertService', () => {
       const converted = await convertService.convert(validJsonAsyncAPI2_0_0);
 
       expect(converted).toEqual({
-        asyncapi: '2.4.0',
+        asyncapi: '2.5.0',
         info: {
           title: 'Super test',
           version: '1.0.0'

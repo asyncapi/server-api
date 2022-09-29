@@ -111,7 +111,7 @@ describe('ConvertController', () => {
         })
         .expect(200, {
           converted: {
-            asyncapi: '2.4.0',
+            asyncapi: '2.5.0',
             info: {
               title: 'Super test',
               version: '1.0.0'
