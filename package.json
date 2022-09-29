@@ -43,7 +43,7 @@
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@asyncapi/avro-schema-parser": "^1.1.0",
     "@asyncapi/bundler": "^0.2.2",
-    "@asyncapi/converter": "^1.0.0",
+    "@asyncapi/converter": "^1.1.0",
     "@asyncapi/diff": "^0.4.0",
     "@asyncapi/dotnet-nats-template": "^0.8.3",
     "@asyncapi/generator": "^1.9.11",
