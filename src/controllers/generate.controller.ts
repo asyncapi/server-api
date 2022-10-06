@@ -11,7 +11,7 @@ import { ArchiverService } from '../services/archiver.service';
 import { GeneratorService } from '../services/generator.service';
 
 import { ProblemException } from '../exceptions/problem.exception';
-import { prepareParserConfig } from '../utils/parser';
+import { prepareParseOptions } from '../utils/parser';
 
 /**
  * Controller which exposes the Generator functionality
@@ -43,7 +43,7 @@ export class GenerateController implements Controller {
           template,
           parameters,
           tmpDir,
-          prepareParserConfig(req),
+          prepareParseOptions(req),
         );
       } catch (genErr: unknown) {
         return next(new ProblemException({

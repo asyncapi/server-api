@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { AsyncAPIDocument } from '@asyncapi/parser';
+import { stringify } from '@asyncapi/parser';
 
 import { validationMiddleware } from '../middlewares/validation.middleware';
 
@@ -12,7 +12,7 @@ export class ParseController implements Controller {
   public basepath = '/parse';
 
   private async parse(req: Request, res: Response) {
-    const stringified = AsyncAPIDocument.stringify(req.asyncapi?.parsedDocument);
+    const stringified = stringify(req.asyncapi?.parsedDocument);
     res.status(200).json({
       parsed: stringified,
     });

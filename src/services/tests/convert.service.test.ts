@@ -23,7 +23,7 @@ describe('ConvertService', () => {
 
   describe('.convert()', () => {
     it('should throw error that the converter cannot convert to a lower version', async () => {
-      let err: ProblemException;
+      let err: ProblemException | undefined;
       try {
         await convertService.convert(validJsonAsyncAPI2_0_0, '1.2.0');
       } catch (e) {

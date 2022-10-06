@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { AsyncAPIDocument } from '@asyncapi/parser';
-
+import { hasErrorDiagnostic } from '@asyncapi/parser/cjs/utils';
 import { ProblemException } from '../exceptions/problem.exception';
 import { createAjvInstance } from '../utils/ajv';
 import { getAppOpenAPI } from '../utils/app-openapi';
-import { parse, prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
+import { parser, prepareParseOptions, tryConvertParserExceptionToProblem } from '../utils/parser';
 
+import type { Request, Response, NextFunction } from 'express';
+import type { AsyncAPIDocumentInterface, ParseOptions, Diagnostic } from '@asyncapi/parser';
 import type { ValidateFunction } from 'ajv';
 
 export interface ValidationMiddlewareOptions {
@@ -25,12 +25,17 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   const paths = appOpenAPI.paths || {};
 
   const pathName = options.path;
+  const methodName = options.method;
+
+  const validatorKey = `${pathName}->${methodName}`;
+  const validate = ajvInstance.getSchema(validatorKey);
+  if (validate) return validate;
+
   const path = paths[String(pathName)];
   if (!path) {
     throw new Error(`Path "${pathName}" doesn't exist in the OpenAPI document.`);
   }
   
-  const methodName = options.method;
   const method = path[String(methodName)];
   if (!method) {
     throw new Error(`Method "${methodName}" for "${pathName}" path doesn't exist in the OpenAPI document.`);
@@ -42,7 +47,7 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   let schema = requestBody.content['application/json'].schema;
   if (!schema) return;
 
-  schema = { ...schema };
+  schema = { ...schema }; // shallow copy
   schema['$schema'] = 'http://json-schema.org/draft-07/schema';
 
   if (options.documents && schema.properties) {
@@ -57,7 +62,8 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
     });
   }
 
-  return ajvInstance.compile(schema);
+  ajvInstance.addSchema(schema, validatorKey);
+  return ajvInstance.getSchema(validatorKey);
 }
 
 async function validateRequestBody(validate: ValidateFunction, body: any) {
@@ -74,20 +80,22 @@ async function validateRequestBody(validate: ValidateFunction, body: any) {
   }
 }
 
-async function validateSingleDocument(asyncapi: string | AsyncAPIDocument, parserConfig: ReturnType<typeof prepareParserConfig>) {
+async function validateSingleDocument(asyncapi: string | AsyncAPIDocumentInterface, parseConfig: ParseOptions) {
   if (typeof asyncapi === 'object') {
     asyncapi = JSON.parse(JSON.stringify(asyncapi));
   }
-  return parse(asyncapi, parserConfig);
+  return parser.parse(asyncapi, parseConfig);
 }
 
-async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>, parserConfig: ReturnType<typeof prepareParserConfig>) {
-  const parsedDocuments: Array<AsyncAPIDocument> = [];
+async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocumentInterface>, parseConfig: ParseOptions) {
+  const parsedDocuments: Array<AsyncAPIDocumentInterface> = [];
+  const allDiagnostics: Array<Diagnostic> = [];
   for (const asyncapi of asyncapis) {
-    const parsed = await validateSingleDocument(asyncapi, parserConfig);
-    parsedDocuments.push(parsed);
+    const { document, diagnostics } = await validateSingleDocument(asyncapi, parseConfig);
+    parsedDocuments.push(document);
+    allDiagnostics.push(...diagnostics);
   }
-  return parsedDocuments;
+  return { documents: parsedDocuments, diagnostics: allDiagnostics };
 }
 
 /**
@@ -107,23 +115,31 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
     }
 
     // validate AsyncAPI document(s)
-    const parserConfig = prepareParserConfig(req);
+    const parserConfig = prepareParseOptions(req);
+    let _diagnostics: Diagnostic[] = [];
     try {
       req.asyncapi = req.asyncapi || {};
       for (const field of documents) {
         const body = req.body[String(field)];
+
         if (Array.isArray(body)) {
-          const parsed = await validateListDocuments(body, parserConfig);
-          req.asyncapi.parsedDocuments = parsed;
+          const { documents, diagnostics } = await validateListDocuments(body, parserConfig);
+          req.asyncapi.parsedDocuments = documents;
+          _diagnostics = diagnostics;
         } else {
-          const parsed = await validateSingleDocument(body, parserConfig);
-          req.asyncapi.parsedDocument = parsed;
+          const { document, diagnostics } = await validateSingleDocument(body, parserConfig);
+          req.asyncapi.parsedDocument = document;
+          _diagnostics = diagnostics;
         }
+      }
+
+      if (hasErrorDiagnostic(_diagnostics)) {
+        return next(tryConvertParserExceptionToProblem(_diagnostics));
       }
 
       next();
     } catch (err: unknown) {
-      return next(tryConvertToProblemException(err));
+      return next(tryConvertParserExceptionToProblem(err));
     }
   };
 }

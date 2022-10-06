@@ -131,38 +131,17 @@ describe('ValidateController', () => {
       const app = new App([new ValidateController()]);
       await app.init();
 
-      return request(app.getServer())
+      const res = await request(app.getServer())
         .post('/v1/validate')
         .send({
           asyncapi: invalidJSONAsyncAPI
         })
-        .expect(422, {
-          type: ProblemException.createType('validation-errors'),
-          title: 'There were errors validating the AsyncAPI document.',
-          status: 422,
-          validationErrors: [
-            {
-              title: '/info should NOT have additional properties',
-              location: {
-                jsonPointer: '/info'
-              }
-            },
-            {
-              title: '/info should have required property \'title\'',
-              location: {
-                jsonPointer: '/info'
-              }
-            }
-          ],
-          parsedJSON: {
-            asyncapi: '2.0.0',
-            info: {
-              tite: 'My API',
-              version: '1.0.0'
-            },
-            channels: {}
-          }
-        });
+        .expect(400);
+
+      expect(res.body.type).toEqual('https://api.asyncapi.com/problem/invalid-asyncapi-document(s)');
+      expect(res.body.title).toEqual('The provided AsyncAPI Document(s) is invalid');
+      expect(res.body.status).toEqual(400);
+      expect(res.body.diagnostics).toBeTruthy();
     });
   });
 });
