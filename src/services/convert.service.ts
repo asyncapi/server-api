@@ -19,11 +19,11 @@ export class ConvertService {
    */
   public async convert(
     spec: string | AsyncAPIDocument,
-    version: SpecsEnum = LAST_SPEC_VERSION,
+    version: SpecsEnum = LAST_SPEC_VERSION as SpecsEnum,
     language?: 'json' | 'yaml' | 'yml',
   ): Promise<string> {
     if (version === 'latest') {
-      version = LAST_SPEC_VERSION;
+      version = LAST_SPEC_VERSION as SpecsEnum;
     }
 
     try {

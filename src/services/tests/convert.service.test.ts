@@ -10,6 +10,15 @@ const validJsonAsyncAPI2_0_0 = {
   channels: {}
 };
 
+const validJsonAsyncAPI2_1_0 = {
+  asyncapi: '2.1.0',
+  info: {
+    title: 'Super test',
+    version: '1.0.0'
+  },
+  channels: {}
+};
+
 const validYamlAsyncAPI2_4_0 = `
 asyncapi: 2.4.0
 info:
@@ -23,9 +32,9 @@ describe('ConvertService', () => {
 
   describe('.convert()', () => {
     it('should throw error that the converter cannot convert to a lower version', async () => {
-      let err: ProblemException;
+      let err: ProblemException | null = null;
       try {
-        await convertService.convert(validJsonAsyncAPI2_0_0, '1.2.0');
+        await convertService.convert(validJsonAsyncAPI2_1_0, '2.0.0');
       } catch (e) {
         err = e;
       }
@@ -34,7 +43,7 @@ describe('ConvertService', () => {
         type: 'internal-converter-error',
         title: 'Could not convert document',
         status: 422,
-        detail: 'Cannot downgrade from 2.0.0 to 1.2.0.',
+        detail: 'Cannot downgrade from 2.1.0 to 2.0.0.',
       }));
     });
 
