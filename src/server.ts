@@ -12,6 +12,7 @@ import { ConvertController } from './controllers/convert.controller';
 import { BundleController } from './controllers/bundle.controller';
 import { DiffController } from './controllers/diff.controller';
 import { DocsController } from './controllers/docs.controller';
+import {ShareController} from './controllers/share.controller';
 
 async function main() {
   const app = new App([
@@ -22,6 +23,7 @@ async function main() {
     new BundleController(),
     new DiffController(),
     new DocsController(),
+    new ShareController()
   ]);
   await app.init();
   app.listen();

@@ -269,6 +269,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+  /share:
+    post:
+      summary: Save the given AsyncAPI document.
+      operationId: saveDoc
+      tags:
+        - share
+      requestBody:
+        description: Parse your AsyncAPI document.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareRequest"
+      responses:
+        "200":
+          description: AsyncAPI document successfully saved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareResponse"
+        "400":
+          description: The given AsyncAPI document(s) is/are not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The given AsyncAPI document(s) is/are not valid due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
 components:
   schemas:
     AsyncAPIDocument:
@@ -418,6 +457,21 @@ components:
           type: [object, string]
           description: The diff between the two AsyncAPI documents.
 
+    ShareRequest:
+      type: object
+      required:
+        - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
+    ShareResponse:
+      type: object
+      required:
+        - asyncapi 
+      properties:
+        shared:
+          $ref: "#/components/schemas/AsyncAPIDocument"
+          
     Problem:
       type: object
       properties:
