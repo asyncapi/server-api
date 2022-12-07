@@ -1,20 +1,47 @@
-import { Request, Response, Router } from 'express';
+import { Request, Response, Router, NextFunction } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 import { Controller } from '../interfaces';
 import { AsyncAPIDocument } from '@asyncapi/parser';
-
 import { validationMiddleware } from '../middlewares/validation.middleware';
+import Data from '../models/data';
+import { ProblemException } from '../exceptions/problem.exception';
 
 export class ShareController implements Controller {
   public basepath = '/share';
-  
-  private async share(req: Request, res: Response) {
-    console.log(req);
-    const stringified = AsyncAPIDocument.stringify(
+
+  private async share(req: Request, res: Response, next: NextFunction) {
+    const stringifiedSpec = AsyncAPIDocument.stringify(
       req.asyncapi?.parsedDocument
     );
-    res.status(200).json({
-      parsed: stringified,
-    });
+
+    const docId = uuidv4();
+    try {
+      let data = await Data.findOne({ spec: stringifiedSpec });
+      if (data) {
+        res.status(201).json({
+          url: `https://studio.asyncapi.com/${data.docId}`,
+        });
+      } else {
+        data = new Data({
+          doc: stringifiedSpec,
+          docId,
+          date: Date.now(),
+        });
+        await data.save();
+        res.status(201).json({
+          url: `https://studio.asyncapi.com/${docId}`,
+        });
+      }
+    } catch (error: unknown) {
+      return next(
+        new ProblemException({
+          type: 'internal-generator-error',
+          title: 'Internal Generator error',
+          status: 500,
+          detail: (error as Error).message,
+        })
+      );
+    }
   }
 
   public async boot(): Promise<Router> {
