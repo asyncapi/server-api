@@ -4,6 +4,7 @@ import config from 'config';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
 
 import { Controller } from './interfaces';
 
@@ -32,6 +33,7 @@ export class App {
     await this.initializeControllers();
     // initialize error handling
     await this.initializeErrorHandling();
+    await this.initializeDatabase();
   }
 
   public listen() {
@@ -76,5 +78,16 @@ export class App {
 
   private async initializeErrorHandling() {
     this.app.use(problemMiddleware);
+  }
+
+  private async initializeDatabase() {
+    await mongoose
+      .connect('mongodb://localhost:27017/asyncapi')
+      .then(() => {
+        logger.info('🚀 Database connection is successful');
+      })
+      .catch((err) => {
+        logger.error(`Database connection failed${  err.message}`);
+      });
   }
 }

@@ -71,6 +71,7 @@
     "express": "^4.17.1",
     "helmet": "^5.0.2",
     "js-yaml": "^4.1.0",
+    "mongoose": "^6.8.0",
     "redoc-express": "^1.0.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
