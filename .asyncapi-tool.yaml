@@ -1,0 +1,13 @@
+title: AsyncAPI Server API
+description: Server API providing official AsyncAPI tools.
+links:
+  websiteUrl: https://api.asyncapi.com/v1
+  docsUrl: https://api.asyncapi.com/v1/docs
+filters:
+  language: JavaScript
+  technology:
+    - Express.js
+    - TypeScript
+  categories:
+    - server
+    - api
