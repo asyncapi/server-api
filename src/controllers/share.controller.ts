@@ -13,26 +13,41 @@ export class ShareController implements Controller {
     const stringifiedSpec = AsyncAPIDocument.stringify(
       req.asyncapi?.parsedDocument
     );
-
     const docId = uuidv4();
     try {
-      let data = await Data.findOne({ spec: stringifiedSpec });
-      if (data) {
-        res.status(201).json({
-          url: `https://studio.asyncapi.com/${data.docId}`,
+      const data = new Data({
+        doc: stringifiedSpec,
+        docId,
+        date: Date.now(),
+      });
+      await data.save();
+      res.status(201).json({
+        url: `https://studio.asyncapi.com/${docId}`,
+      });
+    } catch (error: unknown) {
+      return next(
+        new ProblemException({
+          type: 'internal-generator-error',
+          title: 'Internal Generator error',
+          status: 500,
+          detail: (error as Error).message,
+        })
+      );
+    }
+  }
+
+  private async retrieve(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    try {
+      const result = await Data.findOne({docId: id});
+      if (result) {
+        res.status(200).json({
+          document: result.doc
         });
       } else {
-        data = new Data({
-          doc: stringifiedSpec,
-          docId,
-          date: Date.now(),
-        });
-        await data.save();
-        res.status(201).json({
-          url: `https://studio.asyncapi.com/${docId}`,
-        });
+        res.status(404).json('No document with id was found');
       }
-    } catch (error: unknown) {
+    } catch (error) {
       return next(
         new ProblemException({
           type: 'internal-generator-error',
@@ -56,6 +71,14 @@ export class ShareController implements Controller {
       this.share.bind(this)
     );
 
+    router.get(
+      `${this.basepath}/:id`,
+      await validationMiddleware({
+        path: `${this.basepath}/:id`,
+        method: 'get',
+      }),
+      this.retrieve.bind(this)
+    );
     return router;
   }
 }

@@ -307,6 +307,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+  /share/{id}:
+    get:
+      summary: Retrieve a given AsyncAPI document
+      operationId: getDoc
+      tags:
+        - share
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: 
+            $ref: "#/components/schemas/RetrieveRequest" 
+      schemas:
+        type: string
+      requestBody:
+        description: AsyncAPI document successfully saved.
+        required: true
+        content:
+          application/json:
+            schema:  
+                $ref: "#/components/schemas/RetrieveRequest"     
+      responses:
+        "200":
+          description: AsyncAPI document successfully saved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareResponse"
+        "400":
+          description: The given AsyncAPI document(s) is/are not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: The given AsyncAPI document(s) is/are not valid due to invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
 
 components:
   schemas:
@@ -471,7 +517,16 @@ components:
       properties:
         shared:
           $ref: "#/components/schemas/AsyncAPIDocument"
-          
+
+    RetrieveRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Document unique identifier
+      required:
+      - id       
+
     Problem:
       type: object
       properties:
