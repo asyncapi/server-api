@@ -82,12 +82,12 @@ export class App {
 
   private async initializeDatabase() {
     await mongoose
-      .connect('mongodb://localhost:27017/asyncapi')
+      .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/asyncapi')
       .then(() => {
         logger.info('🚀 Database connection is successful');
       })
       .catch((err) => {
-        logger.error(`Database connection failed${  err.message}`);
+        logger.error(`Database connection failed${err.message}`);
       });
   }
 }
