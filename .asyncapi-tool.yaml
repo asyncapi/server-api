@@ -1,0 +1,10 @@
+title: AsyncAPI Server API
+links:
+  websiteUrl: https://api.asyncapi.com/v1
+  docsUrl: https://api.asyncapi.com/v1/docs
+filters:
+  technology:
+    - Node.js
+    - TypeScript
+  categories:
+    - api
