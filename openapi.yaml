@@ -288,7 +288,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ShareResponse"
+                $ref: "#/components/schemas/ShareDocumentResponse"
         "400":
           description: The given AsyncAPI document(s) is/are not valid.
           content:

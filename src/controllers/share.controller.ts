@@ -1,15 +1,28 @@
 import { Request, Response, Router, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import mongoose from 'mongoose';
 import { Controller } from '../interfaces';
 import { AsyncAPIDocument } from '@asyncapi/parser';
 import { validationMiddleware } from '../middlewares/validation.middleware';
 import Data from '../models/data';
 import { ProblemException } from '../exceptions/problem.exception';
-
+import { logger } from '../utils/logger';
 export class ShareController implements Controller {
   public basepath = '/share';
 
+  private async initializeDatabase() {
+    await mongoose
+      .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/asyncapi')
+      .then(() => {
+        logger.info('🚀 Database connection is successful');
+      })
+      .catch((err) => {
+        logger.error(`Database connection failed${err.message}`);
+      });
+  }
+
   private async share(req: Request, res: Response, next: NextFunction) {
+    await this.initializeDatabase();
     const stringifiedSpec = AsyncAPIDocument.stringify(
       req.asyncapi?.parsedDocument
     );
@@ -37,12 +50,13 @@ export class ShareController implements Controller {
   }
 
   private async retrieve(req: Request, res: Response, next: NextFunction) {
+    await this.initializeDatabase();
     const { id } = req.params;
     try {
-      const result = await Data.findOne({docId: id});
+      const result = await Data.findOne({ docId: id });
       if (result) {
         res.status(200).json({
-          document: result.doc
+          document: result.doc,
         });
       } else {
         res.status(404).json('No document with id was found');
@@ -74,7 +88,7 @@ export class ShareController implements Controller {
     router.get(
       `${this.basepath}/:id`,
       await validationMiddleware({
-        path: `${this.basepath}/${id}`,
+        path: `${this.basepath}/{id}`,
         method: 'get',
       }),
       this.retrieve.bind(this)

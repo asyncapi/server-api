@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AsyncAPIDocument } from '@asyncapi/parser';
+import { validate as isValidUUID } from 'uuid';
 
 import { ProblemException } from '../exceptions/problem.exception';
 import { createAjvInstance } from '../utils/ajv';
@@ -60,6 +61,23 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   return ajvInstance.compile(schema);
 }
 
+async function validateRequestParameters(params: any, next:NextFunction) {
+  if (!params) return;
+  const valid = await isValidUUID(params.id);
+  if (valid === true) {
+    next();
+  }
+
+  if (valid === false) {
+    throw new ProblemException({
+      type: 'invalid-request-params',
+      title: 'Invalid Request Parameters',
+      status: 422,
+      validationErrors: 'Invalid Request Paramaters' as any,
+    });
+  }
+}
+
 async function validateRequestBody(validate: ValidateFunction, body: any) {
   const valid = validate(body);
   const errors = validate.errors && [...validate.errors];
@@ -101,29 +119,35 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
   return async function (req: Request, _: Response, next: NextFunction) {
     // validate request body
     try {
-      await validateRequestBody(validate, req.body);
+      if (validate) {
+        await validateRequestBody(validate, req.body);
+      } else {
+        await validateRequestParameters(req.params, next);
+      }
     } catch (err: unknown) {
       return next(err);
     }
 
     // validate AsyncAPI document(s)
-    const parserConfig = prepareParserConfig(req);
-    try {
-      req.asyncapi = req.asyncapi || {};
-      for (const field of documents) {
-        const body = req.body[String(field)];
-        if (Array.isArray(body)) {
-          const parsed = await validateListDocuments(body, parserConfig);
-          req.asyncapi.parsedDocuments = parsed;
-        } else {
-          const parsed = await validateSingleDocument(body, parserConfig);
-          req.asyncapi.parsedDocument = parsed;
+    if (documents) {
+      const parserConfig = prepareParserConfig(req);
+      try {
+        req.asyncapi = req.asyncapi || {};
+        for (const field of documents) {
+          const body = req.body[String(field)];
+          if (Array.isArray(body)) {
+            const parsed = await validateListDocuments(body, parserConfig);
+            req.asyncapi.parsedDocuments = parsed;
+          } else {
+            const parsed = await validateSingleDocument(body, parserConfig);
+            req.asyncapi.parsedDocument = parsed;
+          }
         }
-      }
 
-      next();
-    } catch (err: unknown) {
-      return next(tryConvertToProblemException(err));
+        next();
+      } catch (err: unknown) {
+        return next(tryConvertToProblemException(err));
+      }
     }
   };
 }
