@@ -36,28 +36,28 @@ export class ShareController implements Controller {
     }
   }
 
-  //   private async retrieve(req: Request, res: Response, next: NextFunction) {
-  //     const { id } = req.params;
-  //     try {
-  //       const result = await Data.findOne({docId: id});
-  //       if (result) {
-  //         res.status(200).json({
-  //           document: result.doc
-  //         });
-  //       } else {
-  //         res.status(404).json('No document with id was found');
-  //       }
-  //     } catch (error) {
-  //       return next(
-  //         new ProblemException({
-  //           type: 'internal-generator-error',
-  //           title: 'Internal Generator error',
-  //           status: 500,
-  //           detail: (error as Error).message,
-  //         })
-  //       );
-  //     }
-  //   }
+  private async retrieve(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    try {
+      const result = await Data.findOne({docId: id});
+      if (result) {
+        res.status(200).json({
+          document: result.doc
+        });
+      } else {
+        res.status(404).json('No document with id was found');
+      }
+    } catch (error) {
+      return next(
+        new ProblemException({
+          type: 'internal-generator-error',
+          title: 'Internal Generator error',
+          status: 500,
+          detail: (error as Error).message,
+        })
+      );
+    }
+  }
 
   public async boot(): Promise<Router> {
     const router = Router();
@@ -71,14 +71,14 @@ export class ShareController implements Controller {
       this.share.bind(this)
     );
 
-    // router.get(
-    //   `${this.basepath}/:id`,
-    //   await validationMiddleware({
-    //     path: `${this.basepath}/:id`,
-    //     method: 'get',
-    //   }),
-    //   this.retrieve.bind(this)
-    // );
+    router.get(
+      `${this.basepath}/:id`,
+      await validationMiddleware({
+        path: `${this.basepath}/${id}`,
+        method: 'get',
+      }),
+      this.retrieve.bind(this)
+    );
     return router;
   }
 }
