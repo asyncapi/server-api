@@ -2,25 +2,25 @@ import mongoose from 'mongoose';
 
 const {Schema} = mongoose;
 
-interface IData {
+interface IShareDocument {
     doc: string;
-    docId: string;
+    id: string;
     date: string;
 }
 
-const dataSchema = new Schema<IData>({
+const shareDocumentSchema = new Schema<IShareDocument>({
   doc: {
     type: String,
     required: true,
   },
-  docId: {
+  id: {
     type: String,
     required: true,
   },
   date: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
-export default mongoose.model<IData>('Data', dataSchema);
+export default mongoose.model<IShareDocument>('ShareDocument', shareDocumentSchema);
