@@ -276,7 +276,7 @@ paths:
       tags:
         - share
       requestBody:
-        description: Parse your AsyncAPI document.
+        description: A JSON object containing your AsyncAPI document and configuration.
         required: true
         content:
           application/json:
@@ -319,16 +319,14 @@ paths:
           required: true
           schema: 
             type: string
-            description: Document unique identifier
+          description: Document unique identifier
       schemas:
-        type: string  
+        type: Object
       responses:
         "200":
           description: AsyncAPI document successfully retrieved.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ShareDocumentResponse"
+          schema:
+            type: string
         "400":
           description: The given share ID is invalid or expired.
           content:

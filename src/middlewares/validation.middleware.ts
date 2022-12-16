@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { AsyncAPIDocument } from '@asyncapi/parser';
-import { validate as isValidUUID } from 'uuid';
 
 import { ProblemException } from '../exceptions/problem.exception';
 import { createAjvInstance } from '../utils/ajv';
@@ -28,19 +27,36 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   const pathName = options.path;
   const path = paths[String(pathName)];
   if (!path) {
-    throw new Error(`Path "${pathName}" doesn't exist in the OpenAPI document.`);
+    throw new Error(
+      `Path "${pathName}" doesn't exist in the OpenAPI document.`
+    );
   }
-  
+
   const methodName = options.method;
   const method = path[String(methodName)];
   if (!method) {
-    throw new Error(`Method "${methodName}" for "${pathName}" path doesn't exist in the OpenAPI document.`);
+    throw new Error(
+      `Method "${methodName}" for "${pathName}" path doesn't exist in the OpenAPI document.`
+    );
   }
 
   const requestBody = method.requestBody;
-  if (!requestBody) return;
+  const requestParams = method.parameters;
+  if (!requestBody && !requestParams) return;
+  let schema;
+  if (requestBody) {
+    schema = requestBody.content['application/json'].schema;
+  }
+  if (requestParams) {
+    const newObj = {};
+    requestParams.map((param) => {
+      newObj[param.name] = param.schema;
+    });
+    schema = {
+      properties: newObj,
+    };
+  }
 
-  let schema = requestBody.content['application/json'].schema;
   if (!schema) return;
 
   schema = { ...schema };
@@ -48,9 +64,11 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
 
   if (options.documents && schema.properties) {
     schema.properties = { ...schema.properties };
-    options.documents.forEach(field => {
+    options.documents.forEach((field) => {
       if (schema.properties[String(field)].items) {
-        schema.properties[String(field)] = { ...schema.properties[String(field)] };
+        schema.properties[String(field)] = {
+          ...schema.properties[String(field)],
+        };
         schema.properties[String(field)].items = true;
       } else {
         schema.properties[String(field)] = true;
@@ -61,25 +79,9 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   return ajvInstance.compile(schema);
 }
 
-async function validateRequestParameters(params: any, next:NextFunction) {
-  if (!params) return;
-  const valid = await isValidUUID(params.id);
-  if (valid === true) {
-    next();
-  }
-
-  if (valid === false) {
-    throw new ProblemException({
-      type: 'invalid-request-params',
-      title: 'Invalid Request Parameters',
-      status: 422,
-      validationErrors: 'Invalid Request Paramaters' as any,
-    });
-  }
-}
-
-async function validateRequestBody(validate: ValidateFunction, body: any) {
-  const valid = validate(body);
+async function validateRequestBodyAndParameters(validate: ValidateFunction, body: any, params: any) {
+  const valid = validate(body || params);
+  console.log(valid);
   const errors = validate.errors && [...validate.errors];
 
   if (valid === false) {
@@ -117,13 +119,9 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
   const documents = options.documents;
 
   return async function (req: Request, _: Response, next: NextFunction) {
-    // validate request body
+    // validate request body/params
     try {
-      if (validate) {
-        await validateRequestBody(validate, req.body);
-      } else {
-        await validateRequestParameters(req.params, next);
-      }
+      await validateRequestBodyAndParameters(validate, req.body, req.params);
     } catch (err: unknown) {
       return next(err);
     }
@@ -148,6 +146,8 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
       } catch (err: unknown) {
         return next(tryConvertToProblemException(err));
       }
+    } else {
+      next();
     }
   };
 }
