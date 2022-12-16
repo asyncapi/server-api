@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import mongoose from 'mongoose';
 import { Controller } from '../interfaces';
 import { validationMiddleware } from '../middlewares/validation.middleware';
-import Data from '../models/data';
+import ShareDocument from '../models/share.model';
 import { ProblemException } from '../exceptions/problem.exception';
 import { logger } from '../utils/logger';
 export class ShareController implements Controller {
@@ -26,7 +26,7 @@ export class ShareController implements Controller {
     );
     const id = uuidv4();
     try {
-      const data = new Data({
+      const data = new ShareDocument({
         doc: stringifiedSpec,
         id,
         date: Date.now(),
@@ -50,7 +50,7 @@ export class ShareController implements Controller {
   private async retrieve(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
     try {
-      const result = await Data.findOne({ id });
+      const result = await ShareDocument.findOne({ id });
       if (result) {
         res.status(200).json({
           document: result.doc,
