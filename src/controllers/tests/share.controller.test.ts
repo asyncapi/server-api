@@ -110,7 +110,7 @@ beforeAll(async () => {
 
 describe('ShareController', () => {
   describe('[POST] /share', () => {
-    it('should return the spec ouput url', async () => {
+    it('should return the spec ID', async () => {
       const app = new App([new ShareController()]);
       await app.init();
 

@@ -81,7 +81,6 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
 
 async function validateRequestBodyAndParameters(validate: ValidateFunction, body: any, params: any) {
   const valid = validate(body || params);
-  console.log(valid);
   const errors = validate.errors && [...validate.errors];
 
   if (valid === false) {

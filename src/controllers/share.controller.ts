@@ -1,5 +1,5 @@
 import { Request, Response, Router, NextFunction } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 import mongoose from 'mongoose';
 import { Controller } from '../interfaces';
 import { validationMiddleware } from '../middlewares/validation.middleware';
@@ -50,13 +50,18 @@ export class ShareController implements Controller {
   private async retrieve(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
     try {
-      const result = await ShareDocument.findOne({ id });
-      if (result) {
-        res.status(200).json({
-          document: result.doc,
-        });
+      const isValidId = uuidValidate(id);
+      if (isValidId) {
+        const result = await ShareDocument.findOne({ id });
+        if (result) {
+          res.status(200).json({
+            document: result.doc,
+          });
+        } else {
+          res.status(404).json('No document with id was found');
+        }
       } else {
-        res.status(404).json('No document with id was found');
+        res.status(400).json('A valid UUID is required');
       }
     } catch (error) {
       return next(
