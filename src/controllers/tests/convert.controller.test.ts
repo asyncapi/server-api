@@ -15,6 +15,15 @@ const validJsonAsyncAPI2_0_0 = {
   channels: {}
 };
 
+const validJsonAsyncAPI2_1_0 = {
+  asyncapi: '2.1.0',
+  info: {
+    title: 'Super test',
+    version: '1.0.0'
+  },
+  channels: {}
+};
+
 const validYamlAsyncAPI2_3_0 = `
 asyncapi: 2.4.0
 info:
@@ -67,14 +76,14 @@ describe('ConvertController', () => {
       return request(app.getServer())
         .post('/v1/convert')
         .send({
-          asyncapi: validJsonAsyncAPI2_0_0,
-          version: '1.2.0'
+          asyncapi: validJsonAsyncAPI2_1_0,
+          version: '2.0.0'
         })
         .expect(422, {
           type: 'https://api.asyncapi.com/problem/internal-converter-error',
           title: 'Could not convert document',
           status: 422,
-          detail: 'Cannot downgrade from 2.0.0 to 1.2.0.',
+          detail: 'Cannot downgrade from 2.1.0 to 2.0.0.',
         });
     });
 
