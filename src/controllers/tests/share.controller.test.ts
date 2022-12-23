@@ -2,7 +2,6 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 
 import { App } from '../../app';
-// import { ProblemException } from '../../exceptions/problem.exception';
 
 import {ShareController} from '../share.controller';
 

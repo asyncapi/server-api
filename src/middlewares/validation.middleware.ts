@@ -57,6 +57,18 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
     };
   }
 
+  if (requestParams && requestBody) {
+    schema = requestBody.content['application/json'].schema;
+    const newObj = {};
+    requestParams.map((param) => {
+      newObj[param.name] = param.schema;
+    });
+    schema.properties = {
+      ...schema.properties,
+      ...newObj
+    };
+  }
+
   if (!schema) return;
 
   schema = { ...schema };
@@ -75,18 +87,34 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
       }
     });
   }
-
   return ajvInstance.compile(schema);
 }
 
-async function validateRequestBodyAndParameters(validate: ValidateFunction, body: any, params: any) {
-  const valid = validate(body || params);
+async function validateRequestBody(validate: ValidateFunction, body: any) {
+  const valid = validate(body);
   const errors = validate.errors && [...validate.errors];
 
   if (valid === false) {
     throw new ProblemException({
       type: 'invalid-request-body',
       title: 'Invalid Request Body',
+      status: 422,
+      validationErrors: errors as any,
+    });
+  }
+}
+
+async function validateRequestParameters(
+  validate: ValidateFunction,
+  params: any
+) {
+  const valid = validate(params);
+  const errors = validate.errors && [...validate.errors];
+
+  if (valid === false) {
+    throw new ProblemException({
+      type: 'invalid-request-parameters',
+      title: 'Invalid Request Parameters',
       status: 422,
       validationErrors: errors as any,
     });
@@ -120,7 +148,10 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
   return async function (req: Request, _: Response, next: NextFunction) {
     // validate request body/params
     try {
-      await validateRequestBodyAndParameters(validate, req.body, req.params);
+      if (Object.keys(req.params).length) {
+        await validateRequestParameters(validate, req.params);
+      }
+      await validateRequestBody(validate, req.body);
     } catch (err: unknown) {
       return next(err);
     }
