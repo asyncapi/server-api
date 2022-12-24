@@ -1,7 +1,6 @@
 import { registerSchemaParser, parse, ParserError } from '@asyncapi/parser';
 import { Request } from 'express';
-import { ProblemException } from '../exceptions/problem.exception';
-
+import { Problem } from '../../problem_lib';
 import ramlDtParser from '@asyncapi/raml-dt-schema-parser';
 import openapiSchemaParser from '@asyncapi/openapi-schema-parser';
 import avroSchemaParser from '@asyncapi/avro-schema-parser';
@@ -54,7 +53,7 @@ function retrieveStatusCode(type: string): number {
 /**
  * Merges fields from ParserError to ProblemException.
  */
-function mergeParserError(error: ProblemException, parserError: any): ProblemException {
+function mergeParserError(error: Problem, parserError: any): Problem {
   if (parserError.detail) {
     error.detail = parserError.detail;
   }
@@ -77,7 +76,7 @@ function tryConvertToProblemException(err: any) {
   let error = err;
   if (error instanceof ParserError) {
     const typeName = err.type.replace('https://github.com/asyncapi/parser-js/', '');
-    error = new ProblemException({
+    error = new Problem({
       type: typeName,
       title: err.title,
       status: retrieveStatusCode(typeName),
