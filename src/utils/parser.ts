@@ -1,9 +1,9 @@
-import { registerSchemaParser, parse, ParserError } from '@asyncapi/parser';
-import { Request } from 'express';
-import { Problem } from '../../problem_lib';
-import ramlDtParser from '@asyncapi/raml-dt-schema-parser';
-import openapiSchemaParser from '@asyncapi/openapi-schema-parser';
-import avroSchemaParser from '@asyncapi/avro-schema-parser';
+import { registerSchemaParser, parse, ParserError } from "@asyncapi/parser";
+import { Request } from "express";
+import { Problem } from "../../problem_lib/index";
+import ramlDtParser from "@asyncapi/raml-dt-schema-parser";
+import openapiSchemaParser from "@asyncapi/openapi-schema-parser";
+import avroSchemaParser from "@asyncapi/avro-schema-parser";
 
 registerSchemaParser(openapiSchemaParser);
 registerSchemaParser(ramlDtParser);
@@ -23,21 +23,24 @@ function prepareParserConfig(req?: Request) {
       file: false,
       http: {
         headers: {
-          Cookie: req.header('Cookie'),
+          Cookie: req.header("Cookie"),
         },
         withCredentials: true,
-      }
+      },
     },
-    path: req.header('x-asyncapi-base-url') || req.header('referer') || req.header('origin'),
+    path:
+      req.header("x-asyncapi-base-url") ||
+      req.header("referer") ||
+      req.header("origin"),
   };
 }
 
 const TYPES_400 = [
-  'null-or-falsey-document',
-  'impossible-to-convert-to-json',
-  'invalid-document-type',
-  'invalid-json',
-  'invalid-yaml',
+  "null-or-falsey-document",
+  "impossible-to-convert-to-json",
+  "invalid-document-type",
+  "invalid-json",
+  "invalid-yaml",
 ];
 
 /**
@@ -75,7 +78,10 @@ function mergeParserError(error: Problem, parserError: any): Problem {
 function tryConvertToProblemException(err: any) {
   let error = err;
   if (error instanceof ParserError) {
-    const typeName = err.type.replace('https://github.com/asyncapi/parser-js/', '');
+    const typeName = err.type.replace(
+      "https://github.com/asyncapi/parser-js/",
+      ""
+    );
     error = new Problem({
       type: typeName,
       title: err.title,
@@ -87,4 +93,10 @@ function tryConvertToProblemException(err: any) {
   return error;
 }
 
-export { prepareParserConfig, parse, mergeParserError, retrieveStatusCode, tryConvertToProblemException };
+export {
+  prepareParserConfig,
+  parse,
+  mergeParserError,
+  retrieveStatusCode,
+  tryConvertToProblemException,
+};

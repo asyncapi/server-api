@@ -3,7 +3,7 @@ import { diff } from "@asyncapi/diff";
 
 import { validationMiddleware } from "../middlewares/validation.middleware";
 
-import { Problem } from '../../problem_lib';
+import { Problem } from "../../problem_lib/index";
 import { Controller } from "../interfaces";
 
 export class DiffController implements Controller {

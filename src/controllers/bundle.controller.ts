@@ -1,14 +1,14 @@
-import { NextFunction, Request, Response, Router } from 'express';
-import bundler from '@asyncapi/bundler';
+import { NextFunction, Request, Response, Router } from "express";
+import bundler from "@asyncapi/bundler";
 
-import { validationMiddleware } from '../middlewares/validation.middleware';
+import { validationMiddleware } from "../middlewares/validation.middleware";
 
 // import { ProblemException } from '../exceptions/problem.exception';
-import { Problem } from '../../problem_lib';
-import { Controller } from '../interfaces';
+import { Problem } from "../../problem_lib/index";
+import { Controller } from "../interfaces";
 
 export class BundleController implements Controller {
-  public basepath = '/bundle';
+  public basepath = "/bundle";
 
   private async bundle(req: Request, res: Response, next: NextFunction) {
     const asyncapis: Array<string> = req.body.asyncapis;
@@ -19,12 +19,14 @@ export class BundleController implements Controller {
       const bundled = document.json();
       res.status(200).json({ bundled });
     } catch (err) {
-      return next(new Problem({
-        type: 'internal-bundler-error',
-        title: 'Internal Bundler error',
-        status: 500,
-        detail: (err as Error).message,
-      }));
+      return next(
+        new Problem({
+          type: "internal-bundler-error",
+          title: "Internal Bundler error",
+          status: 500,
+          detail: (err as Error).message,
+        })
+      );
     }
   }
 
@@ -33,10 +35,10 @@ export class BundleController implements Controller {
 
     router.post(
       this.basepath,
-      await validationMiddleware({ 
-        path: this.basepath, 
-        method: 'post',
-        documents: ['asyncapis', 'base'],
+      await validationMiddleware({
+        path: this.basepath,
+        method: "post",
+        documents: ["asyncapis", "base"],
       }),
       this.bundle.bind(this)
     );

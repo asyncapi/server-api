@@ -1,2 +1,2 @@
-export * from './problem';
-export * from './types';
+import { Problem } from "./problem";
+export { Problem };

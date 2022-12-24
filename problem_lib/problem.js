@@ -9,46 +9,67 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var COPY_MODE;
-(function (COPY_MODE) {
-    COPY_MODE["SKIP_PROPS"] = "skipProps";
-    COPY_MODE["LEAVE_PROPS"] = "leaveProps";
-})(COPY_MODE || (COPY_MODE = {}));
+import { DEFAULT_KEYS } from "./constants";
+import { COPY_MODE } from "./constants";
+import { objectToProblemMap } from "./util";
 export class Problem extends Error {
-    constructor(problem, customKeys) {
+    constructor(problem) {
         super(problem.detail || problem.title);
+        this.problem = problem;
         this.http = problem.http;
         this.type = problem.type;
         this.title = problem.title;
         this.detail = problem.detail;
         this.instance = problem.instance;
         this.stack = problem.stack;
-        customKeys === null || customKeys === void 0 ? void 0 : customKeys.map((customKey) => {
-            this[customKey] = problem[customKey];
-        });
+        // add extra keys
+        Object.keys(problem)
+            .filter((el) => !DEFAULT_KEYS.includes(el))
+            .forEach((k) => (this[k] = problem[k]));
     }
-    copy(problem, mode, props) {
+    copy(mode = COPY_MODE.LEAVE_PROPS, props = []) {
         switch (mode) {
-            case COPY_MODE.LEAVE_PROPS:
-                return new Problem(problem, props);
+            // returns a new problem object with preserved keys passed as props
+            case COPY_MODE.LEAVE_PROPS: {
+                let newProblemKeyValuePairs = {
+                    type: this.problem.type,
+                    title: this.problem.title,
+                };
+                props.forEach((key) => {
+                    newProblemKeyValuePairs = Object.assign(Object.assign({}, newProblemKeyValuePairs), { [key]: this.problem[key] });
+                });
+                const newProblem = new Problem(objectToProblemMap(newProblemKeyValuePairs));
+                return newProblem;
+            }
+            // skip the copy of keys
             case COPY_MODE.SKIP_PROPS:
-            default:
-                let keysToBeCopied = [];
-                for (let key in problem) {
-                    if (props.includes(key))
+            default: {
+                let newProblemKeyValuePairs = {};
+                // loop to copy only the required keys
+                for (let key in this.problem) {
+                    // Skip only those keys, which are given in props and NOT a default key.
+                    if (props.includes(key) && !DEFAULT_KEYS.includes(key))
                         continue;
-                    keysToBeCopied.push(key);
+                    newProblemKeyValuePairs[key] = this.problem[key];
                 }
-                return new Problem(problem, keysToBeCopied);
+                const newProblem = new Problem(objectToProblemMap(newProblemKeyValuePairs));
+                return newProblem;
+            }
         }
     }
-    ;
-    toJSON(problem, includeStack = false) {
-        const { name, message, stack } = problem, rest = __rest(problem, ["name", "message", "stack"]);
-        const jsonObject = Object.assign({}, rest);
-        if (includeStack)
-            jsonObject.stack = stack;
-        return jsonObject;
+    toJSON({ includeStack = false }) {
+        const _a = this, { stack } = _a, rest = __rest(_a, ["stack"]);
+        if (includeStack) {
+            return Object.assign(Object.assign({}, this), { stack: this.stack });
+        }
+        return Object.assign({}, rest);
+    }
+    isOfType(type) {
+        return this.type === type;
+    }
+    update({ updates }) {
+        Object.keys(updates).forEach((i) => {
+            this[i] = updates[i];
+        });
     }
 }
-;
