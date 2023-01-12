@@ -17,7 +17,7 @@ export function problemMiddleware(error: ProblemException, req: Request, res: Re
 
     logger.error(`[${req.method}] ${req.path} >> Status:: ${status}, Type:: ${error.type?.replace('https://api.asyncapi.com/problem/', '')}, Title:: ${error.title}, Detail:: ${error.detail}`);
 
-    const problem = ProblemException.toJSON(error, status >= 500);
+    const problem = error.toJSON({ includeStack: status >= 500 });
     res.status(status).json(problem);
   } catch (err: unknown) {
     next(err);

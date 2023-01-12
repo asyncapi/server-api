@@ -6,8 +6,8 @@ import { validationMiddleware } from '../middlewares/validation.middleware';
 
 import { ConvertService } from '../services/convert.service';
 
-// import { ProblemException } from '../exceptions/problem.exception';
-import {Problem} from "../../../problem/lib"
+import { ProblemException } from '../exceptions/problem.exception';
+
 type ConvertRequestDto = {
   asyncapi: AsyncAPIDocument;
   /**
@@ -42,11 +42,11 @@ export class ConvertController implements Controller {
         converted: convertedSpec
       });
     } catch (err: unknown) {
-      if (err instanceof Problem) {
+      if (err instanceof ProblemException) {
         return next(err);
       }
 
-      return next(new Problem({
+      return next(new ProblemException({
         type: 'internal-server-error',
         title: 'Internal server error',
         status: 500,

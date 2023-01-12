@@ -1,9 +1,9 @@
 import { convert } from "@asyncapi/converter";
 
 import YAML from "js-yaml";
-import { Problem } from "../../problem_lib/index";
 
 import { AsyncAPIDocument, LAST_SPEC_VERSION, SpecsEnum } from "../interfaces";
+import { ProblemException } from "../exceptions/problem.exception";
 
 import type { ConvertVersion } from "@asyncapi/converter";
 
@@ -37,11 +37,11 @@ export class ConvertService {
       }
       return this.convertToFormat(convertedSpec, language);
     } catch (err) {
-      if (err instanceof Problem) {
+      if (err instanceof ProblemException) {
         throw err;
       }
 
-      throw new Problem({
+      throw new ProblemException({
         type: "internal-converter-error",
         title: "Could not convert document",
         status: 422,
@@ -64,7 +64,7 @@ export class ConvertService {
       }
       return this.convertToYaml(spec);
     } catch (err) {
-      throw new Problem({
+      throw new ProblemException({
         type: "converter-output-format",
         title: `Could not transform output to ${language}`,
         status: 422,

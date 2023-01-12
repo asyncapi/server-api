@@ -3,8 +3,7 @@ import bundler from "@asyncapi/bundler";
 
 import { validationMiddleware } from "../middlewares/validation.middleware";
 
-// import { ProblemException } from '../exceptions/problem.exception';
-import { Problem } from "../../problem_lib/index";
+import { ProblemException } from '../exceptions/problem.exception';
 import { Controller } from "../interfaces";
 
 export class BundleController implements Controller {
@@ -20,7 +19,7 @@ export class BundleController implements Controller {
       res.status(200).json({ bundled });
     } catch (err) {
       return next(
-        new Problem({
+        new ProblemException({
           type: "internal-bundler-error",
           title: "Internal Bundler error",
           status: 500,

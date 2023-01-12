@@ -3,7 +3,7 @@ import { diff } from "@asyncapi/diff";
 
 import { validationMiddleware } from "../middlewares/validation.middleware";
 
-import { Problem } from "../../problem_lib/index";
+import { ProblemException } from '../exceptions/problem.exception';
 import { Controller } from "../interfaces";
 
 export class DiffController implements Controller {
@@ -17,7 +17,7 @@ export class DiffController implements Controller {
       res.status(200).json({ diff: output });
     } catch (err) {
       return next(
-        new Problem({
+        new ProblemException({
           type: "internal-diff-error",
           title: "Internal Diff error",
           status: 500,

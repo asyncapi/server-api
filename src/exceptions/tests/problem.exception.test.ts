@@ -40,7 +40,7 @@ describe('ProblemException', () => {
           customField: 'customValue',
         });
       } catch (e) {
-        expect(ProblemException.toJSON(e as ProblemException)).toEqual({
+        expect((e as ProblemException).toJSON()).toEqual({
           type: ProblemException.createType('some-type'),
           title: 'Some problem',
           status: 422,
@@ -58,7 +58,7 @@ describe('ProblemException', () => {
           customField: 'customValue',
         });
       } catch (e) {
-        expect(ProblemException.toJSON(e as ProblemException, true)).toEqual({
+        expect((e as ProblemException).toJSON({ includeStack: true })).toEqual({
           type: ProblemException.createType('some-type'),
           title: 'Some problem',
           status: 422,

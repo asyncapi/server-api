@@ -1,3 +1,4 @@
+"use strict";
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -9,10 +10,12 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import { DEFAULT_KEYS } from "./constants";
-import { COPY_MODE } from "./constants";
-import { objectToProblemMap } from "./util";
-export class Problem extends Error {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Problem = void 0;
+const constants_1 = require("./constants");
+const constants_2 = require("./constants");
+const util_1 = require("./util");
+class Problem extends Error {
     constructor(problem) {
         super(problem.detail || problem.title);
         this.problem = problem;
@@ -24,13 +27,13 @@ export class Problem extends Error {
         this.stack = problem.stack;
         // add extra keys
         Object.keys(problem)
-            .filter((el) => !DEFAULT_KEYS.includes(el))
+            .filter((el) => !constants_1.DEFAULT_KEYS.includes(el))
             .forEach((k) => (this[k] = problem[k]));
     }
-    copy(mode = COPY_MODE.LEAVE_PROPS, props = []) {
+    copy(mode = constants_2.COPY_MODE.LEAVE_PROPS, props = []) {
         switch (mode) {
             // returns a new problem object with preserved keys passed as props
-            case COPY_MODE.LEAVE_PROPS: {
+            case constants_2.COPY_MODE.LEAVE_PROPS: {
                 let newProblemKeyValuePairs = {
                     type: this.problem.type,
                     title: this.problem.title,
@@ -38,21 +41,21 @@ export class Problem extends Error {
                 props.forEach((key) => {
                     newProblemKeyValuePairs = Object.assign(Object.assign({}, newProblemKeyValuePairs), { [key]: this.problem[key] });
                 });
-                const newProblem = new Problem(objectToProblemMap(newProblemKeyValuePairs));
+                const newProblem = new Problem((0, util_1.objectToProblemMap)(newProblemKeyValuePairs));
                 return newProblem;
             }
             // skip the copy of keys
-            case COPY_MODE.SKIP_PROPS:
+            case constants_2.COPY_MODE.SKIP_PROPS:
             default: {
                 let newProblemKeyValuePairs = {};
                 // loop to copy only the required keys
                 for (let key in this.problem) {
                     // Skip only those keys, which are given in props and NOT a default key.
-                    if (props.includes(key) && !DEFAULT_KEYS.includes(key))
+                    if (props.includes(key) && !constants_1.DEFAULT_KEYS.includes(key))
                         continue;
                     newProblemKeyValuePairs[key] = this.problem[key];
                 }
-                const newProblem = new Problem(objectToProblemMap(newProblemKeyValuePairs));
+                const newProblem = new Problem((0, util_1.objectToProblemMap)(newProblemKeyValuePairs));
                 return newProblem;
             }
         }
@@ -73,3 +76,4 @@ export class Problem extends Error {
         });
     }
 }
+exports.Problem = Problem;

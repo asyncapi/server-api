@@ -10,7 +10,7 @@ import { validationMiddleware } from "../middlewares/validation.middleware";
 import { ArchiverService } from "../services/archiver.service";
 import { GeneratorService } from "../services/generator.service";
 
-import { Problem } from "../../problem_lib/index";
+import { ProblemException } from '../exceptions/problem.exception';
 import { prepareParserConfig } from "../utils/parser";
 
 /**
@@ -47,7 +47,7 @@ export class GenerateController implements Controller {
         );
       } catch (genErr: unknown) {
         return next(
-          new Problem({
+          new ProblemException({
             type: "internal-generator-error",
             title: "Internal Generator error",
             status: 500,
@@ -63,7 +63,7 @@ export class GenerateController implements Controller {
       return await this.archiverService.finalize(zip);
     } catch (err: unknown) {
       return next(
-        new Problem({
+        new ProblemException({
           type: "internal-server-error",
           title: "Internal server error",
           status: 500,
@@ -83,7 +83,7 @@ export class GenerateController implements Controller {
     const errors = validate.errors && [...validate.errors];
 
     if (valid === false) {
-      throw new Problem({
+      throw new ProblemException({
         type: "invalid-template-parameters",
         title: "Invalid Generator Template parameters",
         status: 422,

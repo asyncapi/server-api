@@ -1,4 +1,6 @@
-import { Problem } from '../interfaces';
+import { Problem } from '../../problem_lib';
+
+import type { ProblemInterface, ToJsonParamType } from '../../problem_lib/@types';
 
 const SKIPPED_FIELDS = [
   'name',
@@ -7,7 +9,7 @@ const SKIPPED_FIELDS = [
   'stack',
 ];
 
-export class ProblemException extends Error implements Problem {
+export class ProblemException extends Problem {
   static URL_PREFIX = 'https://api.asyncapi.com/problem/';
 
   public type: string;
@@ -17,27 +19,32 @@ export class ProblemException extends Error implements Problem {
   public instance?: string;
   [key: string]: any; // eslint-disable-line no-undef
 
-  constructor(problem: Problem) {
-    super(problem.detail || problem.title);
+  constructor(problem: ProblemInterface) {
+    super(problem);
     this.name = 'ProblemException';
     this.type = problem.type && ProblemException.createType(problem.type);
-
-    for (const field in problem) {
-      if (SKIPPED_FIELDS.includes(field)) continue;
-      (this as any)[String(field)] = problem[String(field)];
-    }
+    // for (const field in problem) {
+    //   if (SKIPPED_FIELDS.includes(field)) continue;
+    //   (this as any)[String(field)] = problem[String(field)];
+    // }
   }
 
-  static toJSON(problem: ProblemException, includeStack = false): Problem {
-    // disable eslint is easier that changing it to more complex logic, we need to "skip" name and message fields
-    const { name, message, stack, ...rest } = problem; // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const json = {
-      ...rest,
-    };
+  override toJSON(options: ToJsonParamType = { includeStack: false }) {
+    const { includeStack } = options;
+    const { stack, ...rest } = this;
+
+    let object = rest;
     if (includeStack) {
-      json.stack = stack;
+      object = {
+        ...rest,
+        stack: this.stack,
+      };
     }
-    return json;
+
+    delete object.name;
+    delete object.problem;
+
+    return object;
   }
 
   static createType(type: string): string {

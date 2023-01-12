@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AsyncAPIDocument } from "@asyncapi/parser";
 
-import { Problem } from "../../problem_lib/index";
+import { ProblemException } from "../exceptions/problem.exception";
 import { createAjvInstance } from "../utils/ajv";
 import { getAppOpenAPI } from "../utils/app-openapi";
 import {
@@ -83,7 +83,7 @@ async function validateRequestBody(validate: ValidateFunction, body: any) {
   const errors = validate.errors && [...validate.errors];
 
   if (valid === false) {
-    throw new Problem({
+    throw new ProblemException({
       type: "invalid-request-body",
       title: "Invalid Request Body",
       status: 422,
