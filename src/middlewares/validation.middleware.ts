@@ -1,30 +1,30 @@
-import { Request, Response, NextFunction } from "express";
-import { AsyncAPIDocument } from "@asyncapi/parser";
+import { Request, Response, NextFunction } from 'express';
+import { AsyncAPIDocument } from '@asyncapi/parser';
 
-import { ProblemException } from "../exceptions/problem.exception";
-import { createAjvInstance } from "../utils/ajv";
-import { getAppOpenAPI } from "../utils/app-openapi";
+import { ProblemException } from '../exceptions/problem.exception';
+import { createAjvInstance } from '../utils/ajv';
+import { getAppOpenAPI } from '../utils/app-openapi';
 import {
   parse,
   prepareParserConfig,
   tryConvertToProblemException,
-} from "../utils/parser";
+} from '../utils/parser';
 
-import type { ValidateFunction } from "ajv";
+import type { ValidateFunction } from 'ajv';
 
 export interface ValidationMiddlewareOptions {
   path: string;
   method:
-    | "all"
-    | "get"
-    | "post"
-    | "put"
-    | "delete"
-    | "patch"
-    | "options"
-    | "head";
+    | 'all'
+    | 'get'
+    | 'post'
+    | 'put'
+    | 'delete'
+    | 'patch'
+    | 'options'
+    | 'head';
   documents?: Array<string>;
-  version?: "v1";
+  version?: 'v1';
 }
 
 const ajvInstance = createAjvInstance();
@@ -55,11 +55,11 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   const requestBody = method.requestBody;
   if (!requestBody) return;
 
-  let schema = requestBody.content["application/json"].schema;
+  let schema = requestBody.content['application/json'].schema;
   if (!schema) return;
 
   schema = { ...schema };
-  schema["$schema"] = "http://json-schema.org/draft-07/schema";
+  schema['$schema'] = 'http://json-schema.org/draft-07/schema';
 
   if (options.documents && schema.properties) {
     schema.properties = { ...schema.properties };
@@ -84,8 +84,8 @@ async function validateRequestBody(validate: ValidateFunction, body: any) {
 
   if (valid === false) {
     throw new ProblemException({
-      type: "invalid-request-body",
-      title: "Invalid Request Body",
+      type: 'invalid-request-body',
+      title: 'Invalid Request Body',
       status: 422,
       validationErrors: errors as any,
     });
@@ -96,7 +96,7 @@ async function validateSingleDocument(
   asyncapi: string | AsyncAPIDocument,
   parserConfig: ReturnType<typeof prepareParserConfig>
 ) {
-  if (typeof asyncapi === "object") {
+  if (typeof asyncapi === 'object') {
     asyncapi = JSON.parse(JSON.stringify(asyncapi));
   }
   return parse(asyncapi, parserConfig);
@@ -120,7 +120,7 @@ async function validateListDocuments(
 export async function validationMiddleware(
   options: ValidationMiddlewareOptions
 ) {
-  options.version = options.version || "v1";
+  options.version = options.version || 'v1';
   const validate = await compileAjv(options);
   const documents = options.documents;
 

@@ -1,10 +1,10 @@
-import { registerSchemaParser, parse, ParserError } from "@asyncapi/parser";
-import { Request } from "express";
-import ramlDtParser from "@asyncapi/raml-dt-schema-parser";
-import openapiSchemaParser from "@asyncapi/openapi-schema-parser";
-import avroSchemaParser from "@asyncapi/avro-schema-parser";
+import { registerSchemaParser, parse, ParserError } from '@asyncapi/parser';
+import { Request } from 'express';
+import ramlDtParser from '@asyncapi/raml-dt-schema-parser';
+import openapiSchemaParser from '@asyncapi/openapi-schema-parser';
+import avroSchemaParser from '@asyncapi/avro-schema-parser';
 
-import { ProblemException } from "../exceptions/problem.exception";
+import { ProblemException } from '../exceptions/problem.exception';
 
 registerSchemaParser(openapiSchemaParser);
 registerSchemaParser(ramlDtParser);
@@ -24,24 +24,24 @@ function prepareParserConfig(req?: Request) {
       file: false,
       http: {
         headers: {
-          Cookie: req.header("Cookie"),
+          Cookie: req.header('Cookie'),
         },
         withCredentials: true,
       },
     },
     path:
-      req.header("x-asyncapi-base-url") ||
-      req.header("referer") ||
-      req.header("origin"),
+      req.header('x-asyncapi-base-url') ||
+      req.header('referer') ||
+      req.header('origin'),
   };
 }
 
 const TYPES_400 = [
-  "null-or-falsey-document",
-  "impossible-to-convert-to-json",
-  "invalid-document-type",
-  "invalid-json",
-  "invalid-yaml",
+  'null-or-falsey-document',
+  'impossible-to-convert-to-json',
+  'invalid-document-type',
+  'invalid-json',
+  'invalid-yaml',
 ];
 
 /**
@@ -59,19 +59,19 @@ function retrieveStatusCode(type: string): number {
  */
 function mergeParserError(error: ProblemException, parserError: any): ProblemException {
   if (parserError.detail) {
-    error.detail = parserError.detail;
+    error.set('detail', parserError.detail);
   }
   if (parserError.validationErrors) {
-    error.validationErrors = parserError.validationErrors;
+    error.set('validationErrors', parserError.validationErrors);
   }
   if (parserError.parsedJSON) {
-    error.parsedJSON = parserError.parsedJSON;
+    error.set('parsedJSON', parserError.parsedJSON);
   }
   if (parserError.location) {
-    error.location = parserError.location;
+    error.set('location', parserError.location);
   }
   if (parserError.refs) {
-    error.refs = parserError.refs;
+    error.set('refs', parserError.refs);
   }
   return error;
 }
@@ -80,8 +80,8 @@ function tryConvertToProblemException(err: any) {
   let error = err;
   if (error instanceof ParserError) {
     const typeName = err.type.replace(
-      "https://github.com/asyncapi/parser-js/",
-      ""
+      'https://github.com/asyncapi/parser-js/',
+      ''
     );
     error = new ProblemException({
       type: typeName,

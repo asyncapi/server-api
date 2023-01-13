@@ -1,23 +1,23 @@
-import fs from "fs";
-import path from "path";
-import { NextFunction, Request, Response, Router } from "express";
-import Ajv from "ajv";
+import fs from 'fs';
+import path from 'path';
+import { NextFunction, Request, Response, Router } from 'express';
+import Ajv from 'ajv';
 
-import { Controller } from "../interfaces";
+import { Controller } from '../interfaces';
 
-import { validationMiddleware } from "../middlewares/validation.middleware";
+import { validationMiddleware } from '../middlewares/validation.middleware';
 
-import { ArchiverService } from "../services/archiver.service";
-import { GeneratorService } from "../services/generator.service";
+import { ArchiverService } from '../services/archiver.service';
+import { GeneratorService } from '../services/generator.service';
 
 import { ProblemException } from '../exceptions/problem.exception';
-import { prepareParserConfig } from "../utils/parser";
+import { prepareParserConfig } from '../utils/parser';
 
 /**
  * Controller which exposes the Generator functionality
  */
 export class GenerateController implements Controller {
-  public basepath = "/generate";
+  public basepath = '/generate';
 
   private archiverService = new ArchiverService();
   private generatorService = new GeneratorService();
@@ -48,15 +48,15 @@ export class GenerateController implements Controller {
       } catch (genErr: unknown) {
         return next(
           new ProblemException({
-            type: "internal-generator-error",
-            title: "Internal Generator error",
+            type: 'internal-generator-error',
+            title: 'Internal Generator error',
             status: 500,
             detail: (genErr as Error).message,
           })
         );
       }
 
-      this.archiverService.appendDirectory(zip, tmpDir, "template");
+      this.archiverService.appendDirectory(zip, tmpDir, 'template');
       this.archiverService.appendAsyncAPIDocument(zip, asyncapi);
 
       res.status(200);
@@ -64,8 +64,8 @@ export class GenerateController implements Controller {
     } catch (err: unknown) {
       return next(
         new ProblemException({
-          type: "internal-server-error",
-          title: "Internal server error",
+          type: 'internal-server-error',
+          title: 'Internal server error',
           status: 500,
           detail: (err as Error).message,
         })
@@ -84,8 +84,8 @@ export class GenerateController implements Controller {
 
     if (valid === false) {
       throw new ProblemException({
-        type: "invalid-template-parameters",
-        title: "Invalid Generator Template parameters",
+        type: 'invalid-template-parameters',
+        title: 'Invalid Generator Template parameters',
         status: 422,
         validationErrors: errors as any,
       });
@@ -119,7 +119,7 @@ export class GenerateController implements Controller {
     );
     const packageJSONContent = await fs.promises.readFile(
       pathToPackageJSON,
-      "utf-8"
+      'utf-8'
     );
     const packageJSON = JSON.parse(packageJSONContent);
     if (!packageJSON) {
@@ -135,7 +135,7 @@ export class GenerateController implements Controller {
     const required: string[] = [];
     for (const parameter in parameters) {
       // at the moment all parameters have to be passed to the Generator instance as string
-      parameters[String(parameter)].type = "string";
+      parameters[String(parameter)].type = 'string';
       if (parameters[String(parameter)].required) {
         required.push(parameter);
       }
@@ -143,8 +143,8 @@ export class GenerateController implements Controller {
     }
 
     return {
-      $schema: "http://json-schema.org/draft-07/schema#",
-      type: "object",
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
       properties: parameters,
       required,
       // don't allow non supported properties
@@ -156,7 +156,7 @@ export class GenerateController implements Controller {
     this.ajv = new Ajv({
       inlineRefs: true,
       allErrors: true,
-      schemaId: "id",
+      schemaId: 'id',
       logger: false,
     });
     const router = Router();
@@ -165,8 +165,8 @@ export class GenerateController implements Controller {
       `${this.basepath}`,
       await validationMiddleware({
         path: this.basepath,
-        method: "post",
-        documents: ["asyncapi"],
+        method: 'post',
+        documents: ['asyncapi'],
       }),
       this.generate.bind(this)
     );

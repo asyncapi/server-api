@@ -1,11 +1,11 @@
-import { convert } from "@asyncapi/converter";
+import { convert } from '@asyncapi/converter';
 
-import YAML from "js-yaml";
+import YAML from 'js-yaml';
 
-import { AsyncAPIDocument, LAST_SPEC_VERSION, SpecsEnum } from "../interfaces";
-import { ProblemException } from "../exceptions/problem.exception";
+import { AsyncAPIDocument, LAST_SPEC_VERSION, SpecsEnum } from '../interfaces';
+import { ProblemException } from '../exceptions/problem.exception';
 
-import type { ConvertVersion } from "@asyncapi/converter";
+import type { ConvertVersion } from '@asyncapi/converter';
 
 /**
  * Service providing `@asyncapi/converter` functionality.
@@ -21,15 +21,15 @@ export class ConvertService {
   public async convert(
     spec: string | AsyncAPIDocument,
     version: SpecsEnum = LAST_SPEC_VERSION as SpecsEnum,
-    language?: "json" | "yaml" | "yml"
+    language?: 'json' | 'yaml' | 'yml'
   ): Promise<string> {
-    if (version === "latest") {
+    if (version === 'latest') {
       version = LAST_SPEC_VERSION as SpecsEnum;
     }
 
     try {
       const asyncapiSpec =
-        typeof spec === "object" ? JSON.stringify(spec) : spec;
+        typeof spec === 'object' ? JSON.stringify(spec) : spec;
       const convertedSpec = convert(asyncapiSpec, version as ConvertVersion);
 
       if (!language) {
@@ -42,8 +42,8 @@ export class ConvertService {
       }
 
       throw new ProblemException({
-        type: "internal-converter-error",
-        title: "Could not convert document",
+        type: 'internal-converter-error',
+        title: 'Could not convert document',
         status: 422,
         detail: (err as Error).message,
       });
@@ -52,20 +52,20 @@ export class ConvertService {
 
   private convertToFormat(
     spec: string | Record<string, unknown>,
-    language: "json" | "yaml" | "yml"
+    language: 'json' | 'yaml' | 'yml'
   ) {
-    if (typeof spec === "object") {
+    if (typeof spec === 'object') {
       spec = JSON.stringify(spec, undefined, 2);
     }
 
     try {
-      if (language === "json") {
+      if (language === 'json') {
         return this.convertToJSON(spec);
       }
       return this.convertToYaml(spec);
     } catch (err) {
       throw new ProblemException({
-        type: "converter-output-format",
+        type: 'converter-output-format',
         title: `Could not transform output to ${language}`,
         status: 422,
         detail: (err as Error).message,
