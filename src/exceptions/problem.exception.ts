@@ -1,12 +1,10 @@
-import { ProblemMixin } from '../../problem_lib';
+import { ProblemMixin } from '@asyncapi/problem';
+
+export interface ProblemExceptionProps {
+  status: number;
+  [key: string]: any;
+}
 
 const typePrefix = 'https://api.asyncapi.com/problem';
 
-export class ProblemException extends ProblemMixin<{
-  status: number;
-  [key: string]: any;
-}>({ typePrefix }) {
-  static createType(type: string): string {
-    return type.startsWith(typePrefix) ? type : `${typePrefix}/${type}`;
-  }
-}
+export class ProblemException extends ProblemMixin<ProblemExceptionProps>({ typePrefix }) {}

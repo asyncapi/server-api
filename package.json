@@ -57,6 +57,7 @@
     "@asyncapi/nodejs-ws-template": "^0.9.25",
     "@asyncapi/openapi-schema-parser": "^2.0.1",
     "@asyncapi/parser": "^1.17.2",
+    "@asyncapi/problem": "^1.0.0",
     "@asyncapi/python-paho-template": "^0.2.13",
     "@asyncapi/raml-dt-schema-parser": "^2.0.1",
     "@asyncapi/specs": "^4.0.1",
