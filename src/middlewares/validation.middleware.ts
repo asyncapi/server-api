@@ -4,13 +4,25 @@ import { AsyncAPIDocument } from '@asyncapi/parser';
 import { ProblemException } from '../exceptions/problem.exception';
 import { createAjvInstance } from '../utils/ajv';
 import { getAppOpenAPI } from '../utils/app-openapi';
-import { parse, prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
+import {
+  parse,
+  prepareParserConfig,
+  tryConvertToProblemException,
+} from '../utils/parser';
 
 import type { ValidateFunction } from 'ajv';
 
 export interface ValidationMiddlewareOptions {
   path: string;
-  method: 'all' | 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head',
+  method:
+    | 'all'
+    | 'get'
+    | 'post'
+    | 'put'
+    | 'delete'
+    | 'patch'
+    | 'options'
+    | 'head';
   documents?: Array<string>;
   version?: 'v1';
 }
@@ -27,13 +39,17 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
   const pathName = options.path;
   const path = paths[String(pathName)];
   if (!path) {
-    throw new Error(`Path "${pathName}" doesn't exist in the OpenAPI document.`);
+    throw new Error(
+      `Path "${pathName}" doesn't exist in the OpenAPI document.`
+    );
   }
-  
+
   const methodName = options.method;
   const method = path[String(methodName)];
   if (!method) {
-    throw new Error(`Method "${methodName}" for "${pathName}" path doesn't exist in the OpenAPI document.`);
+    throw new Error(
+      `Method "${methodName}" for "${pathName}" path doesn't exist in the OpenAPI document.`
+    );
   }
 
   const requestBody = method.requestBody;
@@ -47,9 +63,11 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
 
   if (options.documents && schema.properties) {
     schema.properties = { ...schema.properties };
-    options.documents.forEach(field => {
+    options.documents.forEach((field) => {
       if (schema.properties[String(field)].items) {
-        schema.properties[String(field)] = { ...schema.properties[String(field)] };
+        schema.properties[String(field)] = {
+          ...schema.properties[String(field)],
+        };
         schema.properties[String(field)].items = true;
       } else {
         schema.properties[String(field)] = true;
@@ -74,14 +92,20 @@ async function validateRequestBody(validate: ValidateFunction, body: any) {
   }
 }
 
-async function validateSingleDocument(asyncapi: string | AsyncAPIDocument, parserConfig: ReturnType<typeof prepareParserConfig>) {
+async function validateSingleDocument(
+  asyncapi: string | AsyncAPIDocument,
+  parserConfig: ReturnType<typeof prepareParserConfig>
+) {
   if (typeof asyncapi === 'object') {
     asyncapi = JSON.parse(JSON.stringify(asyncapi));
   }
   return parse(asyncapi, parserConfig);
 }
 
-async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>, parserConfig: ReturnType<typeof prepareParserConfig>) {
+async function validateListDocuments(
+  asyncapis: Array<string | AsyncAPIDocument>,
+  parserConfig: ReturnType<typeof prepareParserConfig>
+) {
   const parsedDocuments: Array<AsyncAPIDocument> = [];
   for (const asyncapi of asyncapis) {
     const parsed = await validateSingleDocument(asyncapi, parserConfig);
@@ -93,7 +117,9 @@ async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>
 /**
  * Validate RequestBody and sent AsyncAPI document(s) for given path and method based on the OpenAPI Document.
  */
-export async function validationMiddleware(options: ValidationMiddlewareOptions) {
+export async function validationMiddleware(
+  options: ValidationMiddlewareOptions
+) {
   options.version = options.version || 'v1';
   const validate = await compileAjv(options);
   const documents = options.documents;

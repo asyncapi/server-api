@@ -18,12 +18,14 @@ export class BundleController implements Controller {
       const bundled = document.json();
       res.status(200).json({ bundled });
     } catch (err) {
-      return next(new ProblemException({
-        type: 'internal-bundler-error',
-        title: 'Internal Bundler error',
-        status: 500,
-        detail: (err as Error).message,
-      }));
+      return next(
+        new ProblemException({
+          type: 'internal-bundler-error',
+          title: 'Internal Bundler error',
+          status: 500,
+          detail: (err as Error).message,
+        })
+      );
     }
   }
 
@@ -32,8 +34,8 @@ export class BundleController implements Controller {
 
     router.post(
       this.basepath,
-      await validationMiddleware({ 
-        path: this.basepath, 
+      await validationMiddleware({
+        path: this.basepath,
         method: 'post',
         documents: ['asyncapis', 'base'],
       }),

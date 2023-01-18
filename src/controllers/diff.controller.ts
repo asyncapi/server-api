@@ -4,7 +4,7 @@ import { diff } from '@asyncapi/diff';
 import { validationMiddleware } from '../middlewares/validation.middleware';
 
 import { ProblemException } from '../exceptions/problem.exception';
-import { Controller} from '../interfaces';
+import { Controller } from '../interfaces';
 
 export class DiffController implements Controller {
   public basepath = '/diff';
@@ -16,22 +16,24 @@ export class DiffController implements Controller {
       const output = diff(asyncapis[0], asyncapis[1]).getOutput();
       res.status(200).json({ diff: output });
     } catch (err) {
-      return next(new ProblemException({
-        type: 'internal-diff-error',
-        title: 'Internal Diff error',
-        status: 500,
-        detail: (err as Error).message,
-      }));
+      return next(
+        new ProblemException({
+          type: 'internal-diff-error',
+          title: 'Internal Diff error',
+          status: 500,
+          detail: (err as Error).message,
+        })
+      );
     }
   }
-    
+
   public async boot(): Promise<Router> {
     const router = Router();
 
     router.post(
       this.basepath,
-      await validationMiddleware({ 
-        path: this.basepath, 
+      await validationMiddleware({
+        path: this.basepath,
         method: 'post',
         documents: ['asyncapis'],
       }),

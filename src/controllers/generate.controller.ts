@@ -43,15 +43,17 @@ export class GenerateController implements Controller {
           template,
           parameters,
           tmpDir,
-          prepareParserConfig(req),
+          prepareParserConfig(req)
         );
       } catch (genErr: unknown) {
-        return next(new ProblemException({
-          type: 'internal-generator-error',
-          title: 'Internal Generator error',
-          status: 500,
-          detail: (genErr as Error).message,
-        }));
+        return next(
+          new ProblemException({
+            type: 'internal-generator-error',
+            title: 'Internal Generator error',
+            status: 500,
+            detail: (genErr as Error).message,
+          })
+        );
       }
 
       this.archiverService.appendDirectory(zip, tmpDir, 'template');
@@ -60,12 +62,14 @@ export class GenerateController implements Controller {
       res.status(200);
       return await this.archiverService.finalize(zip);
     } catch (err: unknown) {
-      return next(new ProblemException({
-        type: 'internal-server-error',
-        title: 'Internal server error',
-        status: 500,
-        detail: (err as Error).message,
-      }));
+      return next(
+        new ProblemException({
+          type: 'internal-server-error',
+          title: 'Internal server error',
+          status: 500,
+          detail: (err as Error).message,
+        })
+      );
     } finally {
       this.archiverService.removeTempDirectory(tmpDir);
     }
@@ -94,7 +98,10 @@ export class GenerateController implements Controller {
   public async getAjvValidator(templateName: string) {
     let validate = this.ajv.getSchema(templateName);
     if (!validate) {
-      this.ajv.addSchema(await this.serializeTemplateParameters(templateName), templateName);
+      this.ajv.addSchema(
+        await this.serializeTemplateParameters(templateName),
+        templateName
+      );
       validate = this.ajv.getSchema(templateName);
     }
     return validate;
@@ -103,9 +110,17 @@ export class GenerateController implements Controller {
   /**
    * Serialize template parameters. Read all parameters from template's package.json and create a proper JSON Schema for validating parameters.
    */
-  public async serializeTemplateParameters(templateName: string): Promise<object> {
-    const pathToPackageJSON = path.join(__dirname, `../../node_modules/${templateName}/package.json`);
-    const packageJSONContent = await fs.promises.readFile(pathToPackageJSON, 'utf-8');
+  public async serializeTemplateParameters(
+    templateName: string
+  ): Promise<object> {
+    const pathToPackageJSON = path.join(
+      __dirname,
+      `../../node_modules/${templateName}/package.json`
+    );
+    const packageJSONContent = await fs.promises.readFile(
+      pathToPackageJSON,
+      'utf-8'
+    );
     const packageJSON = JSON.parse(packageJSONContent);
     if (!packageJSON) {
       return;
@@ -148,8 +163,8 @@ export class GenerateController implements Controller {
 
     router.post(
       `${this.basepath}`,
-      await validationMiddleware({ 
-        path: this.basepath, 
+      await validationMiddleware({
+        path: this.basepath,
         method: 'post',
         documents: ['asyncapi'],
       }),
