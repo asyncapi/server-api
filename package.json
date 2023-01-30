@@ -47,7 +47,7 @@
     "@asyncapi/diff": "^0.4.0",
     "@asyncapi/dotnet-nats-template": "^0.11.0",
     "@asyncapi/generator": "^1.9.15",
-    "@asyncapi/go-watermill-template": "^0.2.13",
+    "@asyncapi/go-watermill-template": "^0.2.14",
     "@asyncapi/html-template": "^0.28.1",
     "@asyncapi/java-spring-cloud-stream-template": "^0.13.2",
     "@asyncapi/java-spring-template": "^0.28.0",
