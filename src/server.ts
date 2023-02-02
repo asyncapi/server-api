@@ -2,7 +2,7 @@
 import './configs/production.json';
 
 // for `config` module
-process.env['NODE_CONFIG_DIR'] = `${__dirname  }/configs`;
+process.env['NODE_CONFIG_DIR'] = `${__dirname}/configs`;
 
 import { App } from './app';
 import { ValidateController } from './controllers/validate.controller';
