@@ -281,6 +281,7 @@ components:
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.3.0.json
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.4.0.json
         - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.5.0.json
+        - $ref: https://raw.githubusercontent.com/asyncapi/spec-json-schemas/master/schemas/2.6.0.json
     AsyncAPIDocuments:
       type: array
       description: AsyncAPI documents in JSON or YAML.
@@ -297,6 +298,7 @@ components:
         - '2.3.0'
         - '2.4.0'
         - '2.5.0'
+        - '2.6.0'
         - 'latest'
 
     ValidateRequest:
