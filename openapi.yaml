@@ -272,7 +272,7 @@ paths:
   /share:
     post:
       summary: Save the given AsyncAPI document.
-      operationId: saveDoc
+      operationId: shareSaveDocument
       tags:
         - share
       requestBody:
@@ -281,14 +281,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ShareDocumentRequest"
+              $ref: "#/components/schemas/ShareDocumentSaveRequest"
       responses:
         "200":
           description: AsyncAPI document successfully saved.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ShareDocumentResponse"
+                $ref: "#/components/schemas/ShareDocumentSaveResponse"
         "400":
           description: The given AsyncAPI document(s) is/are not valid.
           content:
@@ -310,7 +310,7 @@ paths:
   /share/{id}:
     get:
       summary: Retrieve a given AsyncAPI document
-      operationId: getDoc
+      operationId: shareRetrieveDocument
       tags:
         - share
       parameters:
@@ -319,14 +319,15 @@ paths:
           required: true
           schema: 
             type: string
+            format: uuid
           description: Document unique identifier
-      schemas:
-        type: Object
       responses:
         "200":
           description: AsyncAPI document successfully retrieved.
-          schema:
-            type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareDocumentRetrieveResponse"
         "400":
           description: The given share ID is invalid or expired.
           content:
@@ -490,20 +491,31 @@ components:
           type: [object, string]
           description: The diff between the two AsyncAPI documents.
 
-    ShareDocumentRequest:
+    ShareDocumentSaveRequest:
       type: object
       required:
         - asyncapi
       properties:
         asyncapi:
           $ref: '#/components/schemas/AsyncAPIDocument'
-    ShareDocumentResponse:
+        expireAt:
+          type: string
+          format: date-time
+    ShareDocumentSaveResponse:
       type: object
       required:
-        - asyncapi 
+        - id 
       properties:
-        shared:
-          $ref: "#/components/schemas/AsyncAPIDocument"
+        id:
+          type: string
+          format: uuid
+    ShareDocumentRetrieveResponse:
+      type: object
+      required:
+        - document 
+      properties:
+        document:
+          $ref: '#/components/schemas/AsyncAPIDocument'
 
     Problem:
       type: object

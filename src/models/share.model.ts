@@ -1,26 +1,26 @@
-import mongoose from 'mongoose';
+import { Schema } from 'mongoose';
 
-const {Schema} = mongoose;
-
-interface IShareDocument {
-    doc: string;
-    id: string;
-    date: string;
+export interface ShareDocument {
+  id: string;
+  document: string;
+  expireAt?: Date;
 }
 
-const shareDocumentSchema = new Schema<IShareDocument>({
-  doc: {
-    type: String,
-    required: true,
-  },
+export const ShareDocumentSchema = new Schema<ShareDocument>({
   id: {
     type: String,
     required: true,
+    unique: true,
   },
-  date: {
+  document: {
     type: String,
     required: true,
   },
+  expireAt: {
+    type: Date,
+    /* Defaults 7 days from now */
+    default: new Date(new Date().valueOf() + 604800000),
+    /* Remove doc 5 seconds after specified date */
+    expires: 5,
+  },
 });
-
-export default mongoose.model<IShareDocument>('ShareDocument', shareDocumentSchema);

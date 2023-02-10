@@ -4,6 +4,7 @@ import { Router } from 'express';
 export interface Controller {
   basepath: string;
   boot(): Router | Promise<Router>;
+  dispose?(): void | Promise<void>;
 }
 
 export interface Problem {
