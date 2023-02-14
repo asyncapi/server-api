@@ -16,6 +16,7 @@ export class App {
   private app: express.Application;
   private port: string | number;
   private env: string;
+  private initialized = false;
 
   constructor(
     private readonly controllers: Controller[]
@@ -32,15 +33,31 @@ export class App {
     await this.initializeControllers();
     // initialize error handling
     await this.initializeErrorHandling();
+    // add shutdown hook
+    this.onShutdown();
+
+    this.initialized = true;
   }
 
   public listen() {
     this.app.listen(this.port, () => {
       logger.info('=================================');
       logger.info(`= ENV: ${this.env}`);
-      logger.info(`= 🚀 AsyncAPI Server API listening on the port ${this.port}`);
+      logger.info(`= 🚀 AsyncAPI Server API listening on the ${this.env === 'development' ? 'http://localhost:' : 'port '}${this.port}`);
       logger.info('=================================');
     });
+  }
+
+  public async dispose() {
+    if (!this.initialized) {
+      return;
+    }
+
+    for (const controller of this.controllers) {
+      if (typeof controller.dispose === 'function') {
+        await controller.dispose();
+      }
+    }
   }
 
   public getServer() {
@@ -76,5 +93,9 @@ export class App {
 
   private async initializeErrorHandling() {
     this.app.use(problemMiddleware);
+  }
+
+  private onShutdown() {
+    process.on('exit', this.dispose.bind(this));
   }
 }

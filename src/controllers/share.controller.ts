@@ -1,39 +1,39 @@
 import { Request, Response, Router, NextFunction } from 'express';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 import mongoose from 'mongoose';
-import { Controller } from '../interfaces';
+
 import { validationMiddleware } from '../middlewares/validation.middleware';
-import ShareDocument from '../models/share.model';
+import { ShareDocumentSchema, ShareDocument } from '../models';
+
 import { ProblemException } from '../exceptions/problem.exception';
 import { logger } from '../utils/logger';
+
+import { Controller } from '../interfaces';
+
+/**
+ * Controller which saves AsyncAPI documents to the database.
+ */
 export class ShareController implements Controller {
   public basepath = '/share';
+  private connection: mongoose.Connection;
+  private shareDocumentModel: mongoose.Model<ShareDocument>;
 
-  private async initializeDatabase() {
-    await mongoose
-      .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/asyncapi')
-      .then(() => {
-        logger.info('🚀 Database connection is successful');
-      })
-      .catch((err) => {
-        logger.error(`Database connection failed${err.message}`);
-      });
-  }
-
-  private async share(req: Request, res: Response, next: NextFunction) {
-    const stringifiedSpec = JSON.stringify(
-      req.asyncapi
-    );
+  private async create(req: Request, res: Response, next: NextFunction) {
+    const { asyncapi, expireAt } = req.body;
+    const stringifiedDocument = typeof asyncapi === 'string' ? asyncapi : JSON.stringify(asyncapi);
     const id = uuidv4();
+    
     try {
-      const data = new ShareDocument({
-        doc: stringifiedSpec,
+      const data = new this.shareDocumentModel({
         id,
-        date: Date.now(),
+        document: stringifiedDocument,
+        // use expireAt value or default one (7 days)
+        date: expireAt ? new Date(expireAt) : undefined,
       });
+
       await data.save();
-      res.status(201).json({
-        sharedID: id,
+      return res.status(201).json({
+        id,
       });
     } catch (error: unknown) {
       return next(
@@ -49,21 +49,31 @@ export class ShareController implements Controller {
 
   private async retrieve(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
+
     try {
       const isValidId = uuidValidate(id);
-      if (isValidId) {
-        const result = await ShareDocument.findOne({ id });
-        if (result) {
-          res.status(200).json({
-            document: result.doc,
-          });
-        } else {
-          res.status(404).json('No document with id was found');
-        }
-      } else {
-        res.status(400).json('A valid UUID is required');
+      if (!isValidId) {
+        return next(new ProblemException({
+          type: 'invalid-share-id',
+          title: 'The document identifier must be a valid uuid.',
+          status: 400,
+        }));
       }
+
+      const result = await this.shareDocumentModel.findOne({ id });
+      if (!result) {
+        return next(new ProblemException({
+          type: 'not-available-id',
+          title: `No document with id "${id}" was found.`,
+          status: 404,
+        }));
+      }
+
+      return res.status(200).json({
+        document: result.document,
+      });
     } catch (error) {
+      console.log(error);
       return next(
         new ProblemException({
           type: 'internal-server-error',
@@ -75,8 +85,20 @@ export class ShareController implements Controller {
     }
   }
 
+  private async initializeDatabase() {
+    try {
+      const connection = this.connection = await mongoose.createConnection(process.env.MONGODB_URI || 'mongodb://localhost:27017/asyncapi-documents').asPromise();
+      this.shareDocumentModel = connection.model('ShareDocument', ShareDocumentSchema);
+    } catch (err) {
+      return logger.error(`Database connection failed: ${err.message}`);
+    }
+
+    logger.info('🚀 Database connection is successful');
+  }
+
   public async boot(): Promise<Router> {
     const router = Router();
+
     await this.initializeDatabase();
     router.post(
       `${this.basepath}`,
@@ -85,7 +107,7 @@ export class ShareController implements Controller {
         method: 'post',
         documents: ['asyncapi'],
       }),
-      this.share.bind(this)
+      this.create.bind(this)
     );
 
     router.get(
@@ -96,6 +118,11 @@ export class ShareController implements Controller {
       }),
       this.retrieve.bind(this)
     );
+
     return router;
+  }
+
+  dispose(): Promise<void> {
+    return this.connection.close();
   }
 }

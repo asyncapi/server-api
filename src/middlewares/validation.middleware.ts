@@ -20,7 +20,7 @@ const ajvInstance = createAjvInstance();
 /**
  * Create AJV's validator function for given path in the OpenAPI document.
  */
-async function compileAjv(options: ValidationMiddlewareOptions) {
+async function compileAjv(options: ValidationMiddlewareOptions): Promise<{ body: ValidateFunction | undefined, params: ValidateFunction | undefined }> {
   const appOpenAPI = await getAppOpenAPI();
   const paths = appOpenAPI.paths || {};
 
@@ -40,88 +40,87 @@ async function compileAjv(options: ValidationMiddlewareOptions) {
     );
   }
 
+  let bodyValidateFunction: ValidateFunction;
+  let paramsValidateFunction: ValidateFunction;
+
   const requestBody = method.requestBody;
-  const requestParams = method.parameters;
-  if (!requestBody && !requestParams) return;
-  let schema;
   if (requestBody) {
-    schema = requestBody.content['application/json'].schema;
+    let schema = requestBody.content['application/json'].schema;
+    if (!schema) return;
+  
+    schema = { ...schema };
+    schema['$schema'] = 'http://json-schema.org/draft-07/schema';
+  
+    if (options.documents && schema.properties) {
+      schema.properties = { ...schema.properties };
+      options.documents.forEach((field) => {
+        if (schema.properties[String(field)].items) {
+          schema.properties[String(field)] = {
+            ...schema.properties[String(field)],
+          };
+          schema.properties[String(field)].items = true;
+        } else {
+          schema.properties[String(field)] = true;
+        }
+      });
+    }
+
+    bodyValidateFunction = ajvInstance.compile(schema);
   }
+
+  const requestParams = method.parameters;
   if (requestParams) {
-    const newObj = {};
-    requestParams.map((param) => {
-      newObj[param.name] = param.schema;
-    });
-    schema = {
-      properties: newObj,
-    };
-  }
+    const properties = {};
+    const required: string[] = [];
 
-  if (requestParams && requestBody) {
-    schema = requestBody.content['application/json'].schema;
-    const newObj = {};
-    requestParams.map((param) => {
-      newObj[param.name] = param.schema;
-    });
-    schema.properties = {
-      ...schema.properties,
-      ...newObj
-    };
-  }
-
-  if (!schema) return;
-
-  schema = { ...schema };
-  schema['$schema'] = 'http://json-schema.org/draft-07/schema';
-
-  if (options.documents && schema.properties) {
-    schema.properties = { ...schema.properties };
-    options.documents.forEach((field) => {
-      if (schema.properties[String(field)].items) {
-        schema.properties[String(field)] = {
-          ...schema.properties[String(field)],
-        };
-        schema.properties[String(field)].items = true;
-      } else {
-        schema.properties[String(field)] = true;
+    requestParams.map(param => {
+      properties[param.name] = param.schema;
+      if (param.required) {
+        required.push(param.name);
       }
     });
+
+    const schema = {
+      $schema: 'http://json-schema.org/draft-07/schema',
+      type: 'object',
+      required,
+      properties,
+      additionalProperties: false,
+    };
+    paramsValidateFunction = ajvInstance.compile(schema);
   }
-  return ajvInstance.compile(schema);
+
+  return {
+    body: bodyValidateFunction,
+    params: paramsValidateFunction,
+  };
 }
 
 async function validateRequestBody(validate: ValidateFunction, body: any) {
-  if (Object.keys(body).length) {
-    const valid = validate(body);
-    const errors = validate.errors && [...validate.errors];
+  const valid = validate(body);
+  const errors = validate.errors && [...validate.errors];
 
-    if (valid === false) {
-      throw new ProblemException({
-        type: 'invalid-request-body',
-        title: 'Invalid Request Body',
-        status: 422,
-        validationErrors: errors as any,
-      });
-    }
+  if (valid === false) {
+    throw new ProblemException({
+      type: 'invalid-request-body',
+      title: 'Invalid Request Body',
+      status: 422,
+      validationErrors: errors as any,
+    });
   }
 }
 
-async function validateRequestParameters(
-  validate: ValidateFunction,
-  params: any
-) {
-  if (Object.keys(params).length) {
-    const valid = validate(params);
-    const errors = validate.errors && [...validate.errors];
+async function validateRequestParameters(validate: ValidateFunction, params: Record<string, any>) {
+  const valid = validate(params);
+  const errors = validate.errors && [...validate.errors];
 
-    if (valid === false) {
-      throw new ProblemException({
-        type: 'invalid-request-parameters',
-        title: 'Invalid Request Parameters',
-        status: 422,
-        validationErrors: errors as any,
-      });
-    }
+  if (valid === false) {
+    throw new ProblemException({
+      type: 'invalid-request-parameters',
+      title: 'Invalid Request Parameters',
+      status: 422,
+      validationErrors: errors as any,
+    });
   }
 }
 
@@ -152,8 +151,12 @@ export async function validationMiddleware(options: ValidationMiddlewareOptions)
   return async function (req: Request, _: Response, next: NextFunction) {
     // validate request body/params
     try {
-      await validateRequestParameters(validate, req.params);
-      await validateRequestBody(validate, req.body);
+      if (validate.params) {
+        await validateRequestParameters(validate.params, req.params);
+      }
+      if (validate.body) {
+        await validateRequestBody(validate.body, req.body);
+      }
     } catch (err: unknown) {
       return next(err);
     }
