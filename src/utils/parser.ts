@@ -1,10 +1,10 @@
 import { registerSchemaParser, parse, ParserError } from '@asyncapi/parser';
 import { Request } from 'express';
-import { ProblemException } from '../exceptions/problem.exception';
-
 import ramlDtParser from '@asyncapi/raml-dt-schema-parser';
 import openapiSchemaParser from '@asyncapi/openapi-schema-parser';
 import avroSchemaParser from '@asyncapi/avro-schema-parser';
+
+import { ProblemException } from '../exceptions/problem.exception';
 
 registerSchemaParser(openapiSchemaParser);
 registerSchemaParser(ramlDtParser);
@@ -27,9 +27,12 @@ function prepareParserConfig(req?: Request) {
           Cookie: req.header('Cookie'),
         },
         withCredentials: true,
-      }
+      },
     },
-    path: req.header('x-asyncapi-base-url') || req.header('referer') || req.header('origin'),
+    path:
+      req.header('x-asyncapi-base-url') ||
+      req.header('referer') ||
+      req.header('origin'),
   };
 }
 
@@ -56,19 +59,19 @@ function retrieveStatusCode(type: string): number {
  */
 function mergeParserError(error: ProblemException, parserError: any): ProblemException {
   if (parserError.detail) {
-    error.detail = parserError.detail;
+    error.set('detail', parserError.detail);
   }
   if (parserError.validationErrors) {
-    error.validationErrors = parserError.validationErrors;
+    error.set('validationErrors', parserError.validationErrors);
   }
   if (parserError.parsedJSON) {
-    error.parsedJSON = parserError.parsedJSON;
+    error.set('parsedJSON', parserError.parsedJSON);
   }
   if (parserError.location) {
-    error.location = parserError.location;
+    error.set('location', parserError.location);
   }
   if (parserError.refs) {
-    error.refs = parserError.refs;
+    error.set('refs', parserError.refs);
   }
   return error;
 }
@@ -76,7 +79,10 @@ function mergeParserError(error: ProblemException, parserError: any): ProblemExc
 function tryConvertToProblemException(err: any) {
   let error = err;
   if (error instanceof ParserError) {
-    const typeName = err.type.replace('https://github.com/asyncapi/parser-js/', '');
+    const typeName = err.type.replace(
+      'https://github.com/asyncapi/parser-js/',
+      ''
+    );
     error = new ProblemException({
       type: typeName,
       title: err.title,
@@ -88,4 +94,10 @@ function tryConvertToProblemException(err: any) {
   return error;
 }
 
-export { prepareParserConfig, parse, mergeParserError, retrieveStatusCode, tryConvertToProblemException };
+export {
+  prepareParserConfig,
+  parse,
+  mergeParserError,
+  retrieveStatusCode,
+  tryConvertToProblemException,
+};

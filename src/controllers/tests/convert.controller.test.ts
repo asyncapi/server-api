@@ -24,7 +24,7 @@ const validJsonAsyncAPI2_1_0 = {
   channels: {}
 };
 
-const validYamlAsyncAPI2_3_0 = `
+const validYamlAsyncAPI2_4_0 = `
 asyncapi: 2.4.0
 info:
   title: Super test
@@ -120,7 +120,7 @@ describe('ConvertController', () => {
         })
         .expect(200, {
           converted: {
-            asyncapi: '2.5.0',
+            asyncapi: '2.6.0',
             info: {
               title: 'Super test',
               version: '1.0.0'
@@ -142,7 +142,7 @@ describe('ConvertController', () => {
           language: 'yaml'
         })
         .expect(200, {
-          converted: validYamlAsyncAPI2_3_0.trimStart(),
+          converted: validYamlAsyncAPI2_4_0.trimStart(),
         });
     });
   });

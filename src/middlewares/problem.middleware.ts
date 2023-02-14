@@ -12,10 +12,11 @@ export function problemMiddleware(error: ProblemException, req: Request, res: Re
   }
 
   try {
-    const status = error.status = error.status || 500;
-    error.title = error.title || 'Internal server error';
+    const problemShape = error.get();
+    const status = problemShape.status = problemShape.status || 500;
+    problemShape.title = problemShape.title || 'Internal server error';
 
-    logger.error(`[${req.method}] ${req.path} >> Status:: ${status}, Type:: ${error.type?.replace('https://api.asyncapi.com/problem/', '')}, Title:: ${error.title}, Detail:: ${error.detail}`);
+    logger.error(`[${req.method}] ${req.path} >> Status:: ${status}, Type:: ${problemShape.type.replace('https://api.asyncapi.com/problem/', '')}, Title:: ${problemShape.title}, Detail:: ${problemShape.detail}`);
 
     const problem = ProblemException.toJSON(error, false);
     res.status(status).json(problem);

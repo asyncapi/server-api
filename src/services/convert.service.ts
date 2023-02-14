@@ -1,8 +1,9 @@
 import { convert } from '@asyncapi/converter';
 
 import YAML from 'js-yaml';
-import { ProblemException } from '../exceptions/problem.exception';
+
 import { AsyncAPIDocument, LAST_SPEC_VERSION, SpecsEnum } from '../interfaces';
+import { ProblemException } from '../exceptions/problem.exception';
 
 import type { ConvertVersion } from '@asyncapi/converter';
 
@@ -20,14 +21,15 @@ export class ConvertService {
   public async convert(
     spec: string | AsyncAPIDocument,
     version: SpecsEnum = LAST_SPEC_VERSION as SpecsEnum,
-    language?: 'json' | 'yaml' | 'yml',
+    language?: 'json' | 'yaml' | 'yml'
   ): Promise<string> {
     if (version === 'latest') {
       version = LAST_SPEC_VERSION as SpecsEnum;
     }
 
     try {
-      const asyncapiSpec = typeof spec === 'object' ? JSON.stringify(spec) : spec;
+      const asyncapiSpec =
+        typeof spec === 'object' ? JSON.stringify(spec) : spec;
       const convertedSpec = convert(asyncapiSpec, version as ConvertVersion);
 
       if (!language) {
@@ -43,12 +45,15 @@ export class ConvertService {
         type: 'internal-converter-error',
         title: 'Could not convert document',
         status: 422,
-        detail: (err as Error).message
+        detail: (err as Error).message,
       });
     }
   }
 
-  private convertToFormat(spec: string | Record<string, unknown>, language: 'json' | 'yaml' | 'yml') {
+  private convertToFormat(
+    spec: string | Record<string, unknown>,
+    language: 'json' | 'yaml' | 'yml'
+  ) {
     if (typeof spec === 'object') {
       spec = JSON.stringify(spec, undefined, 2);
     }
@@ -63,7 +68,7 @@ export class ConvertService {
         type: 'converter-output-format',
         title: `Could not transform output to ${language}`,
         status: 422,
-        detail: (err as Error).message
+        detail: (err as Error).message,
       });
     }
   }

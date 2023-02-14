@@ -1,17 +1,12 @@
 module.exports = {
-  coverageReporters: [
-    'json-summary',
-    'lcov',
-    'text'
-  ],
-  collectCoverageFrom: [
-    'src/**'
-  ],
+  coverageReporters: ['json-summary', 'lcov', 'text'],
+  collectCoverageFrom: ['src/**'],
 
   preset: 'ts-jest',
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.ts?$': 'ts-jest',
   },
 
   // Test spec file resolution pattern
@@ -22,7 +17,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 
   testTimeout: 20000,
-  
+
   setupFiles: ['./tests/jest.setup.ts'],
   globals: {
     'ts-jest': {

@@ -4,13 +4,25 @@ import { AsyncAPIDocument } from '@asyncapi/parser';
 import { ProblemException } from '../exceptions/problem.exception';
 import { createAjvInstance } from '../utils/ajv';
 import { getAppOpenAPI } from '../utils/app-openapi';
-import { parse, prepareParserConfig, tryConvertToProblemException } from '../utils/parser';
+import {
+  parse,
+  prepareParserConfig,
+  tryConvertToProblemException,
+} from '../utils/parser';
 
 import type { ValidateFunction } from 'ajv';
 
 export interface ValidationMiddlewareOptions {
   path: string;
-  method: 'all' | 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head',
+  method:
+    | 'all'
+    | 'get'
+    | 'post'
+    | 'put'
+    | 'delete'
+    | 'patch'
+    | 'options'
+    | 'head';
   documents?: Array<string>;
   version?: 'v1';
 }
@@ -131,7 +143,10 @@ async function validateSingleDocument(asyncapi: string | AsyncAPIDocument, parse
   return parse(asyncapi, parserConfig);
 }
 
-async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>, parserConfig: ReturnType<typeof prepareParserConfig>) {
+async function validateListDocuments(
+  asyncapis: Array<string | AsyncAPIDocument>,
+  parserConfig: ReturnType<typeof prepareParserConfig>
+) {
   const parsedDocuments: Array<AsyncAPIDocument> = [];
   for (const asyncapi of asyncapis) {
     const parsed = await validateSingleDocument(asyncapi, parserConfig);
@@ -143,7 +158,9 @@ async function validateListDocuments(asyncapis: Array<string | AsyncAPIDocument>
 /**
  * Validate RequestBody and sent AsyncAPI document(s) for given path and method based on the OpenAPI Document.
  */
-export async function validationMiddleware(options: ValidationMiddlewareOptions) {
+export async function validationMiddleware(
+  options: ValidationMiddlewareOptions
+) {
   options.version = options.version || 'v1';
   const validate = await compileAjv(options);
   const documents = options.documents;
