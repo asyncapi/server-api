@@ -73,7 +73,6 @@ export class ShareController implements Controller {
         document: result.document,
       });
     } catch (error) {
-      console.log(error);
       return next(
         new ProblemException({
           type: 'internal-server-error',

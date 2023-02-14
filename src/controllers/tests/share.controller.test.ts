@@ -1,101 +1,47 @@
 import request from 'supertest';
 
 import { App } from '../../app';
+import { ProblemException } from '../../exceptions/problem.exception';
+
 import { ShareController } from '../share.controller';
 
-const asyncAPIDocument = {
+const validAsyncAPIDocument = {
   asyncapi: '2.5.0',
   info: {
-    title: 'Building MQTT API',
+    title: 'Account Service',
     version: '1.0.0',
-    description: 'First prototype of building API using mosquitto broker',
-    license: {
-      name: 'Apache 2.0',
-      url: 'https://www.apache.org/licenses/LICENSE-2.0',
-    },
-  },
-  servers: {
-    development: {
-      url: 'test.mosquitto.org',
-      protocol: 'mqtt',
-      description: 'Mosquitto broker for development',
-      variables: {
-        port: {
-          description:
-            'Secure connection (TLS) is available through port 8883.',
-          default: '1883',
-        },
-      },
-    },
+    description: 'This service is in charge of processing user signups',
   },
   channels: {
-    unitBalanceRequester: {
-      description:
-        'This topic publishes an event demanding building unit balance',
+    'user/signedup': {
       subscribe: {
-        summary:
-          'This triggers a request action for each building about the balance',
-        operationId: 'BalanceRequester',
         message: {
-          $ref: '#/components/messages/lightBalanceRequester',
-        },
-      },
-    },
-    unitBalanceResponder: {
-      description: 'This topic publishes event for building unit balance',
-      publish: {
-        summary: 'This triggers a balance event for building units measured',
-        operationId: 'BalanceResponder',
-        message: {
-          $ref: '#/components/messages/lightMeasured',
-        },
-      },
-    },
-    unitBalanceUpdater: {
-      description: 'This topic publishes event that updates unit balance',
-      subscribe: {
-        summary: 'This triggers a balance event for building units measured',
-        operationId: 'UnitBalanceUpdater',
-        message: {
-          $ref: '#/components/messages/lightMeasured',
+          $ref: '#/components/messages/UserSignedUp',
         },
       },
     },
   },
   components: {
     messages: {
-      lightBalanceRequester: {
-        name: 'lightBalanceRequester',
-        title: 'Light Balance Requester',
-        summary: 'Request balance from buildings',
-        contentType: 'application/json',
-        payload: {
-          type: 'string',
-        },
-      },
-      lightMeasured: {
-        name: 'lightMeasured',
-        title: 'Light measured',
-        summary:
-          'Inform about environmental lighting conditions of a particular streetlight.',
-        contentType: 'application/json',
+      UserSignedUp: {
         payload: {
           type: 'object',
           properties: {
-            buildingID: {
-              type: 'integer',
-              description: 'Building unique indentifier',
+            displayName: {
+              type: 'string',
+              description: 'Name of the user',
             },
-            unit: {
-              type: 'integer',
-              description: 'Number of unit remaining from building',
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Email of the user',
             },
           },
         },
       },
     },
   },
-};
+}; 
 
 describe('ShareController', () => {
   let app: App;
@@ -110,16 +56,17 @@ describe('ShareController', () => {
   });
 
   describe('[POST-GET] /share', () => {
-    it('should return the document ID and then reuse it for retrieving document', async () => {
-      let id = '';
+    let id = '';
 
+    it('should return the document ID and then reuse it for retrieving document', async () => {
       await request(app.getServer())
         .post('/v1/share')
         .send({
-          asyncapi: asyncAPIDocument,
+          asyncapi: validAsyncAPIDocument,
+          expireAt: '2022-08-10T23:00:00.000Z',
         })
         .expect(201)
-        .then(response => {
+        .then((response) => {
           id = response.body.id;
         });
 
@@ -129,25 +76,37 @@ describe('ShareController', () => {
         .expect(200);
     });
 
-    // it('should return an error when an invalid spec is passed', async () => {
-    //   const app = new App([new ShareController()]);
-    //   await app.init();
+    it('should throw error when document ID is not a valid ID ', async () => {
+      id = '806c262f-7bd7-41c0-88c9-0595c96b5c53c';
+      return await request(app.getServer())
+        .get(`/v1/share/${id}`)
+        .send()
+        .expect(422, {
+          type: 'https://api.asyncapi.com/problem/invalid-request-parameters',
+          title: 'Invalid Request Parameters',
+          status: 422,
+          validationErrors: [
+            {
+              instancePath: '/id',
+              schemaPath: '#/properties/id/format',
+              keyword: 'format',
+              params: { format: 'uuid' },
+              message: 'must match format "uuid"',
+            },
+          ],
+        });
+    });
 
-    //   return request(app.getServer())
-    //     .post('/v1/share')
-    //     .send(invalidAsyncApiFile)
-    //     .expect(422);
-    // });
+    it('should throw error when document ID doesn\'t exist in the record ', async () => {
+      id = '806c262f-7bd7-41c0-88c9-0595c96b5c5c';
+      return await request(app.getServer())
+        .get(`/v1/share/${id}`)
+        .send()
+        .expect(404, {
+          type: 'https://api.asyncapi.com/problem/not-available-id',
+          title: `No document with id "${id}" was found.`,
+          status: 404,
+        });
+    });
   });
-
-  // describe('[GET] /share/id', () => {
-  //   it('it should return an invalid UUID ID', async () => {
-  //     const app = new App([new ShareController]);
-  //     await app.init();
-
-  //     return request(app.getServer())
-  //       .get(`/share/${invalidUUID}`)
-  //       .expect(404);
-  //   });
-  // });
 });

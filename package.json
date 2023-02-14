@@ -32,7 +32,7 @@
     "build:dev": "tsc",
     "build:prod": "tsc",
     "test": "npm run test:all",
-    "test:all": "npm run test:unit && npm run test:e2e",
+    "test:all": "npm run test:e2e && npm run test:unit",
     "test:unit": "cross-env NODE_ENV=test jest --testPathIgnorePatterns=src/controllers/tests/share.controller.test.ts -i",
     "test:e2e": "npm run docker:compose:start && cross-env NODE_ENV=test jest -- ./src/controllers/tests/share.controller.test.ts -i",
     "docker:compose:start": "docker-compose up -d && sleep 1",
