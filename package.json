@@ -60,7 +60,7 @@
     "@asyncapi/problem": "^1.0.0",
     "@asyncapi/python-paho-template": "^0.2.13",
     "@asyncapi/raml-dt-schema-parser": "^2.0.1",
-    "@asyncapi/specs": "^4.1.0",
+    "@asyncapi/specs": "^4.2.0",
     "@asyncapi/ts-nats-template": "^0.10.2",
     "ajv": "^8.8.2",
     "ajv-formats": "^2.1.1",
