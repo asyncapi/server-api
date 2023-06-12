@@ -3,12 +3,12 @@ import { Controller } from '../interfaces';
 
 const helpData = {
     command1: {
-        info: 'Details about command1',
+        info: 'Details about command1. It has subcommand1 and subcommand2',
         subcommand1: 'Details about command1 > subcommand1',
         subcommand2: 'Details about command1 > subcommand2'
     },
     command2: {
-        info: 'Details about command2',
+        info: 'Details about command2. It has subcommand1 and subcommand2',
         subcommand1: 'Details about command2 > subcommand1',
         subcommand2: 'Details about command2 > subcommand2'
     }
@@ -21,24 +21,31 @@ export class HelpController implements Controller {
         const router: Router = Router();
 
         router.get(this.basepath, (req: Request, res: Response) => {
-            const command = req.body.command;
+            const command = req.body.command.trim();
 
             if (!command) {
                 return res.status(400).json({ message: 'Command parameter is required' });
             }
 
-            const subCommands = command.split('.');
-            let currentData: any = helpData;
+            const [mainCommand, subCommand] = command.split(' ');
 
-            for (const subCommand of subCommands) {
-                currentData = currentData[subCommand];
-
-                if (!currentData) {
-                    return res.status(404).json({ message: 'Help information not found' });
-                }
+            // Check if the main command exists
+            if (!helpData[mainCommand]) {
+                return res.status(404).json({ message: 'Help information not found' });
             }
 
-            res.json(currentData);
+            // If a subcommand is specified, check if it exists
+            if (subCommand) {
+                const subCommandInfo = helpData[mainCommand][subCommand];
+                if (!subCommandInfo) {
+                    return res.status(404).json({ message: 'Help information not found' });
+                }
+                return res.json({ info: subCommandInfo });
+            }
+
+            // If no subcommand is specified, return the main command info
+            const mainCommandInfo = helpData[mainCommand].info;
+            return res.json({ info: mainCommandInfo });
         });
 
         return router;
