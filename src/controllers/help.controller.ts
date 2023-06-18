@@ -59,8 +59,6 @@ export class HelpController implements Controller {
             return res.send(htmlContent);
         });        
         
-        
-
         return router;
     }
 }
