@@ -13,9 +13,10 @@ const fetchCommands = async (user, repo) => {
                 'Accept': 'application/vnd.github.v3.raw',
             },
         });
-        return response.data;
+        return { data: response.data, error: null };
     } catch (error) {
         console.error(`Error fetching commands: ${error}`);
+        return { data: null, error };
     }
 };
 
@@ -28,8 +29,41 @@ export class HelpController implements Controller {
         router.get(this.basepath, async (req: Request, res: Response) => {
             const command = req.body.command ? req.body.command.trim() : null;
         
-            const commandsMarkdown = await fetchCommands('princerajpoot20', 'api_endpoint');
+            const { data: commandsMarkdown, error } = await fetchCommands('asyncapi', 'server-api');
         
+            if (error) {
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    const statusCode = error.response.status;
+                    
+                    switch (statusCode) {
+                        case 401:
+                            return res.status(statusCode).json({ message: 'Unauthorized: Please check your GitHub API credentials.' });
+                        case 403:
+                            return res.status(statusCode).json({ message: 'Forbidden: You do not have permission to access this resource on GitHub.' });
+                        case 404:
+                            return res.status(statusCode).json({ message: 'Not Found: The requested GitHub repository or file could not be found.' });
+                        case 429:
+                            return res.status(statusCode).json({ message: 'Too Many Requests: You have exceeded the GitHub API rate limits.' });
+                        case 500:
+                            return res.status(statusCode).json({ message: 'Internal Server Error: Something went wrong on the GitHub server.' });
+                        case 502:
+                            return res.status(statusCode).json({ message: 'Bad Gateway: There was a problem with the gateway or proxy server on GitHub.' });
+                        case 503:
+                            return res.status(statusCode).json({ message: 'Service Unavailable: The GitHub service is currently unavailable. Please try again later.' });
+                        default:
+                            return res.status(statusCode).json({ message: error.response.data.message || 'Error fetching help information' });
+                    }
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    return res.status(500).json({ message: 'No response received from GitHub API' });
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    return res.status(500).json({ message: 'Error in sending request to GitHub API' });
+                }
+            }
+
             if (!commandsMarkdown) {
                 return res.status(500).json({ message: 'Error fetching help information' });
             }
@@ -57,10 +91,8 @@ export class HelpController implements Controller {
             const htmlContent = md.render(`##${commandSection}`);
         
             return res.send(htmlContent);
-        });        
+        });
         
-        
-
         return router;
     }
 }
