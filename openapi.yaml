@@ -228,21 +228,19 @@ paths:
 
   /help:
     get:
-      summary: Retrieve help information for the given command.
+      summary: Retrieve help information for the given command and any number of subcommands.
       operationId: help
       tags:
         - help
-      requestBody:
-        description: Command for which help information is needed.
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                command:
-                  type: string
-                  example: "command1.subcommand1"
+      parameters:
+        - name: command
+          in: query
+          style: form
+          explode: true
+          description: The command (and any subcommands) for which help information is needed. Subcommands can be separated by '/' or space ' '.
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Help information retrieved successfully.
@@ -254,7 +252,7 @@ paths:
                   message:
                     type: string
         "400":
-          description: Failed to get help. The given AsyncAPI command is not valid..
+          description: Failed to get help. The given AsyncAPI command is not valid.
           content:
             application/json:
               schema:
