@@ -17,6 +17,19 @@ const fetchCommands = async (user, repo) => {
     }
 };
 
+const resolveRefs = (obj, openapiSpec) => {
+    if (obj instanceof Object) {
+        for (let key in obj) {
+            if (obj[key] && obj[key].$ref) {
+                const componentKey = obj[key].$ref.replace('#/components/schemas/', '');
+                obj[key] = openapiSpec.components.schemas[componentKey];
+            } else {
+                resolveRefs(obj[key], openapiSpec);
+            }
+        }
+    }
+};
+
 export class HelpController implements Controller {
     public basepath = '/help';
 
@@ -53,7 +66,7 @@ export class HelpController implements Controller {
             });
             
             if (!matchedPathKey) {
-                return res.status(404).json({ message: 'Help information not found' });
+                return res.status(400).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
             }
 
             const pathInfo = openapiSpec.paths[matchedPathKey];
@@ -61,18 +74,22 @@ export class HelpController implements Controller {
             const operationDetails = pathInfo[method];
 
             if (!operationDetails) {
-                return res.status(404).json({ message: 'Help information not found' });
+                return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
             }
 
             const { requestBody } = operationDetails;
 
-            let requestBodyComponent = {};
+            let requestBodyComponent: any = {};
 
             if (requestBody && requestBody.content && requestBody.content['application/json']) {
                 const { $ref } = requestBody.content['application/json'].schema;
-                const componentKey = $ref.replace('#/components/schemas/', '');
-                requestBodyComponent = openapiSpec.components.schemas[componentKey];
+                if ($ref) {
+                    const componentKey = $ref.replace('#/components/schemas/', '');
+                    requestBodyComponent = openapiSpec.components.schemas[componentKey];
+                }
             }
+
+            resolveRefs(requestBodyComponent, openapiSpec);
 
             const responseObject = {
                 command: matchedPathKey,
