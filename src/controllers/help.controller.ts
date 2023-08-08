@@ -3,7 +3,7 @@ import { Controller } from '../interfaces';
 import axios from 'axios';
 import yaml from 'js-yaml';
 
-const fetchCommands = async (user, repo) => {
+export const fetchCommands = async (user, repo) => {
     try {
         const url = `https://api.github.com/repos/${user}/${repo}/contents/openapi.yaml`;
         const response = await axios.get(url, {
@@ -22,7 +22,13 @@ const resolveRefs = (obj, openapiSpec) => {
         for (let key in obj) {
             if (obj[key] && obj[key].$ref) {
                 const componentKey = obj[key].$ref.replace('#/components/schemas/', '');
-                obj[key] = openapiSpec.components.schemas[componentKey];
+                if (componentKey === 'AsyncAPIDocument') {
+                    obj[key] = {
+                        "$ref": "https://github.com/asyncapi/spec/blob/master/spec/asyncapi.md#asyncapi-object"
+                    };
+                } else {
+                    obj[key] = openapiSpec.components.schemas[componentKey];
+                }
             } else {
                 resolveRefs(obj[key], openapiSpec);
             }
@@ -66,7 +72,7 @@ export class HelpController implements Controller {
             });
             
             if (!matchedPathKey) {
-                return res.status(400).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
+                return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
             }
 
             const pathInfo = openapiSpec.paths[matchedPathKey];
@@ -95,9 +101,7 @@ export class HelpController implements Controller {
                 command: matchedPathKey,
                 method: method.toUpperCase(),
                 summary: operationDetails.summary || '',
-                description: operationDetails.description || '',
-                parameters: operationDetails.parameters || [],
-                requestBody: requestBodyComponent,
+                requestBody: requestBodyComponent
             };
             
             return res.json(responseObject);
