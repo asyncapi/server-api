@@ -20,7 +20,7 @@ export const fetchCommands = async (user, repo) => {
 const resolveRefs = (obj, openapiSpec) => {
     if (obj instanceof Object) {
         for (let key in obj) {
-            if (obj[key] && obj[key].$ref) {
+            if (obj[key]?.["$ref"]) {
                 const componentKey = obj[key].$ref.replace('#/components/schemas/', '');
                 if (componentKey === 'AsyncAPIDocument') {
                     obj[key] = {
@@ -87,7 +87,7 @@ export class HelpController implements Controller {
 
             let requestBodyComponent: any = {};
 
-            if (requestBody && requestBody.content && requestBody.content['application/json']) {
+            if (requestBody?.content?.['application/json']) {
                 const { $ref } = requestBody.content['application/json'].schema;
                 if ($ref) {
                     const componentKey = $ref.replace('#/components/schemas/', '');
