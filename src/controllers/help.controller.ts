@@ -8,8 +8,8 @@ export const fetchCommands = async (user, repo) => {
         const url = `https://api.github.com/repos/${user}/${repo}/contents/openapi.yaml`;
         const response = await axios.get(url, {
             headers: {
-                'Accept': 'application/vnd.github.v3.raw',
-            },
+                Accept: 'application/vnd.github.v3.raw'
+            }
         });
         return yaml.load(response.data);
     } catch (error) {
