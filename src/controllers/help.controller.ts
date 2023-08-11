@@ -36,6 +36,34 @@ const resolveRefs = (obj, openapiSpec) => {
     }
 };
 
+const getCommandsFromRequest = (req: Request): string[] => {
+    return req.params[0] ? req.params[0].split('/').filter(cmd => cmd.trim()) : [];
+}
+
+const getPathKeysMatchingCommands = (commands: string[], pathKeys: string[]): string | undefined => {
+    return pathKeys.find(pathKey => {
+        const pathParts = pathKey.split('/').filter(part => part !== '');
+        if (pathParts.length !== commands.length) return false;
+        for (let i = 0; i < pathParts.length; i++) {
+            const pathPart = pathParts[i];
+            const command = commands[i];
+            if (pathPart !== command && !pathPart.startsWith('{')) {
+                return false;
+            }
+        }
+        return true;
+    });
+}
+
+const buildResponseObject = (matchedPathKey: string, method: string, operationDetails: any, requestBodyComponent: any) => {
+    return {
+        command: matchedPathKey,
+        method: method.toUpperCase(),
+        summary: operationDetails.summary || '',
+        requestBody: requestBodyComponent
+    };
+}
+
 export class HelpController implements Controller {
     public basepath = '/help';
 
@@ -43,12 +71,9 @@ export class HelpController implements Controller {
         const router: Router = Router();
 
         router.get(/^\/help(\/.*)?$/, async (req: Request, res: Response) => {
-            const commands = req.params[0] ? req.params[0].split('/').filter(cmd => cmd.trim()) : [];
+            const commands = getCommandsFromRequest(req);
             const openapiSpec: any = await fetchCommands('asyncapi', 'server-api');
-
-            if (!openapiSpec) {
-                return res.status(500).json({ message: 'Error fetching help information' });
-            }
+            if (!openapiSpec) return res.status(500).json({ message: 'Error fetching help information' });
 
             if (commands.length === 0) {
                 const routes = Object.keys(openapiSpec.paths).map(path => ({ command: path.replace(/^\//, ''), url: `${this.basepath}${path}` }));
@@ -56,37 +81,16 @@ export class HelpController implements Controller {
             }
 
             const pathKeys = Object.keys(openapiSpec.paths);
-            const matchedPathKey = pathKeys.find(pathKey => {
-                const pathParts = pathKey.split('/').filter(part => part !== '');
-                if (pathParts.length !== commands.length) {
-                    return false;
-                }
-                for (let i = 0; i < pathParts.length; i++) {
-                    const pathPart = pathParts[i];
-                    const command = commands[i];
-                    if (pathPart !== command && !pathPart.startsWith('{')) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-            
-            if (!matchedPathKey) {
-                return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
-            }
+            const matchedPathKey = getPathKeysMatchingCommands(commands, pathKeys);
+            if (!matchedPathKey) return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
 
             const pathInfo = openapiSpec.paths[matchedPathKey];
             const method = commands.length > 1 ? 'get' : 'post';
             const operationDetails = pathInfo[method];
-
-            if (!operationDetails) {
-                return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
-            }
+            if (!operationDetails) return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
 
             const { requestBody } = operationDetails;
-
             let requestBodyComponent: any = {};
-
             if (requestBody?.content?.['application/json']) {
                 const { $ref } = requestBody.content['application/json'].schema;
                 if ($ref) {
@@ -96,15 +100,7 @@ export class HelpController implements Controller {
             }
 
             resolveRefs(requestBodyComponent, openapiSpec);
-
-            const responseObject = {
-                command: matchedPathKey,
-                method: method.toUpperCase(),
-                summary: operationDetails.summary || '',
-                requestBody: requestBodyComponent
-            };
-            
-            return res.json(responseObject);
+            return res.json(buildResponseObject(matchedPathKey, method, operationDetails, requestBodyComponent));
         });
 
         return router;
