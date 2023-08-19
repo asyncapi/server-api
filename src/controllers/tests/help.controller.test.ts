@@ -1,6 +1,5 @@
 import request from 'supertest';
 import { App } from '../../app';
-import { ProblemException } from '../../exceptions/problem.exception';
 import { HelpController, fetchCommands } from '../help.controller';
 
 jest.mock('../help.controller', () => ({
