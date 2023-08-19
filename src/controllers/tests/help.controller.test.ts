@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { App } from '../../app';
+import { ProblemException } from '../../exceptions/problem.exception';
 import { HelpController, fetchCommands } from '../help.controller';
 
 jest.mock('../help.controller', () => ({
-...(jest.requireActual('../help.controller') as any),
-fetchCommands: jest.fn()
+    ...(jest.requireActual('../help.controller') as any),
+    fetchCommands: jest.fn()
 }));
-
 
 describe('HelpController', () => {
     let app;
@@ -110,12 +110,16 @@ describe('HelpController', () => {
             const response = await request(app.getServer())
                 .get('/v1/help/invalidCommand')
                 .expect(404);
-
-            expect(response.body.message).toBe('Failed to get help. The given AsyncAPI command is not valid.');
+        
+            expect(response.body).toEqual({
+                type: 'https://api.asyncapi.com/problem/invalid-asyncapi-command',
+                title: 'Invalid AsyncAPI Command',
+                status: 404,
+                detail: 'The given AsyncAPI command is not valid.'
+            });
         });
 
         it('should return 404 error for a command without a method', async () => {
-            
             (fetchCommands as jest.Mock).mockResolvedValue({
                 paths: {
                     "/someCommand": {}
@@ -125,8 +129,13 @@ describe('HelpController', () => {
             const response = await request(app.getServer())
                 .get('/v1/help/someCommand')
                 .expect(404);
-
-            expect(response.body.message).toBe('Failed to get help. The given AsyncAPI command is not valid.');
+        
+            expect(response.body).toEqual({
+                type: 'https://api.asyncapi.com/problem/invalid-asyncapi-command',
+                title: 'Invalid AsyncAPI Command',
+                status: 404,
+                detail: 'The given AsyncAPI command is not valid.'
+            });
         });       
     });
 });

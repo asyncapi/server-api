@@ -1,7 +1,8 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { Controller } from '../interfaces';
 import axios from 'axios';
 import yaml from 'js-yaml';
+import { ProblemException } from '../exceptions/problem.exception';
 
 export const fetchCommands = async (user, repo) => {
     try {
@@ -14,6 +15,12 @@ export const fetchCommands = async (user, repo) => {
         return yaml.load(response.data);
     } catch (error) {
         console.error(`Error fetching commands: ${error}`);
+        throw new ProblemException({
+            type: 'fetch-commands-error',
+            title: 'Error Fetching Commands',
+            status: 500,
+            detail: error.message
+        });
     }
 };
 
@@ -67,13 +74,18 @@ const buildResponseObject = (matchedPathKey: string, method: string, operationDe
 export class HelpController implements Controller {
     public basepath = '/help';
 
-    public boot(): Router {
+    public async boot(): Promise<Router> {
         const router: Router = Router();
 
-        router.get(/^\/help(\/.*)?$/, async (req: Request, res: Response) => {
+        router.get(/^\/help(\/.*)?$/, async (req: Request, res: Response, next: NextFunction) => {
             const commands = getCommandsFromRequest(req);
-            const openapiSpec: any = await fetchCommands('asyncapi', 'server-api');
-            if (!openapiSpec) return res.status(500).json({ message: 'Error fetching help information' });
+            let openapiSpec: any;
+
+            try {
+                openapiSpec = await fetchCommands('asyncapi', 'server-api');
+            } catch (err) {
+                return next(err);
+            }
 
             if (commands.length === 0) {
                 const routes = Object.keys(openapiSpec.paths).map(path => ({ command: path.replace(/^\//, ''), url: `${this.basepath}${path}` }));
@@ -82,12 +94,26 @@ export class HelpController implements Controller {
 
             const pathKeys = Object.keys(openapiSpec.paths);
             const matchedPathKey = getPathKeysMatchingCommands(commands, pathKeys);
-            if (!matchedPathKey) return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
+            if (!matchedPathKey) {
+                return next(new ProblemException({
+                    type: 'invalid-asyncapi-command',
+                    title: 'Invalid AsyncAPI Command',
+                    status: 404,
+                    detail: 'The given AsyncAPI command is not valid.'
+                }));
+            }
 
             const pathInfo = openapiSpec.paths[matchedPathKey];
             const method = commands.length > 1 ? 'get' : 'post';
             const operationDetails = pathInfo[method];
-            if (!operationDetails) return res.status(404).json({ message: 'Failed to get help. The given AsyncAPI command is not valid.' });
+            if (!operationDetails) {
+                return next(new ProblemException({
+                    type: 'invalid-asyncapi-command',
+                    title: 'Invalid AsyncAPI Command',
+                    status: 404,
+                    detail: 'The given AsyncAPI command is not valid.'
+                }));
+            }
 
             const { requestBody } = operationDetails;
             let requestBodyComponent: any = {};
