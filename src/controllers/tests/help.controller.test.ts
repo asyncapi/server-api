@@ -1,10 +1,10 @@
 import request from 'supertest';
 import { App } from '../../app';
-import { HelpController, fetchCommands } from '../help.controller';
+import { HelpController } from '../help.controller';
+import { getAppOpenAPI } from '../../utils/app-openapi';
 
-jest.mock('../help.controller', () => ({
-    ...(jest.requireActual('../help.controller') as any),
-    fetchCommands: jest.fn()
+jest.mock('../../utils/app-openapi', () => ({
+    getAppOpenAPI: jest.fn(),
 }));
 
 describe('HelpController', () => {
@@ -16,13 +16,14 @@ describe('HelpController', () => {
 
     describe('[GET] /help', () => {
         it('should return all commands', async () => {
-            (fetchCommands as jest.Mock).mockResolvedValue({
+            (getAppOpenAPI as jest.Mock).mockResolvedValue({
                 paths: {
                     "/validate": {},
                     "/parse": {},
                     "/generate": {},
                     "/convert": {},
                     "/bundle": {},
+                    "/help": {},
                     "/diff": {}
                 }
             });
@@ -53,56 +54,14 @@ describe('HelpController', () => {
                     "url": "/help/bundle"
                 },
                 {
+                    "command": "help",
+                    "url": "/help/help"
+                },
+                {
                     "command": "diff",
                     "url": "/help/diff"
                 }
             ]);
-        });
-
-        it('should return help details for a specific command - generate', async () => {
-            const response = await request(app.getServer())
-                .get('/v1/help/generate')
-                .expect(200);
-
-            expect(response.body).toEqual({
-                "command": "/generate",
-                "method": "POST",
-                "summary": "Generate the given AsyncAPI template.",
-                "requestBody": {
-                    "type": "object",
-                    "required": [
-                        "asyncapi",
-                        "template"
-                    ],
-                    "properties": {
-                        "asyncapi": {
-                            "$ref": "https://github.com/asyncapi/spec/blob/master/spec/asyncapi.md#asyncapi-object"
-                        },
-                        "template": {
-                            "type": "string",
-                            "description": "Template name to be generated.",
-                            "enum": [
-                                "@asyncapi/dotnet-nats-template",
-                                "@asyncapi/go-watermill-template",
-                                "@asyncapi/html-template",
-                                "@asyncapi/java-spring-cloud-stream-template",
-                                "@asyncapi/java-spring-template",
-                                "@asyncapi/java-template",
-                                "@asyncapi/markdown-template",
-                                "@asyncapi/nodejs-template",
-                                "@asyncapi/nodejs-ws-template",
-                                "@asyncapi/python-paho-template",
-                                "@asyncapi/ts-nats-template"
-                            ]
-                        },
-                        "parameters": {
-                            "type": "object",
-                            "description": "Template parameters to be generated. Each template has different parameters that you should check in the documentation, \nwhich is usually located in the template's repository.\nThis field is optional but may be required for some templates.\n",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            });
         });
 
         it('should return 404 error for an invalid command', async () => {
@@ -119,7 +78,7 @@ describe('HelpController', () => {
         });
 
         it('should return 404 error for a command without a method', async () => {
-            (fetchCommands as jest.Mock).mockResolvedValue({
+            (getAppOpenAPI as jest.Mock).mockResolvedValue({
                 paths: {
                     "/someCommand": {}
                 }

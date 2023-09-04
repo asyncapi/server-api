@@ -8,9 +8,6 @@ module.exports = {
     '^.+\\.tsx?$': 'ts-jest',
     '^.+\\.ts?$': 'ts-jest',
   },
-  moduleNameMapper: {
-    '^axios$': require.resolve('axios'),
-  },
 
   // Test spec file resolution pattern
   // Matches parent folder `tests` or `__tests__` and filename
