@@ -4,29 +4,28 @@ import { ProblemException } from '../exceptions/problem.exception';
 import { getAppOpenAPI } from '../utils/app-openapi';
 
 const getCommandsFromRequest = (req: Request): string[] => {
-  return req.params[0] ? req.params[0].split('/').filter(cmd => cmd.trim()) : [];
+  return req.params.command ? req.params.command.split('/').filter(cmd => cmd.trim()) : [];
+};
+
+const isKeyValid = (key: string, obj: any): boolean => {
+  return Object.keys(obj).includes(key);
 };
 
 const getPathKeysMatchingCommands = (commands: string[], pathKeys: string[]): string | undefined => {
+  if (!Array.isArray(pathKeys) || !pathKeys.every(key => typeof key === 'string')) {
+    return undefined;
+  }
   return pathKeys.find(pathKey => {
     const pathParts = pathKey.split('/').filter(part => part !== '');
-    if (pathParts.length !== commands.length) return false;
-    for (let i = 0; i < pathParts.length; i++) {
-      const pathPart = pathParts[i];
+    return pathParts.every((pathPart, i) => {
       const command = commands[i];
-      if (pathPart !== command && !pathPart.startsWith('{')) {
-        return false;
-      }
-    }
-    return true;
+      return pathPart === command || pathPart.startsWith('{');
+    });
   });
 };
 
 const getFullRequestBodySpec = (operationDetails: any) => {
-  if (operationDetails?.requestBody?.content?.['application/json']) {
-    return operationDetails.requestBody.content['application/json'].schema;
-  }
-  return null;
+  return isKeyValid('requestBody', operationDetails) ? operationDetails.requestBody.content['application/json'].schema : null;
 };
 
 const buildResponseObject = (matchedPathKey: string, method: string, operationDetails: any, requestBodySchema: any) => {
@@ -44,7 +43,7 @@ export class HelpController implements Controller {
   public async boot(): Promise<Router> {
     const router: Router = Router();
 
-    router.get(/^\/help(\/.*)?$/, async (req: Request, res: Response, next: NextFunction) => {
+    router.get('/help/:command*?', async (req: Request, res: Response, next: NextFunction) => {
       const commands = getCommandsFromRequest(req);
       let openapiSpec: any;
 
@@ -55,12 +54,13 @@ export class HelpController implements Controller {
       }
 
       if (commands.length === 0) {
-        const routes = Object.keys(openapiSpec.paths).map(path => ({ command: path.replace(/^\//, ''), url: `${this.basepath}${path}` }));
+        const routes = isKeyValid('paths', openapiSpec) ? Object.keys(openapiSpec.paths).map(path => ({ command: path.replace(/^\//, ''), url: `${this.basepath}${path}` })) : [];
         return res.json(routes);
       }
 
-      const pathKeys = Object.keys(openapiSpec.paths);
+      const pathKeys = isKeyValid('paths', openapiSpec) ? Object.keys(openapiSpec.paths) : [];
       const matchedPathKey = getPathKeysMatchingCommands(commands, pathKeys);
+
       if (!matchedPathKey) {
         return next(new ProblemException({
           type: 'invalid-asyncapi-command',
@@ -70,9 +70,9 @@ export class HelpController implements Controller {
         }));
       }
 
-      const pathInfo = openapiSpec.paths[matchedPathKey];
+      const pathInfo = isKeyValid(matchedPathKey, openapiSpec.paths) ? openapiSpec.paths[matchedPathKey] : undefined;
       const method = commands.length > 1 ? 'get' : 'post';
-      const operationDetails = pathInfo[method];
+      const operationDetails = isKeyValid(method, pathInfo) ? pathInfo[method] : undefined;
       if (!operationDetails) {
         return next(new ProblemException({
           type: 'invalid-asyncapi-command',
