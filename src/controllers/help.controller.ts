@@ -18,7 +18,7 @@ const getPathKeysMatchingCommands = (commands: string[], pathKeys: string[]): st
   return pathKeys.find(pathKey => {
     const pathParts = pathKey.split('/').filter(part => part !== '');
     return pathParts.every((pathPart, i) => {
-      const command = commands[i];
+      const command = commands[Number(i)];
       return pathPart === command || pathPart.startsWith('{');
     });
   });
@@ -70,9 +70,9 @@ export class HelpController implements Controller {
         }));
       }
 
-      const pathInfo = isKeyValid(matchedPathKey, openapiSpec.paths) ? openapiSpec.paths[matchedPathKey] : undefined;
+      const pathInfo = isKeyValid(matchedPathKey, openapiSpec.paths) ? openapiSpec.paths[String(matchedPathKey)] : undefined;
       const method = commands.length > 1 ? 'get' : 'post';
-      const operationDetails = isKeyValid(method, pathInfo) ? pathInfo[method] : undefined;
+      const operationDetails = isKeyValid(method, pathInfo) ? pathInfo[String(method)] : undefined;
       if (!operationDetails) {
         return next(new ProblemException({
           type: 'invalid-asyncapi-command',
