@@ -226,6 +226,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
+  /help:
+    get:
+      summary: Retrieve help information for the given command.
+      operationId: help
+      tags:
+        - help
+      parameters:
+        - name: command
+          in: query
+          style: form
+          explode: true
+          description: The command for which help information is needed.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Help information retrieved successfully.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/HelpListResponse'
+                  - $ref: '#/components/schemas/HelpCommandResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "404":
+          description: Command not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
   /diff:
     post:
       summary: Compare the given AsyncAPI documents.
@@ -415,6 +458,25 @@ components:
           type: [object, string]
           description: The diff between the two AsyncAPI documents.
 
+    HelpListResponse:
+      type: object
+      properties:
+        commands:
+          type: array
+          items:
+            type: string
+          description: A list of all available commands.        
+    HelpCommandResponse:
+      type: object
+      description: Detailed help information for a specific command.
+      properties:
+        command:
+          type: string
+          description: The name of the command.
+        description:
+          type: string
+          description: Detailed description of the command.
+    
     Problem:
       type: object
       properties:
