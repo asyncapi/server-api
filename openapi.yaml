@@ -26,7 +26,7 @@ paths:
         name: Github Repository for the AsyncAPI Parser
         url: https://github.com/asyncapi/parser-js
       requestBody:
-        description: Validate the given AsyncAPI document.
+        description: Details of validation.
         required: true
         content:
           application/json:
@@ -108,7 +108,7 @@ paths:
         name: Github Repository for the AsyncAPI Generator
         url: https://github.com/asyncapi/generator
       requestBody:
-        description: Template details to be generated.
+        description: Details of generation.
         required: true
         content:
           application/json:
@@ -151,7 +151,7 @@ paths:
         name: Github Repository for the AsyncAPI Converter
         url: https://github.com/asyncapi/converter-js
       requestBody:
-        description: Parameters to convert the spec.
+        description: Details of converting.
         required: true
         content:
           application/json:
@@ -185,7 +185,7 @@ paths:
 
   /bundle:
     post:
-      summary: Bundle the given AsyncAPI document(s).
+      summary: Bundle the given AsyncAPI document(s)  to single one.
       operationId: bundle
       tags:
         - bundle
@@ -194,7 +194,7 @@ paths:
         name: Github Repository for the AsyncAPI Bundler
         url: https://github.com/asyncapi/bundler
       requestBody:
-        description: Bundle the given AsyncAPI document(s) to single one.
+        description: Details of bundling.
         required: true
         content:
           application/json:
@@ -280,7 +280,7 @@ paths:
         name: Github Repository for the AsyncAPI Diff
         url: https://github.com/asyncapi/diff
       requestBody:
-        description: Compare the given AsyncAPI documents.
+        description: Details of diffing.
         required: true
         content:
           application/json:
@@ -301,6 +301,49 @@ paths:
                 $ref: '#/components/schemas/Problem'
         '422':
           description: Failed to retrieve changes between two AsyncAPI documents due to invalid parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        default:
+          description: Unexpected problem.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+  /optimize:
+    post:
+      summary: Get ways of optimizing an AsyncAPI document.
+      operationId: optimize
+      tags:
+        - optimize
+        - optimizer
+      externalDocs:
+        name: Github Repository for the AsyncAPI Optimizer
+        url: https://github.com/asyncapi/optimizer
+      requestBody:
+        description: Details of optimizing.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OptimizeRequest'
+      responses:
+        '200':
+          description: AsyncAPI document successfully optimized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OptimizeResponse'
+        '400':
+          description: AsyncAPI documents is not valid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: The given AsyncAPI document is not valid due to invalid parameters in the request.
           content:
             application/json:
               schema:
@@ -419,6 +462,8 @@ components:
             - 'json'
     ConvertResponse:
       type: object
+      required:
+        - converted 
       properties:
         converted:
           $ref: '#/components/schemas/AsyncAPIDocument'
@@ -453,10 +498,49 @@ components:
             $ref: '#/components/schemas/AsyncAPIDocument'
     DiffResponse:
       type: object
+      required:
+        - diff 
       properties:
         diff:
           type: [object, string]
           description: The diff between the two AsyncAPI documents.
+
+    OptimizeRequest:
+      type: object
+      required:
+        - asyncapi
+      properties:
+        asyncapi:
+          $ref: '#/components/schemas/AsyncAPIDocument'
+        rules:
+          type: object
+          properties:
+            reuseComponents: 
+              type: boolean
+              description: Whether to reuse components from `components` section or not.
+              default: true
+            removeComponents:
+              type: boolean
+              description: Whether to remove un-used components from `components` section or not.
+              default: true
+            moveToComponents:
+              type: boolean
+              description: Whether to move duplicated components to the `components` section or not.
+              default: true
+        report:
+          type: boolean
+          description: Whether to generate a report based on unoptimized AsyncAPI document or not.
+          default: false
+    OptimizeResponse:
+      type: object
+      required:
+        - optimized 
+      properties:
+        optimized:
+          $ref: '#/components/schemas/AsyncAPIDocument'
+        report:
+          type: object
+          description: Generated report based on unoptimized AsyncAPI document. The `report=true` flag must be entered to get the field.
 
     HelpListResponse:
       type: object
