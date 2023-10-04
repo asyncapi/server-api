@@ -18,13 +18,12 @@ export class OptimizeController implements Controller {
     try {
       const optimizer = new Optimizer(asyncapi);
 
-      const optimizerReport = await optimizer.getReport();
       const result: Record<string, any> = {
         optimized: JSON.parse(optimizer.getOptimizedDocument({ rules, output: 'JSON' as any })),
       };
   
       if (report) {
-        result.report = optimizerReport;
+        result.report = await optimizer.getReport();
       }
   
       res.status(200).json(result);
