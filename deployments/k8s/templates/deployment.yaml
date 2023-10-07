@@ -40,6 +40,11 @@ spec:
             - name: http
               containerPort: {{ .Values.ports.http }}
               protocol: TCP
+          env:
+            - name: PORT
+              value: "{{ .Values.env.PORT }}"
+            - name: NODE_ENV
+              value: "{{ .Values.env.NODE_ENV }}"
           livenessProbe:
             httpGet:
               path: /
