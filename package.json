@@ -36,7 +36,8 @@
     "lint:fix": "eslint --max-warnings 0 --config .eslintrc . --fix",
     "generate:assets": "npm run generate:readme:toc",
     "generate:readme:toc": "markdown-toc -i README.md",
-    "docker:build": "docker build --tag asyncapi/server-api ."
+    "docker:build": "docker build --tag asyncapi/server-api .",
+    "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^10.1.0",
