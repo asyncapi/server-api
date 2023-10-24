@@ -45,13 +45,13 @@ export class GenerateController implements Controller {
           tmpDir,
           prepareParserConfig(req)
         );
-      } catch (genErr: unknown) {
+      } catch (err: unknown) {
         return next(
           new ProblemException({
             type: 'internal-generator-error',
             title: 'Internal Generator error',
             status: 500,
-            detail: (genErr as Error).message,
+            detail: (err as Error).message,
           })
         );
       }
@@ -127,7 +127,7 @@ export class GenerateController implements Controller {
     }
 
     const generator = packageJSON.generator;
-    if (!generator || !generator.parameters) {
+    if (!generator?.parameters) {
       return;
     }
 
