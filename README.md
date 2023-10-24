@@ -34,7 +34,7 @@ Run:
 
 ```bash
 npm install
-npm start:prod
+npm run start:prod
 ```
 
 server is ready to use on [http://localhost:80](http://localhost:80).
