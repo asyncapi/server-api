@@ -1,0 +1,55 @@
+name: Deploy to DigitalOcean Droplets
+
+on:
+  push:
+    branches:
+      - master
+  
+  workflow_dispatch: 
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'master'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to DigitalOcean Droplets
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/${{ secrets.USERNAME }}
+            if [ ! -d "deploy" ]; then
+              git clone https://github.com/asyncapi/server-api.git:deploy
+            fi
+
+            cd deploy
+            git checkout master
+            git pull origin master
+
+            # Remove old docker containers
+            docker rm -f $(docker ps -a -q)
+            # Remove old docker images
+            docker rmi -f $(docker images -a -q)
+            # Remove old docker volumes
+            docker volume rm $(docker volume ls -q)
+
+            # Build new docker image
+            docker build -t asyncapi/server-api .
+
+            # Run new docker image
+            docker run -d -p 80:80 -p 443:443 --name asyncapi-server-api asyncapi/server-api --restart=always
+
+
+
+
+
+
+
+
