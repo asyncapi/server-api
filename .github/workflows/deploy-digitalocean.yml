@@ -4,13 +4,6 @@ on:
   push:
     branches:
       - master
-  
-  workflow_dispatch: 
-    inputs:
-      branch:
-        description: 'Branch to deploy'
-        required: true
-        default: 'master'
 
 jobs:
   deploy:
@@ -26,7 +19,7 @@ jobs:
           script: |
             cd /home/${{ secrets.USERNAME }}
             if [ ! -d "deploy" ]; then
-              git clone https://github.com/asyncapi/server-api.git:deploy
+              git clone https://github.com/asyncapi/server-api.git deploy
             fi
 
             cd deploy
@@ -44,7 +37,7 @@ jobs:
             docker build -t asyncapi/server-api .
 
             # Run new docker image
-            docker run -d -p 80:80 -p 443:443 --name asyncapi-server-api asyncapi/server-api --restart=always
+            docker run -d -p 80:80 -p 443:443 --restart always --name asyncapi-server-api asyncapi/server-api
 
 
 

@@ -12,6 +12,7 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh-authorized-keys: 
       - # Add your public key here
+
 runcmd:
   - sudo apt-get update -y
   - sudo apt install apt-transport-https ca-certificates curl software-properties-common
@@ -20,6 +21,8 @@ runcmd:
   - sudo apt-get update -y
   - sudo apt install docker-ce -y
   - sudo systemctl status docker
-  - sudo usermod -aG docker ${USER}
+  # Add your user to the docker group to avoid using sudo when running docker
+  # NOTE: You need to logout and login again for this to take effect
   - sudo systemctl enable docker
   - sudo systemctl start docker
+  - sudo usermod -aG docker asyncapi
