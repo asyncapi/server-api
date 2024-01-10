@@ -1,7 +1,0 @@
-apiVersion: v2
-name: asyncapi-server-api
-description: Helm chart that installs the AsyncAPI Server API - https://github.com/asyncapi/server-api
-
-type: application
-version: 0.1.0
-appVersion: "0.1.0-alpha"
