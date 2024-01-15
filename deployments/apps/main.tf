@@ -45,10 +45,9 @@ resource "digitalocean_app" "server-api" {
       name = "asyncapi-server-api"
       http_port = 80
       health_check {
-        http_path = "/v1/help/validate"
+        http_path = "/"
         port = 80
       }
-      run_command = "npm run start:docker"
       env {
         key = "PORT"
         value = "80"
