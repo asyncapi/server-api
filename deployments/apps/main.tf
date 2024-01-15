@@ -45,7 +45,7 @@ resource "digitalocean_app" "server-api" {
       name = "asyncapi-server-api"
       http_port = 80
       health_check {
-        http_path = "/"
+        http_path = "/v1/help/validate"
         port = 80
       }
       env {
