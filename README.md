@@ -60,8 +60,8 @@ server is ready to use on [http://localhost:80](http://localhost:80).
 This project is deployed to [DigitalOcean App Platform](https://www.digitalocean.com/products/app-platform/) using [Terraform](https://www.terraform.io/) and [GitHub Actions](https://www.github.com/digitalocean/app_action/). To deploy it to your own account, follow these steps:
 
 1. Fork this repository.
-2. Create a [DigitalOcean Personal Access Token](https://cloud.digitalocean.com/account/api/tokens) with `read` and `write` permissions. For for information, see [DigitalOcean's documentation](https://docs.digitalocean.com/reference/api/create-personal-access-token/).
-3. Run `terraform init` to initialize the Terraform project as can be seen [here](./deployments/apps/main.tf)
+2. Create a [DigitalOcean Personal Access Token](https://cloud.digitalocean.com/account/api/tokens) with `read` and `write` permissions. For more information, see [DigitalOcean's documentation](https://docs.digitalocean.com/reference/api/create-personal-access-token/).
+3. Run `terraform init` to initialize the Terraform project as can be seen [here](./deployments/apps/main.tf). This should be run being located at ./deployments/apps directory preferably.
 4. Run `terraform apply` to create the necessary infrastructure. 
 
 > [!NOTE]
