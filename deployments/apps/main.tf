@@ -14,7 +14,7 @@ provider "digitalocean" {}
 resource "digitalocean_app" "server-api" {
   spec {
     name = "server-api"
-    region = "blr"
+    region = "sfo3"
 
     domain {
       name = "api.asyncapi.com"
