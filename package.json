@@ -55,7 +55,7 @@
     "@asyncapi/markdown-template": "^1.4.0",
     "@asyncapi/nodejs-template": "^1.0.0",
     "@asyncapi/nodejs-ws-template": "^0.9.33",
-    "@asyncapi/openapi-schema-parser": "^2.0.3",
+    "@asyncapi/openapi-schema-parser": "^3.0.12",
     "@asyncapi/parser": "^1.18.1",
     "@asyncapi/problem": "^1.0.0",
     "@asyncapi/python-paho-template": "^0.2.13",
