@@ -26,7 +26,9 @@ initialDelaySeconds:
   liveness: 30
   readiness: 30
 # Env vars. Needed for configuring the app.
-env: {}
+env:
+  PORT: "80"
+  NODE_ENV: "production"
 
 nameOverride: ""
 fullnameOverride: ""
