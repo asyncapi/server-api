@@ -55,6 +55,24 @@ server is ready to use on [http://localhost:80](http://localhost:80).
 2. Write code and tests.
 3. Make sure all tests pass `npm test`
 
+## Deployment
+
+This project is deployed to [DigitalOcean App Platform](https://www.digitalocean.com/products/app-platform/) using [Terraform](https://www.terraform.io/) and [GitHub Actions](https://www.github.com/digitalocean/app_action/). To deploy it to your own account, follow these steps:
+
+1. Fork this repository.
+2. Create a [DigitalOcean Personal Access Token](https://cloud.digitalocean.com/account/api/tokens) with `read` and `write` permissions. For more information, see [DigitalOcean's documentation](https://docs.digitalocean.com/reference/api/create-personal-access-token/).
+3. Run `terraform init` to initialize the Terraform project as can be seen [here](./deployments/apps/main.tf). This should be run being located at ./deployments/apps directory preferably.
+4. Run `terraform apply` to create the necessary infrastructure. 
+
+> [!NOTE]
+> You need to export the following environment variables before running `terraform apply`:
+> - `DIGITALOCEAN_ACCESS_TOKEN`: Your DigitalOcean Personal Access Token.
+
+
+### How the GitHub workflow works
+
+The [GitHub workflow](./.github/workflows/release-docker.yml) is triggered when a new tag is pushed to the repository. It will build a new Docker image and push it to the [Docker Hub](https://hub.docker.com/r/asyncapi/server-api) repository. Then the [DigitalOcean App Platform GitHub Action](https://www.github.com/digitalocean/app_action/) updates the application with the new image.
+
 ## Contribution
 
 Read [CONTRIBUTING](https://github.com/asyncapi/.github/blob/master/CONTRIBUTING.md) guide.

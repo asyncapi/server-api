@@ -32,3 +32,15 @@ jobs:
           pass: ${{ secrets.DOCKER_PASSWORD }}
           slug: asyncapi/server-api
           description: Server API providing official AsyncAPI tools
+
+  deploy-app:
+    name: Deploy to DigitalOcean App
+    needs: publish-docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to DigitalOcean App
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: "server-api"
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[{"name":"asyncapi-server-api","image":{"registry_type":"DOCKER_HUB","registry":"asyncapi","repository":"server-api","tag":"latest"}}]'
