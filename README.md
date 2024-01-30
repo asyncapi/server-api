@@ -19,8 +19,14 @@ This package is still under development and has not published and reached versio
 <!-- toc -->
 
 - [Requirements](#requirements)
+- [Using it locally](#using-it-locally)
+- [Using it via Docker](#using-it-via-docker)
 - [Development](#development)
-- [Contributing](#contributing)
+- [Deployment](#deployment)
+  * [How the GitHub workflow works](#how-the-github-workflow-works)
+- [Contribution](#contribution)
+- [Supported by](#supported-by)
+- [Contributors](#contributors)
 
 <!-- tocstop -->
 
