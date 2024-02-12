@@ -80,7 +80,18 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "Shurtu-gal",
+      "name": "Ashish Padhy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/100484401?v=4",
+      "profile": "http://ashishpadhy.live",
+      "contributions": [
+        "doc",
+        "infra"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "commitType": "docs"
 }
