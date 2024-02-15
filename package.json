@@ -1,6 +1,6 @@
 {
   "name": "@asyncapi/server-api",
-  "version": "0.16.5",
+  "version": "0.16.6",
   "description": "Server API providing official AsyncAPI tools",
   "license": "Apache-2.0",
   "homepage": "https://github.com/asyncapi/server-api",
