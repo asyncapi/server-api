@@ -54,7 +54,7 @@
     "@asyncapi/java-template": "^0.2.0",
     "@asyncapi/markdown-template": "^1.4.0",
     "@asyncapi/nodejs-template": "^2.0.1",
-    "@asyncapi/nodejs-ws-template": "^0.9.33",
+    "@asyncapi/nodejs-ws-template": "^0.9.34",
     "@asyncapi/openapi-schema-parser": "^3.0.21",
     "@asyncapi/parser": "^1.18.1",
     "@asyncapi/problem": "^1.0.0",
